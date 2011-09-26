@@ -1,4 +1,0 @@
-[Project]
-Name=telepathy-kded-module
-Manager=KDevCMakeManager
-VersionControl=kdevgit

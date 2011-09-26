@@ -1,0 +1,19 @@
+[Desktop Entry]
+Icon=preferences-other
+StartupNotify=true
+Terminal=false
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-DBUS-StartupType=
+X-KDE-HasReadOnlyMode=false
+X-KDE-Library=kcm_telepathy_kded_module_config
+X-KDE-ParentApp=kcontrol
+X-KDE-SubstituteUID=false
+X-KDE-RootOnly=false
+X-KDE-System-Settings-Parent-Category=im-and-voip
+Categories=Qt;KDE;X-KDE-settings-network;
+
+Name=General
+Name[x-test]=xxGeneralxx
+Comment=General settings for IM and VoIP
+Comment[x-test]=xxGeneral settings for IM and VoIPxx
