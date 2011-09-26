@@ -41,6 +41,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void autoAwayChecked(bool checked);
+    void settingsHasChanged();
 
 private:
     Ui::TelepathyKDEDUi *ui;
