@@ -19,17 +19,32 @@
 
 #include "autoaway.h"
 
-#include <KIdleTime>
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/AccountSet>
+
 #include <KDebug>
+#include <KIdleTime>
+#include <KConfig>
+#include <KConfigGroup>
 
 AutoAway::AutoAway(const Tp::AccountManagerPtr& am, QObject* parent)
     : QObject(parent)
 {
+    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    KConfigGroup kdedConfig = config->group("KDED");
+
+    bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
+    bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
+
     m_accountManager = am;
-    m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(10 * 1000);
-    m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(20 * 1000);
+    if (autoAwayEnabled) {
+        int awayTime = kdedConfig.readEntry("awayAfter", 5);
+        m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime);
+    }
+    if (autoAwayEnabled && autoXAEnabled) {
+        int xaTime = kdedConfig.readEntry("xaAfter", 15);
+        m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime);
+    }
     m_prevPresence = Tp::Presence::available();
 
     connect(KIdleTime::instance(), SIGNAL(timeoutReached(int)),
