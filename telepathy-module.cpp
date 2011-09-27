@@ -36,6 +36,8 @@ K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module"))
 TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     : KDEDModule(parent)
 {
+    Q_UNUSED(args)
+
     Tp::registerTypes();
     Tp::enableDebug(false);
     Tp::enableWarnings(false);

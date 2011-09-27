@@ -86,6 +86,9 @@ TelepathyMPRIS::~TelepathyMPRIS()
 
 void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties)
 {
+    Q_UNUSED(interface)
+    Q_UNUSED(invalidatedProperties)
+
     if (m_accountManager->onlineAccounts()->accounts().isEmpty()) {
         return;
     }
