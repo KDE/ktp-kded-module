@@ -39,11 +39,11 @@ AutoAway::AutoAway(const Tp::AccountManagerPtr& am, QObject* parent)
     m_accountManager = am;
     if (autoAwayEnabled) {
         int awayTime = kdedConfig.readEntry("awayAfter", 5);
-        m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime);
+        m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime * 60 * 1000);
     }
     if (autoAwayEnabled && autoXAEnabled) {
         int xaTime = kdedConfig.readEntry("xaAfter", 15);
-        m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime);
+        m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime * 60 * 1000);
     }
     m_prevPresence = Tp::Presence::available();
 
