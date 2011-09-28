@@ -46,6 +46,9 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoAwayChecked(bool)));
 
+    connect(ui->m_xaCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(autoXAChecked(bool)));
+
     connect(ui->m_xaCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
 
@@ -122,6 +125,12 @@ void TelepathyKDEDConfig::autoAwayChecked(bool checked)
 
     ui->m_awayMins->setEnabled(checked);
 
+    Q_EMIT changed(true);
+}
+
+void TelepathyKDEDConfig::autoXAChecked(bool checked)
+{
+    ui->m_xaMins->setEnabled(checked);
     Q_EMIT changed(true);
 }
 
