@@ -57,13 +57,13 @@ void AutoAway::timeoutReached(int id)
                 m_accountManager->onlineAccounts()->accounts().first()->currentPresence().type() != Tp::Presence::hidden().type()) {
 
                 m_prevPresence = m_accountManager->onlineAccounts()->accounts().first()->currentPresence();
-                emit setPresence(Tp::Presence::away());
+                Q_EMIT setPresence(Tp::Presence::away());
 
             }
         } else if (id == m_extAwayTimeoutId) {
             if (!m_accountManager->onlineAccounts()->accounts().isEmpty()) {
                 if (m_accountManager->onlineAccounts()->accounts().first()->currentPresence().type() == Tp::Presence::away().type()) {
-                    emit setPresence(Tp::Presence::xa());
+                    Q_EMIT setPresence(Tp::Presence::xa());
                 }
             }
         }
@@ -73,7 +73,7 @@ void AutoAway::timeoutReached(int id)
 void AutoAway::backFromIdle()
 {
     kDebug();
-    emit setPresence(m_prevPresence);
+    Q_EMIT setPresence(m_prevPresence);
 }
 
 void AutoAway::readConfig()

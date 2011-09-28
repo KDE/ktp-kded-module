@@ -70,20 +70,20 @@ void TelepathyKDEDConfig::load()
     KConfigGroup kdedConfig = config->group("KDED");
 
     //check if auto-away is enabled
-    bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
+    bool autoAwayEnabled = kdedConfig.readEntry(QLatin1String("autoAwayEnabled"), true);
 
     //default away time is 5 minutes
-    int awayTime = kdedConfig.readEntry("awayAfter", 5);
+    int awayTime = kdedConfig.readEntry(QLatin1String("awayAfter"), 5);
 
     ui->m_awayCheckBox->setChecked(autoAwayEnabled);
     ui->m_awayMins->setValue(awayTime);
     ui->m_awayMins->setEnabled(autoAwayEnabled);
 
     //check for x-away
-    bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
+    bool autoXAEnabled = kdedConfig.readEntry(QLatin1String("autoXAEnabled"), true);
 
     //default x-away time is 15 minutes
-    int xaTime = kdedConfig.readEntry("xaAfter", 15);
+    int xaTime = kdedConfig.readEntry(QLatin1String("xaAfter"), 15);
 
     //enable auto-x-away only if auto-away is enabled
     ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
@@ -102,14 +102,16 @@ void TelepathyKDEDConfig::save()
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     KConfigGroup kdedConfig = config->group("KDED");
 
-    kdedConfig.writeEntry("autoAwayEnabled", ui->m_awayCheckBox->isChecked());
-    kdedConfig.writeEntry("awayAfter", ui->m_awayMins->value());
-    kdedConfig.writeEntry("autoXAEnabled", ui->m_xaCheckBox->isChecked());
-    kdedConfig.writeEntry("xaAfter", ui->m_xaMins->value());
-    kdedConfig.writeEntry("nowPlayingEnabled", ui->m_nowPlayingCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("autoAwayEnabled"), ui->m_awayCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("awayAfter"), ui->m_awayMins->value());
+    kdedConfig.writeEntry(QLatin1String("autoXAEnabled"), ui->m_xaCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
+    kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
     kdedConfig.sync();
 
-    QDBusMessage message = QDBusMessage::createSignal("/Telepathy", "org.kde.Telepathy", "settingsChange");
+    QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
+                                                      QLatin1String( "org.kde.Telepathy"),
+                                                      QLatin1String("settingsChange"));
     QDBusConnection::sessionBus().send(message);
 }
 

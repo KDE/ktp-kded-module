@@ -14,7 +14,10 @@ include (KDE4Defaults)
 # make some more macros available
 include (MacroLibrary)
 
-add_definitions (${KDE4_DEFINITIONS})
+add_definitions (${KDE4_DEFINITIONS}
+                 -DQT_NO_CAST_FROM_ASCII
+                 -DQT_NO_KEYWORDS
+)
 
 include_directories (${KDE4_INCLUDES}
                      ${CMAKE_CURRENT_BINARY_DIR}

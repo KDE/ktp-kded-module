@@ -61,8 +61,8 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
-    QDBusConnection::sessionBus().connect(QString(), "/Telepathy", "org.kde.Telepathy",
-                                          "settingsChange", this, SIGNAL(settingsChanged()) );
+    QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
+                                          QLatin1String("settingsChange"), this, SIGNAL(settingsChanged()) );
 
 }
 
@@ -94,7 +94,7 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
 void TelepathyModule::setPresence(const Tp::Presence &presence)
 {
     kDebug() << "Setting presence to" << presence.status() << presence.statusMessage();
-    foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+    Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
         if (account->isEnabled() && account->isValid() && account->isOnline()) {
             account->setRequestedPresence(presence);
         }

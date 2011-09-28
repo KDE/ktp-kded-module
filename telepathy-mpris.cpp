@@ -37,25 +37,25 @@ TelepathyMPRIS::TelepathyMPRIS(const Tp::AccountManagerPtr am, QObject* parent) 
     m_originalPresence = am->onlineAccounts()->accounts().first()->currentPresence().statusMessage();
 
     QDBusConnectionInterface *i = QDBusConnection::sessionBus().interface();
-    QStringList mprisServices = i->registeredServiceNames().value().filter("org.mpris.MediaPlayer2");
+    QStringList mprisServices = i->registeredServiceNames().value().filter(QLatin1String("org.mpris.MediaPlayer2"));
 
     QString artist;
     QString title;
     QString album;
 
-    foreach (const QString &service, mprisServices) {
-        QDBusInterface mprisInterface(service, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player");
+    Q_FOREACH (const QString &service, mprisServices) {
+        QDBusInterface mprisInterface(service, QLatin1String("/org/mpris/MediaPlayer2"), QLatin1String("org.mpris.MediaPlayer2.Player"));
         if (mprisInterface.property("PlaybackStatus") == QLatin1String("Playing")) {
             QMap<QString, QVariant> metadata = mprisInterface.property("Metadata").toMap();
-            artist = metadata.value("xesam:artist").toString();
-            title = metadata.value("xesam:title").toString();
-            album = metadata.value("xesam:album").toString();
+            artist = metadata.value(QLatin1String("xesam:artist")).toString();
+            title = metadata.value(QLatin1String("xesam:title")).toString();
+            album = metadata.value(QLatin1String("xesam:album")).toString();
 
             QDBusConnection::sessionBus().connect(
-                "org.mpris.MediaPlayer2.clementine",
-                "/org/mpris/MediaPlayer2",
-                "org.freedesktop.DBus.Properties",
-                "PropertiesChanged",
+                QLatin1String("org.mpris.MediaPlayer2.clementine"), //FIXME do not hardcode clementine here
+                QLatin1String("/org/mpris/MediaPlayer2"),
+                QLatin1String("org.freedesktop.DBus.Properties"),
+                QLatin1String("PropertiesChanged"),
                 this,
                 SLOT(onPlayerSignalReceived(const QString& ,
                                             const QVariantMap& ,
@@ -71,11 +71,11 @@ TelepathyMPRIS::TelepathyMPRIS(const Tp::AccountManagerPtr am, QObject* parent) 
         Tp::SimplePresence presence;
         presence.type = currentPresence.type();
         presence.status = currentPresence.status();
-        presence.statusMessage = QString("Now listening to %1 by %2 from album %3").arg(title, artist, album);
+        presence.statusMessage = QString(QLatin1String("Now listening to %1 by %2 from album %3")).arg(title, artist, album);
 
         kDebug() << "Setting presence message to" << presence.statusMessage;
 
-        emit setPresence(presence);
+        Q_EMIT setPresence(presence);
     }
 }
 
@@ -93,7 +93,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
         return;
     }
     //FIXME We can do less lame parsing
-    foreach (const QVariant &property, changedProperties.values()) {
+    Q_FOREACH (const QVariant &property, changedProperties.values()) {
         if (property.canConvert<QDBusArgument>()) {
             QString artist;
             QString title;
@@ -101,18 +101,18 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
 
             QDBusArgument g = property.value<QDBusArgument>();
             QMap<QString, QVariant> k = qdbus_cast<QMap<QString, QVariant> >(g);
-            title = k.value("xesam:title").toString();
-            artist = k.value("xesam:artist").toString();
-            album = k.value("xesam:album").toString();
+            title = k.value(QLatin1String("xesam:title")).toString();
+            artist = k.value(QLatin1String("xesam:artist")).toString();
+            album = k.value(QLatin1String("xesam:album")).toString();
 
             Tp::Presence currentPresence = m_accountManager->onlineAccounts()->accounts().first()->currentPresence();
 
             Tp::SimplePresence presence;
             presence.type = currentPresence.type();
             presence.status = currentPresence.status();
-            presence.statusMessage = QString("Now listening to %1 by %2 from album %3").arg(title, artist, album);
+            presence.statusMessage = QString(QLatin1String("Now listening to %1 by %2 from album %3")).arg(title, artist, album);
 
-            emit setPresence(presence);
+            Q_EMIT setPresence(presence);
         }
 
         if (property.canConvert<QString>()) {
