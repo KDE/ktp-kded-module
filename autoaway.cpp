@@ -84,11 +84,14 @@ void AutoAway::readConfig()
     bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
     bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
 
+    //remove all our timeouts and only readd them if auto-away is enabled
+    //WARNING: can't use removeAllTimeouts because this runs inside KDED, it would remove other KDED timeouts as well
+    KIdleTime::instance()->removeIdleTimeout(m_awayTimeoutId);
+    KIdleTime::instance()->removeIdleTimeout(m_extAwayTimeoutId);
+
     if (autoAwayEnabled) {
         int awayTime = kdedConfig.readEntry("awayAfter", 5);
         m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime * 60 * 1000);
-    } else if (!autoAwayEnabled && m_awayTimeoutId != -1) {
-        KIdleTime::instance()->removeAllIdleTimeouts();
     }
     if (autoAwayEnabled && autoXAEnabled) {
         int xaTime = kdedConfig.readEntry("xaAfter", 15);
