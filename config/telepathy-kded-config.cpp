@@ -87,6 +87,7 @@ void TelepathyKDEDConfig::load()
 
     //enable auto-x-away only if auto-away is enabled
     ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
+    ui->m_xaCheckBox->setEnabled(autoAwayEnabled);
     ui->m_xaMins->setValue(xaTime);
     ui->m_xaMins->setEnabled(autoXAEnabled && autoAwayEnabled);
 
