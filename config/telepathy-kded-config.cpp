@@ -36,6 +36,10 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
 {
     ui->setupUi(this);
 
+    //TODO enable this when it is supported by the approver
+    ui->m_autoAcceptLabel->setHidden(true);
+    ui->m_autoAcceptCheckBox->setHidden(true);
+
     //FIXME: figure out how to use i18ncp without argument for suffix
     ui->m_awayMins->setSuffix(i18nc("Unit after number in spinbox, denotes time unit 'minutes', keep the leading whitespace!",
                                      " minutes"));
