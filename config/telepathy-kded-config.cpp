@@ -118,7 +118,7 @@ void TelepathyKDEDConfig::save()
 void TelepathyKDEDConfig::autoAwayChecked(bool checked)
 {
     ui->m_xaCheckBox->setEnabled(checked);
-    ui->m_xaMins->setEnabled(checked);
+    ui->m_xaMins->setEnabled(checked && ui->m_xaCheckBox->isChecked());
 
     ui->m_awayMins->setEnabled(checked);
 
