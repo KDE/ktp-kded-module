@@ -28,23 +28,12 @@
 #include <KConfigGroup>
 
 AutoAway::AutoAway(const Tp::AccountManagerPtr& am, QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_awayTimeoutId(-1),
+      m_extAwayTimeoutId(-1)
 {
-    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
-    KConfigGroup kdedConfig = config->group("KDED");
-
-    bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
-    bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
-
+    readConfig();
     m_accountManager = am;
-    if (autoAwayEnabled) {
-        int awayTime = kdedConfig.readEntry("awayAfter", 5);
-        m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime * 60 * 1000);
-    }
-    if (autoAwayEnabled && autoXAEnabled) {
-        int xaTime = kdedConfig.readEntry("xaAfter", 15);
-        m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime * 60 * 1000);
-    }
     m_prevPresence = Tp::Presence::available();
 
     connect(KIdleTime::instance(), SIGNAL(timeoutReached(int)),
@@ -85,4 +74,29 @@ void AutoAway::backFromIdle()
 {
     kDebug();
     emit setPresence(m_prevPresence);
+}
+
+void AutoAway::readConfig()
+{
+    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    KConfigGroup kdedConfig = config->group("KDED");
+
+    bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
+    bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
+
+    if (autoAwayEnabled) {
+        int awayTime = kdedConfig.readEntry("awayAfter", 5);
+        m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime * 60 * 1000);
+    } else if (!autoAwayEnabled && m_awayTimeoutId != -1) {
+        KIdleTime::instance()->removeAllIdleTimeouts();
+    }
+    if (autoAwayEnabled && autoXAEnabled) {
+        int xaTime = kdedConfig.readEntry("xaAfter", 15);
+        m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime * 60 * 1000);
+    }
+}
+
+void AutoAway::onSettingsChanged()
+{
+    readConfig();
 }

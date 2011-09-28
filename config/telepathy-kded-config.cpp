@@ -23,6 +23,8 @@
 
 #include <KPluginFactory>
 #include <KLocalizedString>
+#include <QDBusMessage>
+#include <QDBusConnection>
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
 K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("telepathy_kded_module_config", "kcm_telepathy_kded_module_config"))
@@ -105,6 +107,9 @@ void TelepathyKDEDConfig::save()
     kdedConfig.writeEntry("xaAfter", ui->m_xaMins->value());
     kdedConfig.writeEntry("nowPlayingEnabled", ui->m_nowPlayingCheckBox->isChecked());
     kdedConfig.sync();
+
+    QDBusMessage message = QDBusMessage::createSignal("/Telepathy", "org.kde.Telepathy", "settingsChange");
+    QDBusConnection::sessionBus().send(message);
 }
 
 void TelepathyKDEDConfig::autoAwayChecked(bool checked)

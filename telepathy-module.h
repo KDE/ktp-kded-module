@@ -39,6 +39,9 @@ public:
     TelepathyModule(QObject *parent, const QList<QVariant> &args);
     ~TelepathyModule();
 
+Q_SIGNALS:
+    void settingsChanged();
+
 public Q_SLOTS:
     void setPresence(const Tp::Presence& presence);
 

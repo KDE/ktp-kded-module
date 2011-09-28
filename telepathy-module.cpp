@@ -20,15 +20,15 @@
 #include "telepathy-module.h"
 
 #include <KPluginFactory>
+#include <KDebug>
 
 #include <TelepathyQt4/AccountFactory>
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/PendingReady>
+#include <TelepathyQt4/Debug>
 
 #include "telepathy-mpris.h"
 #include "autoaway.h"
-#include <KDebug>
-#include <TelepathyQt4/Debug>
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
 K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module"))
@@ -58,6 +58,10 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+
+    QDBusConnection::sessionBus().connect(QString(), "/Telepathy", "org.kde.Telepathy",
+                                          "settingsChange", this, SIGNAL(settingsChanged()) );
+
 }
 
 TelepathyModule::~TelepathyModule()
@@ -74,9 +78,15 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     connect(m_autoAway, SIGNAL(setPresence(Tp::Presence)),
             this, SLOT(setPresence(Tp::Presence)));
 
+    connect(this, SIGNAL(settingsChanged()),
+            m_autoAway, SLOT(onSettingsChanged()));
+
     m_mpris = new TelepathyMPRIS(m_accountManager, this);
     connect(m_mpris, SIGNAL(setPresence(Tp::Presence)),
             this, SLOT(setPresence(Tp::Presence)));
+
+    connect(this, SIGNAL(settingsChanged()),
+            m_mpris, SLOT(onSettingsChanged()));
 }
 
 void TelepathyModule::setPresence(const Tp::Presence &presence)

@@ -125,3 +125,8 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
     }
 
 }
+
+void TelepathyMPRIS::onSettingsChanged()
+{
+
+}

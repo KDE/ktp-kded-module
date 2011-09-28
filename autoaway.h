@@ -34,8 +34,13 @@ public:
     AutoAway(const Tp::AccountManagerPtr& am, QObject* parent = 0);
     ~AutoAway();
 
+    void readConfig();
+
 Q_SIGNALS:
     void setPresence(const Tp::Presence &presence);
+
+public Q_SLOTS:
+    void onSettingsChanged();
 
 private Q_SLOTS:
     void timeoutReached(int);
