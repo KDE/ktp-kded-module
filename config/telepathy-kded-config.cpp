@@ -43,23 +43,27 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     ui->m_xaMins->setSuffix(i18nc("Unit after number in spinbox, denotes time unit 'minutes', keep the leading whitespace!",
                                     " minutes"));
 
-    connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
-            this, SLOT(autoAwayChecked(bool)));
-
-    connect(ui->m_xaCheckBox, SIGNAL(clicked(bool)),
-            this, SLOT(autoXAChecked(bool)));
-
+    connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
+            this, SLOT(settingsHasChanged()));
+    connect(ui->m_autoAcceptCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(settingsHasChanged()));
     connect(ui->m_xaCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
-
     connect(ui->m_awayMins, SIGNAL(valueChanged(int)),
             this, SLOT(settingsHasChanged()));
-
     connect(ui->m_xaMins, SIGNAL(valueChanged(int)),
             this, SLOT(settingsHasChanged()));
-
     connect(ui->m_nowPlayingCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
+    connect(ui->m_nowPlayingText, SIGNAL(textChanged(QString)),
+            this, SLOT(settingsHasChanged()));
+
+    connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(autoAwayChecked(bool)));
+    connect(ui->m_xaCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(autoXAChecked(bool)));
+    connect(ui->m_nowPlayingCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(nowPlayingChecked(bool)));
 }
 
 TelepathyKDEDConfig::~TelepathyKDEDConfig()
@@ -70,6 +74,20 @@ TelepathyKDEDConfig::~TelepathyKDEDConfig()
 void TelepathyKDEDConfig::load()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+
+// File transfers config
+    KConfigGroup filetransferConfig = config->group(QLatin1String("File Transfers"));
+
+    // download directory
+    QString downloadDirectory = filetransferConfig.readPathEntry(QLatin1String("downloadDirectory"),
+                    QDir::homePath() + QLatin1String("/") + i18nc("This is the download directory in user's home", "Downloads"));
+    ui->m_downloadUrlRequester->setUrl(KUrl(downloadDirectory));
+
+    // check if auto-accept file transfers is enabled
+    bool autoAcceptEnabled = filetransferConfig.readEntry(QLatin1String("autoAccept"), false);
+    ui->m_autoAcceptCheckBox->setChecked(autoAcceptEnabled);
+
+// KDED module config
     KConfigGroup kdedConfig = config->group("KDED");
 
     //check if auto-away is enabled
@@ -95,14 +113,29 @@ void TelepathyKDEDConfig::load()
     ui->m_xaMins->setEnabled(autoXAEnabled && autoAwayEnabled);
 
     //check if 'Now playing..' is enabled
-    bool nowPlayingEnabled = kdedConfig.readEntry("nowPlayingEnabled", true);
-
+    bool nowPlayingEnabled = kdedConfig.readEntry(QLatin1String("nowPlayingEnabled"), true);
     ui->m_nowPlayingCheckBox->setChecked(nowPlayingEnabled);
+
+    //now playing text
+    QString nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
+                                                  i18nc("The text displayed by now playing plugin", "Now listening to %title by %author from album %album"));
+    ui->m_nowPlayingText->setText(nowPlayingText);
+    // TODO enable this
+    ui->m_nowPlayingText->setEnabled(nowPlayingEnabled && false);
 }
 
 void TelepathyKDEDConfig::save()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+
+// File transfers config
+    KConfigGroup filetransferConfig = config->group(QLatin1String("File Transfers"));
+
+    filetransferConfig.writeEntry(QLatin1String("downloadDirectory"), ui->m_downloadUrlRequester->url().toLocalFile());
+    filetransferConfig.writeEntry(QLatin1String("autoAccept"), ui->m_autoAcceptCheckBox->isChecked());
+    filetransferConfig.sync();
+
+// KDED module config
     KConfigGroup kdedConfig = config->group("KDED");
 
     kdedConfig.writeEntry(QLatin1String("autoAwayEnabled"), ui->m_awayCheckBox->isChecked());
@@ -110,6 +143,7 @@ void TelepathyKDEDConfig::save()
     kdedConfig.writeEntry(QLatin1String("autoXAEnabled"), ui->m_xaCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
     kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("nowPlayingText"), ui->m_nowPlayingText->text());
     kdedConfig.sync();
 
     QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
@@ -131,6 +165,13 @@ void TelepathyKDEDConfig::autoAwayChecked(bool checked)
 void TelepathyKDEDConfig::autoXAChecked(bool checked)
 {
     ui->m_xaMins->setEnabled(checked);
+    Q_EMIT changed(true);
+}
+
+void TelepathyKDEDConfig::nowPlayingChecked(bool checked)
+{
+    // TODO Enable this
+    ui->m_nowPlayingText->setEnabled(checked && false);
     Q_EMIT changed(true);
 }
 

@@ -11,7 +11,11 @@ kde4_add_ui_files(telepathy_kded_module_config_SRCS ${telepathy_kded_module_conf
 kde4_add_plugin(kcm_telepathy_kded_module_config
                     ${telepathy_kded_module_config_SRCS})
 
-target_link_libraries(kcm_telepathy_kded_module_config ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS} )
+target_link_libraries(kcm_telepathy_kded_module_config ${KDE4_KDECORE_LIBS}
+                                                       ${KDE4_KDEUI_LIBS}
+                                                       ${KDE4_KCMUTILS_LIBS}
+                                                       ${KDE4_KIO_LIBS}
+)
 
 
 install(TARGETS kcm_telepathy_kded_module_config

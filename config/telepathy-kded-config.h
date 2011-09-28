@@ -40,9 +40,10 @@ public Q_SLOTS:
     void save();
 
 private Q_SLOTS:
+    void settingsHasChanged();
     void autoAwayChecked(bool checked);
     void autoXAChecked(bool checked);
-    void settingsHasChanged();
+    void nowPlayingChecked(bool checked);
 
 private:
     Ui::TelepathyKDEDUi *ui;
