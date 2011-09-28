@@ -1,5 +1,5 @@
 /*
-    KDE integration module for Telepathy
+    Class for displaying connection errors
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -18,42 +18,42 @@
 */
 
 
-#ifndef TELEPATHY_MODULE_H
-#define TELEPATHY_MODULE_H
+#ifndef ERROR_HANDLER_H
+#define ERROR_HANDLER_H
 
-#include <KDEDModule>
-
+#include <QObject>
 #include <TelepathyQt4/AccountManager>
 
-class ErrorHandler;
-class TelepathyMPRIS;
-class AutoAway;
-namespace Tp {
-    class PendingOperation;
-}
-
-class TelepathyModule : public KDEDModule
+class ErrorHandler : public QObject
 {
     Q_OBJECT
-
 public:
-    TelepathyModule(QObject *parent, const QList<QVariant> &args);
-    ~TelepathyModule();
+    ErrorHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
+    virtual ~ErrorHandler();
 
-Q_SIGNALS:
-    void settingsChanged();
+    enum SystemMessageType {
+        /*
+         * this will show a system message to the user
+         * but it will fade after short timout,
+         * thus it should be used for non-important messages
+         * like "Connecting..." etc.
+         */
+        SystemMessageInfo,
 
-public Q_SLOTS:
-    void setPresence(const Tp::Presence& presence);
+        /*
+         * message with this class will stay visible until user
+         * closes it and will have light-red background
+         */
+        SystemMessageError
+    };
 
 private Q_SLOTS:
-    void onAccountManagerReady(Tp::PendingOperation*);
+    void handleErrors(const Tp::ConnectionStatus status);
+    void showMessageToUser(const QString& text, const ErrorHandler::SystemMessageType type);
+    void handleNewAccount(const Tp::AccountPtr &account);
 
 private:
     Tp::AccountManagerPtr m_accountManager;
-    AutoAway *m_autoAway;
-    TelepathyMPRIS *m_mpris;
-    ErrorHandler *m_errorHandler;
 };
 
-#endif // TELEPATHY_MODULE_H
+#endif // ERROR_HANDLER_H

@@ -27,9 +27,12 @@ include_directories (${KDE4_INCLUDES}
 
 set (telepathy_module_SRCS
      telepathy-module.cpp
+     autoaway.cpp
+     telepathy-mpris.cpp
+     error-handler.cpp
 )
 
-kde4_add_plugin (kded_telepathy_module autoaway.cpp telepathy-mpris.cpp
+kde4_add_plugin (kded_telepathy_module
                  ${telepathy_module_SRCS}
 )
 

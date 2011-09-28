@@ -29,6 +29,7 @@
 
 #include "telepathy-mpris.h"
 #include "autoaway.h"
+#include "error-handler.h"
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
 K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module"))
@@ -89,6 +90,8 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
 
     connect(this, SIGNAL(settingsChanged()),
             m_mpris, SLOT(onSettingsChanged()));
+
+    m_errorHandler = new ErrorHandler(m_accountManager, this);
 }
 
 void TelepathyModule::setPresence(const Tp::Presence &presence)
