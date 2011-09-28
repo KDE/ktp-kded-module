@@ -39,6 +39,7 @@ kde4_add_plugin (kded_telepathy_module
 target_link_libraries (kded_telepathy_module
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
+                       ${KDE4_KDEUI_LIBS}
                        kidletime
 
 )

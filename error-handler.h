@@ -49,7 +49,7 @@ public:
 
 private Q_SLOTS:
     void handleErrors(const Tp::ConnectionStatus status);
-    void showMessageToUser(const QString& text, const ErrorHandler::SystemMessageType type);
+    void showMessageToUser(const QString &text, const ErrorHandler::SystemMessageType type);
     void handleNewAccount(const Tp::AccountPtr &account);
 
 private:

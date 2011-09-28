@@ -43,7 +43,7 @@ ErrorHandler::~ErrorHandler()
 
 }
 
-void ErrorHandler::handleError(const Tp::ConnectionStatus status)
+void ErrorHandler::handleErrors(const Tp::ConnectionStatus status)
 {
     Tp::AccountPtr account(qobject_cast< Tp::Account* >(sender()));
 
@@ -69,14 +69,14 @@ void ErrorHandler::handleError(const Tp::ConnectionStatus status)
     }
 }
 
-void ErrorHandler::showMessageToUser(const QString& text, const ErrorHandler::SystemMessageType type)
+void ErrorHandler::showMessageToUser(const QString &text, const ErrorHandler::SystemMessageType type)
 {
     //The pointer is automatically deleted when the event is closed
     KNotification *notification;
     if (type == ErrorHandler::SystemMessageError) {
-        notification = new KNotification("telepathyError", this);
+        notification = new KNotification(QLatin1String("telepathyError"), KNotification::Persistent);
     } else {
-        notification = new KNotification("telepathyInfo", this);
+        notification = new KNotification(QLatin1String("telepathyInfo"), KNotification::CloseOnTimeout);
     }
 
     KAboutData aboutData("ktelepathy",0,KLocalizedString(),0);
