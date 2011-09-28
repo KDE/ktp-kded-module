@@ -94,7 +94,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
     }
     //FIXME We can do less lame parsing
     foreach (const QVariant &property, changedProperties.values()) {
-        if (property.typeName() == QLatin1String("QDBusArgument")) {
+        if (property.canConvert<QDBusArgument>()) {
             QString artist;
             QString title;
             QString album;
@@ -115,7 +115,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
             emit setPresence(presence);
         }
 
-        if (property.typeName() == QLatin1String("QString")) {
+        if (property.canConvert<QString>()) {
             if (property.toString() == QLatin1String("Paused")) {
                 Tp::Presence currentPresence = m_accountManager->onlineAccounts()->accounts().first()->currentPresence();
 
