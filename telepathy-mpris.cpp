@@ -52,7 +52,7 @@ TelepathyMPRIS::TelepathyMPRIS(const Tp::AccountManagerPtr am, QObject* parent) 
             album = metadata.value(QLatin1String("xesam:album")).toString();
 
             QDBusConnection::sessionBus().connect(
-                QLatin1String("org.mpris.MediaPlayer2.clementine"), //FIXME do not hardcode clementine here
+                service,
                 QLatin1String("/org/mpris/MediaPlayer2"),
                 QLatin1String("org.freedesktop.DBus.Properties"),
                 QLatin1String("PropertiesChanged"),
