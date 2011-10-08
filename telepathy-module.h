@@ -25,12 +25,15 @@
 
 #include <TelepathyQt4/AccountManager>
 
-class ErrorHandler;
-class TelepathyMPRIS;
-class AutoAway;
+class TelepathyKDEDModulePlugin;
 namespace Tp {
     class PendingOperation;
 }
+
+class GlobalPresence;
+class ErrorHandler;
+class TelepathyMPRIS;
+class AutoAway;
 
 class TelepathyModule : public KDEDModule
 {
@@ -43,17 +46,19 @@ public:
 Q_SIGNALS:
     void settingsChanged();
 
-public Q_SLOTS:
-    void setPresence(const Tp::Presence& presence);
-
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation*);
+    void onPresenceChanged(const Tp::Presence &presence);
+    void onPluginActivated(bool);
 
 private:
-    Tp::AccountManagerPtr m_accountManager;
-    AutoAway *m_autoAway;
-    TelepathyMPRIS *m_mpris;
-    ErrorHandler *m_errorHandler;
+    Tp::AccountManagerPtr    m_accountManager;
+    AutoAway                *m_autoAway;
+    TelepathyMPRIS          *m_mpris;
+    ErrorHandler            *m_errorHandler;
+    GlobalPresence          *m_globalPresence;
+
+    QStack<TelepathyKDEDModulePlugin*> m_pluginStack;
 };
 
 #endif // TELEPATHY_MODULE_H

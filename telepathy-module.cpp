@@ -30,6 +30,10 @@
 #include "telepathy-mpris.h"
 #include "autoaway.h"
 #include "error-handler.h"
+#include "global-presence.h"
+#include "telepathy-kded-module-plugin.h"
+
+#include <KConfigGroup>
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
 K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module"))
@@ -77,16 +81,19 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
         return;
     }
 
-    m_autoAway = new AutoAway(m_accountManager, this);
-    connect(m_autoAway, SIGNAL(setPresence(Tp::Presence)),
-            this, SLOT(setPresence(Tp::Presence)));
+    m_globalPresence = GlobalPresence::Instance();
+    m_globalPresence->setAccountManager(m_accountManager);
+
+    m_autoAway = new AutoAway(this);
+    connect(m_autoAway, SIGNAL(activate(bool)),
+            this, SLOT(onPluginActivated(bool)));
 
     connect(this, SIGNAL(settingsChanged()),
             m_autoAway, SLOT(onSettingsChanged()));
 
-    m_mpris = new TelepathyMPRIS(m_accountManager, this);
-    connect(m_mpris, SIGNAL(setPresence(Tp::Presence)),
-            this, SLOT(setPresence(Tp::Presence)));
+    m_mpris = new TelepathyMPRIS(this);
+    connect(m_mpris, SIGNAL(activate(bool)),
+            this, SLOT(onPluginActivated(bool)));
 
     connect(this, SIGNAL(settingsChanged()),
             m_mpris, SLOT(onSettingsChanged()));
@@ -94,14 +101,63 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_errorHandler = new ErrorHandler(m_accountManager, this);
 }
 
-void TelepathyModule::setPresence(const Tp::Presence &presence)
+void TelepathyModule::onPresenceChanged(const Tp::Presence &presence)
 {
-    kDebug() << "Setting presence to" << presence.status() << presence.statusMessage();
-    Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
-        if (account->isEnabled() && account->isValid() && account->isOnline()) {
-            account->setRequestedPresence(presence);
+    //only save if the presence is not auto-set
+    if (m_pluginStack.isEmpty()) {
+        KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+        KConfigGroup presenceConfig = config->group("LastPresence");
+
+        presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)m_globalPresence->currentPresence().type());
+        presenceConfig.writeEntry(QLatin1String("PresenceStatus"), m_globalPresence->currentPresence().status());
+        presenceConfig.writeEntry(QLatin1String("PresenceMessage"), m_globalPresence->currentPresence().statusMessage());
+
+        presenceConfig.sync();
+    }
+}
+
+void TelepathyModule::onPluginActivated(bool active)
+{
+    TelepathyKDEDModulePlugin *plugin = qobject_cast<TelepathyKDEDModulePlugin*>(sender());
+    Q_ASSERT(plugin);
+
+    if (active) {
+        kDebug() << "Received activation request, current active plugins:" << m_pluginStack.size();
+        if (m_pluginStack.isEmpty()) {
+            m_globalPresence->saveCurrentPresence();
+            m_pluginStack.push(plugin);
+        }
+        if (m_pluginStack.top() != plugin) {
+            if (plugin->pluginPriority() >= m_pluginStack.top()->pluginPriority()) {
+                m_pluginStack.push(plugin);
+            } else {
+                int i = 0;
+                while (m_pluginStack.at(i++)->pluginPriority() <= plugin->pluginPriority()) {
+                }
+
+                m_pluginStack.insert(i, plugin);
+            }
+        }
+
+        m_globalPresence->setPresence(m_pluginStack.top()->requestedPresence());
+    } else {
+        kDebug() << "Received deactivation request, current active plugins:" << m_pluginStack.size();
+        while (!m_pluginStack.isEmpty()) {
+            if (!m_pluginStack.top()->isActive()) {
+                m_pluginStack.pop();
+            } else {
+                break;
+            }
+        }
+
+        if (m_pluginStack.isEmpty()) {
+            m_globalPresence->restoreSavedPresence();
+        } else {
+            m_globalPresence->setPresence(m_pluginStack.top()->requestedPresence());
         }
     }
+
+    kDebug() << "Number of active plugins:" << m_pluginStack.size();
 }
 
 #include "telepathy-module.moc"

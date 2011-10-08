@@ -26,15 +26,18 @@
 #include <KIdleTime>
 #include <KConfig>
 #include <KConfigGroup>
+#include "global-presence.h"
 
-AutoAway::AutoAway(const Tp::AccountManagerPtr& am, QObject* parent)
-    : QObject(parent),
+// #define PLUGIN_PRIORITY 99
+
+AutoAway::AutoAway(QObject *parent)
+    : TelepathyKDEDModulePlugin(parent),
       m_awayTimeoutId(-1),
       m_extAwayTimeoutId(-1)
+//       m_idle(false)
 {
+    m_pluginPriority = 99;
     readConfig();
-    m_accountManager = am;
-    m_prevPresence = Tp::Presence::available();
 
     connect(KIdleTime::instance(), SIGNAL(timeoutReached(int)),
             this, SLOT(timeoutReached(int)));
@@ -49,21 +52,29 @@ AutoAway::~AutoAway()
 
 void AutoAway::timeoutReached(int id)
 {
+    if (!m_enabled) {
+        return;
+    }
     KIdleTime::instance()->catchNextResumeEvent();
     if (id == m_awayTimeoutId) {
-        if (!m_accountManager->onlineAccounts()->accounts().isEmpty()) {
-            if (m_accountManager->onlineAccounts()->accounts().first()->currentPresence().type() != Tp::Presence::away().type() ||
-                m_accountManager->onlineAccounts()->accounts().first()->currentPresence().type() != Tp::Presence::xa().type() ||
-                m_accountManager->onlineAccounts()->accounts().first()->currentPresence().type() != Tp::Presence::hidden().type()) {
+        if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
+            if (m_globalPresence->currentPresence().type() != Tp::Presence::away().type() ||
+                m_globalPresence->currentPresence().type() != Tp::Presence::xa().type() ||
+                m_globalPresence->currentPresence().type() != Tp::Presence::hidden().type()) {
 
-                m_prevPresence = m_accountManager->onlineAccounts()->accounts().first()->currentPresence();
-                Q_EMIT setPresence(Tp::Presence::away());
+//                 m_globalPresence->saveCurrentPresence(100);
+//                 m_idle = true;
+                m_requestedPresence = Tp::Presence::away();
+                Q_EMIT activate(true);
+//                 Q_EMIT requestPresenceChange(Tp::Presence::away());
 
             }
         } else if (id == m_extAwayTimeoutId) {
-            if (!m_accountManager->onlineAccounts()->accounts().isEmpty()) {
-                if (m_accountManager->onlineAccounts()->accounts().first()->currentPresence().type() == Tp::Presence::away().type()) {
-                    Q_EMIT setPresence(Tp::Presence::xa());
+            if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
+                if (m_globalPresence->currentPresence().type() == Tp::Presence::away().type()) {
+//                     Q_EMIT requestPresenceChange(Tp::Presence::xa());
+                        m_requestedPresence = Tp::Presence::xa();
+                        Q_EMIT activate(true);
                 }
             }
         }
@@ -73,7 +84,7 @@ void AutoAway::timeoutReached(int id)
 void AutoAway::backFromIdle()
 {
     kDebug();
-    Q_EMIT setPresence(m_prevPresence);
+    Q_EMIT activate(false);
 }
 
 void AutoAway::readConfig()
@@ -92,6 +103,9 @@ void AutoAway::readConfig()
     if (autoAwayEnabled) {
         int awayTime = kdedConfig.readEntry("awayAfter", 5);
         m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime * 60 * 1000);
+        m_enabled = true;
+    } else {
+        m_enabled = false;
     }
     if (autoAwayEnabled && autoXAEnabled) {
         int xaTime = kdedConfig.readEntry("xaAfter", 15);
@@ -103,3 +117,8 @@ void AutoAway::onSettingsChanged()
 {
     readConfig();
 }
+/*
+bool AutoAway::isIdle()
+{
+    return m_idle;
+}*/

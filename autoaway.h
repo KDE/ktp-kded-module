@@ -21,23 +21,22 @@
 #ifndef AUTOAWAY_H
 #define AUTOAWAY_H
 
-#include <QObject>
+#include "telepathy-kded-module-plugin.h"
 
 #include <TelepathyQt4/Presence>
 #include <TelepathyQt4/AccountManager>
 
-class AutoAway : public QObject
+class GlobalPresence;
+class AutoAway : public TelepathyKDEDModulePlugin
 {
     Q_OBJECT
 
 public:
-    AutoAway(const Tp::AccountManagerPtr& am, QObject* parent = 0);
+    AutoAway(QObject* parent = 0);
     ~AutoAway();
 
     void readConfig();
-
-Q_SIGNALS:
-    void setPresence(const Tp::Presence &presence);
+//     bool isIdle();
 
 public Q_SLOTS:
     void onSettingsChanged();
@@ -49,9 +48,10 @@ private Q_SLOTS:
 private:
     int m_awayTimeoutId;
     int m_extAwayTimeoutId;
+//     bool m_idle;
 
-    Tp::Presence m_prevPresence;
-    Tp::AccountManagerPtr m_accountManager;
+//     Tp::Presence m_prevPresence;
+//     Tp::AccountManagerPtr m_accountManager;
 };
 
 #endif // AUTOAWAY_H
