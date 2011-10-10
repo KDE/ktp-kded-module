@@ -1,5 +1,5 @@
 /*
-    Now playing... presence plugin
+    Parent class for Telepathy KDED Plugins
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -18,32 +18,33 @@
 */
 
 
-#ifndef TELEPATHY_MPRIS_H
-#define TELEPATHY_MPRIS_H
-
 #include "telepathy-kded-module-plugin.h"
-#include <TelepathyQt4/Presence>
-#include <TelepathyQt4/AccountManager>
 
-class TelepathyMPRIS : public TelepathyKDEDModulePlugin
+#include "global-presence.h"
+
+TelepathyKDEDModulePlugin::TelepathyKDEDModulePlugin(GlobalPresence* globalPresence, QObject* parent)
+    : QObject(parent),
+      m_enabled(false),
+      m_pluginPriority(50)
 {
-    Q_OBJECT
+    m_globalPresence = globalPresence;
+}
 
-public:
-    TelepathyMPRIS(GlobalPresence *globalPresence, QObject *parent = 0);
-    virtual ~TelepathyMPRIS();
+TelepathyKDEDModulePlugin::~TelepathyKDEDModulePlugin()
+{
+}
 
-public Q_SLOTS:
-    void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
-    void onSettingsChanged();
-    void detectPlayers();
-    void serviceOwnerChanged(const QString &a, const QString &b, const QString &c);
+void TelepathyKDEDModulePlugin::setEnabled(bool enabled)
+{
+    m_enabled = enabled;
 
-Q_SIGNALS:
-    void togglePlaybackActive(bool);
+    if(!enabled) {
+        setActive(false);
+    }
+}
 
-private:
-    QStringList m_knownPlayers;
-};
-
-#endif // TELEPATHY_MPRIS_H
+void TelepathyKDEDModulePlugin::setActive(bool active)
+{
+    m_active = active;
+    Q_EMIT activate(active);
+}

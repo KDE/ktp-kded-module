@@ -25,11 +25,11 @@
 
 #include <TelepathyQt4/AccountManager>
 
-class TelepathyKDEDModulePlugin;
 namespace Tp {
     class PendingOperation;
 }
 
+class TelepathyKDEDModulePlugin;
 class GlobalPresence;
 class ErrorHandler;
 class TelepathyMPRIS;
@@ -58,7 +58,7 @@ private:
     ErrorHandler            *m_errorHandler;
     GlobalPresence          *m_globalPresence;
 
-    QStack<TelepathyKDEDModulePlugin*> m_pluginStack;
+    QList<TelepathyKDEDModulePlugin*> m_pluginStack;
 };
 
 #endif // TELEPATHY_MODULE_H

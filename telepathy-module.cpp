@@ -81,17 +81,17 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
         return;
     }
 
-    m_globalPresence = GlobalPresence::Instance();
+    m_globalPresence = new GlobalPresence(this);
     m_globalPresence->setAccountManager(m_accountManager);
 
-    m_autoAway = new AutoAway(this);
+    m_autoAway = new AutoAway(m_globalPresence, this);
     connect(m_autoAway, SIGNAL(activate(bool)),
             this, SLOT(onPluginActivated(bool)));
 
     connect(this, SIGNAL(settingsChanged()),
             m_autoAway, SLOT(onSettingsChanged()));
 
-    m_mpris = new TelepathyMPRIS(this);
+    m_mpris = new TelepathyMPRIS(m_globalPresence, this);
     connect(m_mpris, SIGNAL(activate(bool)),
             this, SLOT(onPluginActivated(bool)));
 
@@ -125,35 +125,36 @@ void TelepathyModule::onPluginActivated(bool active)
         kDebug() << "Received activation request, current active plugins:" << m_pluginStack.size();
         if (m_pluginStack.isEmpty()) {
             m_globalPresence->saveCurrentPresence();
-            m_pluginStack.push(plugin);
-        }
-        if (m_pluginStack.top() != plugin) {
-            if (plugin->pluginPriority() >= m_pluginStack.top()->pluginPriority()) {
-                m_pluginStack.push(plugin);
-            } else {
-                int i = 0;
-                while (m_pluginStack.at(i++)->pluginPriority() <= plugin->pluginPriority()) {
+            m_pluginStack.append(plugin);
+        } else if (!m_pluginStack.contains(plugin)) {
+            int i;
+            for (i = 0; i < m_pluginStack.size(); i++) {
+                if (plugin->pluginPriority() >= m_pluginStack.at(i)->pluginPriority()) {
+                    break;
                 }
-
-                m_pluginStack.insert(i, plugin);
             }
+            m_pluginStack.insert(i, plugin);
         }
 
-        m_globalPresence->setPresence(m_pluginStack.top()->requestedPresence());
+        if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
+            m_globalPresence->setPresence(m_pluginStack.first()->requestedPresence());
+        }
     } else {
         kDebug() << "Received deactivation request, current active plugins:" << m_pluginStack.size();
         while (!m_pluginStack.isEmpty()) {
-            if (!m_pluginStack.top()->isActive()) {
-                m_pluginStack.pop();
+            if (!m_pluginStack.first()->isActive()) {
+                m_pluginStack.removeFirst();
             } else {
                 break;
             }
         }
 
-        if (m_pluginStack.isEmpty()) {
-            m_globalPresence->restoreSavedPresence();
-        } else {
-            m_globalPresence->setPresence(m_pluginStack.top()->requestedPresence());
+        if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
+            if (m_pluginStack.isEmpty()) {
+                m_globalPresence->restoreSavedPresence();
+            } else {
+                m_globalPresence->setPresence(m_pluginStack.first()->requestedPresence());
+            }
         }
     }
 

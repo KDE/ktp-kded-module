@@ -33,7 +33,7 @@ class GlobalPresence : public QObject
 {
     Q_OBJECT
 public:
-    static GlobalPresence *Instance();
+    GlobalPresence(QObject *parent = 0);
 
     /** Set the account manager to use
       * @param accountManager should be ready.
@@ -78,9 +78,6 @@ private Q_SLOTS:
     void onAccountAdded(const Tp::AccountPtr &account);
 
 private:
-    GlobalPresence(QObject *parent = 0);
-    static GlobalPresence *s_instance;
-
     Tp::AccountSetPtr m_enabledAccounts;
     Tp::AccountSetPtr m_onlineAccounts;
 

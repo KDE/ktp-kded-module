@@ -27,16 +27,16 @@
 #include <TelepathyQt4/AccountManager>
 
 class GlobalPresence;
+
 class AutoAway : public TelepathyKDEDModulePlugin
 {
     Q_OBJECT
 
 public:
-    AutoAway(QObject* parent = 0);
+    AutoAway(GlobalPresence *globalPresence, QObject* parent = 0);
     ~AutoAway();
 
     void readConfig();
-//     bool isIdle();
 
 public Q_SLOTS:
     void onSettingsChanged();
@@ -48,10 +48,6 @@ private Q_SLOTS:
 private:
     int m_awayTimeoutId;
     int m_extAwayTimeoutId;
-//     bool m_idle;
-
-//     Tp::Presence m_prevPresence;
-//     Tp::AccountManagerPtr m_accountManager;
 };
 
 #endif // AUTOAWAY_H

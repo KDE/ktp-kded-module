@@ -24,8 +24,6 @@
 
 #include <KDebug>
 
-GlobalPresence* GlobalPresence::s_instance = 0;
-
 GlobalPresence::GlobalPresence(QObject *parent)
     : QObject(parent),
       m_requestedPresence(Tp::Presence::offline()),
@@ -42,18 +40,6 @@ GlobalPresence::GlobalPresence(QObject *parent)
     m_presenceSorting[Tp::ConnectionPresenceTypeUnknown] = 5;
     m_presenceSorting[Tp::ConnectionPresenceTypeUnset] = 5;
     m_presenceSorting[Tp::ConnectionPresenceTypeOffline] = 6;
-
-    //set the correct current presence
-    onCurrentPresenceChanged();
-}
-
-GlobalPresence* GlobalPresence::Instance()
-{
-    if (!s_instance) {
-        s_instance = new GlobalPresence();
-    }
-
-    return s_instance;
 }
 
 void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManager)
