@@ -56,18 +56,27 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
         return;
     }
 
+    bool trackInfoFound = false;
+
     QString artist;
     QString title;
     QString album;
 
     //FIXME We can do less lame parsing...maybe.
     Q_FOREACH (const QVariant &property, changedProperties.values()) {
-        if (property.canConvert<QDBusArgument>()) {
+        //if we're dealing with track's metadata
+        if (property.canConvert<QDBusArgument>() && changedProperties.key(property) == QLatin1String("Metadata")) {
             QDBusArgument g = property.value<QDBusArgument>();
             QMap<QString, QVariant> k = qdbus_cast<QMap<QString, QVariant> >(g);
+
+            //amarok sends empty metadata after the playlist has finished, so let's make sure we won't use them
+            if (k.isEmpty()) {
+                break;
+            }
             title = k.value(QLatin1String("xesam:title")).toString();
             artist = k.value(QLatin1String("xesam:artist")).toString();
             album = k.value(QLatin1String("xesam:album")).toString();
+            trackInfoFound = true;
 
             //we got what we need, bail out
             break;
@@ -86,10 +95,14 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
                     QDBusInterface mprisInterface(service, QLatin1String("/org/mpris/MediaPlayer2"), QLatin1String("org.mpris.MediaPlayer2.Player"));
                     if (mprisInterface.property("PlaybackStatus") == QLatin1String("Playing")) {
                         QMap<QString, QVariant> metadata = mprisInterface.property("Metadata").toMap();
+                        if (metadata.isEmpty()) {
+                            break;
+                        }
+
                         artist = metadata.value(QLatin1String("xesam:artist")).toString();
                         title = metadata.value(QLatin1String("xesam:title")).toString();
                         album = metadata.value(QLatin1String("xesam:album")).toString();
-
+                        trackInfoFound = true;
                         break;
                     }
 
@@ -98,15 +111,19 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
         }
     }
 
-    Tp::Presence currentPresence = m_globalPresence->currentPresence();
+    if (trackInfoFound) {
+        Tp::Presence currentPresence = m_globalPresence->currentPresence();
 
-    Tp::SimplePresence presence;
-    presence.type = currentPresence.type();
-    presence.status = currentPresence.status();
-    presence.statusMessage = QString(QLatin1String("Now listening to %1 by %2 from album %3")).arg(title, artist, album);
+        Tp::SimplePresence presence;
+        presence.type = currentPresence.type();
+        presence.status = currentPresence.status();
+        presence.statusMessage = QString(QLatin1String("Now listening to %1 by %2 from album %3")).arg(title, artist, album);
 
-    setRequestedPresence(Tp::Presence(presence));
-    setActive(true);
+        setRequestedPresence(Tp::Presence(presence));
+        setActive(true);
+    } else {
+        setActive(false);
+    }
 }
 
 void TelepathyMPRIS::detectPlayers()
