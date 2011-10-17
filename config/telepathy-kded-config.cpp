@@ -27,7 +27,7 @@
 #include <QDBusConnection>
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
-K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("telepathy_kded_module_config", "kcm_telepathy_kded_module_config"))
+K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("telepathy_kded_module_config", "telepathy_kded_module"))
 
 
 TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& args)
