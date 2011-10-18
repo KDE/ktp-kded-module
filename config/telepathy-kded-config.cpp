@@ -117,7 +117,7 @@ void TelepathyKDEDConfig::load()
     ui->m_xaMins->setEnabled(autoXAEnabled && autoAwayEnabled);
 
     //check if 'Now playing..' is enabled
-    bool nowPlayingEnabled = kdedConfig.readEntry(QLatin1String("nowPlayingEnabled"), true);
+    bool nowPlayingEnabled = kdedConfig.readEntry(QLatin1String("nowPlayingEnabled"), false);
     ui->m_nowPlayingCheckBox->setChecked(nowPlayingEnabled);
 
     //now playing text

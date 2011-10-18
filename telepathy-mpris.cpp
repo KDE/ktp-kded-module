@@ -165,7 +165,7 @@ void TelepathyMPRIS::onSettingsChanged()
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     KConfigGroup kdedConfig = config->group("KDED");
 
-    bool pluginEnabled = kdedConfig.readEntry("nowPlayingEnabled", true);
+    bool pluginEnabled = kdedConfig.readEntry("nowPlayingEnabled", false);
 
     //if the plugin was enabled and is now disabled
     if (isEnabled() && !pluginEnabled) {
