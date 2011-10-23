@@ -38,12 +38,15 @@ public Q_SLOTS:
     void onSettingsChanged();
     void detectPlayers();
     void serviceOwnerChanged(const QString &a, const QString &b, const QString &c);
+    void onActivateNowPlaying();
+    void onDeactivateNowPlaying();
 
 Q_SIGNALS:
     void togglePlaybackActive(bool);
 
 private:
     QStringList m_knownPlayers;
+    bool m_presenceActivated;
 };
 
 #endif // TELEPATHY_MPRIS_H

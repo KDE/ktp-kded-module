@@ -30,7 +30,8 @@
 #include "global-presence.h"
 
 TelepathyMPRIS::TelepathyMPRIS(GlobalPresence* globalPresence, QObject* parent)
-    : TelepathyKDEDModulePlugin(globalPresence, parent)
+    : TelepathyKDEDModulePlugin(globalPresence, parent),
+      m_presenceActivated(false)
 {
     setPluginPriority(50);
 
@@ -40,6 +41,12 @@ TelepathyMPRIS::TelepathyMPRIS(GlobalPresence* globalPresence, QObject* parent)
     //watch for new mpris-enabled players
     connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),
             this, SLOT(serviceOwnerChanged(QString,QString,QString)));
+
+    QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
+                                          QLatin1String("activateNowPlaying"), this, SLOT(onActivateNowPlaying()) );
+
+    QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
+                                          QLatin1String("deactivateNowPlaying"), this, SLOT(onDeactivateNowPlaying()) );
 }
 
 TelepathyMPRIS::~TelepathyMPRIS()
@@ -120,7 +127,9 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
         presence.statusMessage = QString(QLatin1String("Now listening to %1 by %2 from album %3")).arg(title, artist, album);
 
         setRequestedPresence(Tp::Presence(presence));
-        setActive(true);
+        if (m_presenceActivated) {
+            setActive(true);
+        }
     } else {
         setActive(false);
     }
@@ -186,4 +195,18 @@ void TelepathyMPRIS::serviceOwnerChanged(const QString& a, const QString& b, con
         kDebug() << "Found new mpris interface, running detection...";
         detectPlayers();
     }
+}
+
+void TelepathyMPRIS::onActivateNowPlaying()
+{
+    kDebug() << "Plugin activated";
+    m_presenceActivated = true;
+    detectPlayers();
+}
+
+void TelepathyMPRIS::onDeactivateNowPlaying()
+{
+    kDebug() << "Plugin deactivated on CL request";
+    m_presenceActivated = false;
+    setActive(false);
 }
