@@ -6,5 +6,5 @@ X-KDE-DBus-ModuleName=telepathy_module
 X-KDE-Kded-autoload=true
 X-KDE-Kded-phase=2
 X-KDE-Kded-load-on-demand=false
-Name=Telepathy KDED Module
-Comment=TBD
+Name=Telepathy Integration Module
+Comment=Module providing deeper integration of Instant Messaging with KDE.
