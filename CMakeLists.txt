@@ -26,6 +26,7 @@ include_directories (${KDE4_INCLUDES}
 )
 
 set (telepathy_module_SRCS
+     error-dictionary.cpp
      telepathy-kded-module-plugin.cpp
      global-presence.cpp
      telepathy-module.cpp
