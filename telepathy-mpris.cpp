@@ -23,11 +23,14 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QVariant>
+
 #include <KDebug>
-#include <TelepathyQt4/AccountSet>
 #include <KSharedConfig>
 #include <KConfigGroup>
-#include "global-presence.h"
+
+#include <TelepathyQt4/AccountSet>
+
+#include "common/global-presence.h"
 
 TelepathyMPRIS::TelepathyMPRIS(GlobalPresence* globalPresence, QObject* parent)
     : TelepathyKDEDModulePlugin(globalPresence, parent),

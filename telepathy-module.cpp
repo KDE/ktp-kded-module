@@ -27,10 +27,11 @@
 #include <TelepathyQt4/PendingReady>
 #include <TelepathyQt4/Debug>
 
+#include "common/global-presence.h"
+
 #include "telepathy-mpris.h"
 #include "autoaway.h"
 #include "error-handler.h"
-#include "global-presence.h"
 #include "telepathy-kded-module-plugin.h"
 
 #include <KConfigGroup>

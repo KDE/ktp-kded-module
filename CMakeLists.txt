@@ -37,13 +37,13 @@ endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
 
 
 set (telepathy_module_SRCS
-     error-dictionary.cpp
      telepathy-kded-module-plugin.cpp
-     global-presence.cpp
      telepathy-module.cpp
      autoaway.cpp
      telepathy-mpris.cpp
      error-handler.cpp
+     common/global-presence.cpp
+     common/error-dictionary.cpp
 )
 
 kde4_add_plugin (kded_telepathy_module

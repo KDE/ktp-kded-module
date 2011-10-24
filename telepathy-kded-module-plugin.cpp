@@ -20,7 +20,7 @@
 
 #include "telepathy-kded-module-plugin.h"
 
-#include "global-presence.h"
+#include "common/global-presence.h"
 
 TelepathyKDEDModulePlugin::TelepathyKDEDModulePlugin(GlobalPresence* globalPresence, QObject* parent)
     : QObject(parent),
