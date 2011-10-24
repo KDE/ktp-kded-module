@@ -25,6 +25,17 @@ include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
+execute_process(COMMAND git submodule init
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+execute_process(COMMAND git submodule update
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
+
+
 set (telepathy_module_SRCS
      error-dictionary.cpp
      telepathy-kded-module-plugin.cpp
