@@ -36,7 +36,7 @@
 #include <KConfigGroup>
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
-K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module", "telepathy_kded_module"))
+K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module", "telepathy-kded-module"))
 
 TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     : KDEDModule(parent)
