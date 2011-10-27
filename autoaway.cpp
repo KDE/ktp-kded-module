@@ -61,11 +61,11 @@ void AutoAway::timeoutReached(int id)
 
             setRequestedPresence(Tp::Presence::away());
             setActive(true);
-        } else if (id == m_extAwayTimeoutId) {
-            if (m_globalPresence->currentPresence().type() == Tp::Presence::away().type()) {
-                setRequestedPresence(Tp::Presence::xa());
-                setActive(true);
-            }
+        }
+    } else if (id == m_extAwayTimeoutId) {
+        if (m_globalPresence->currentPresence().type() == Tp::Presence::away().type()) {
+            setRequestedPresence(Tp::Presence::xa());
+            setActive(true);
         }
     }
 }
