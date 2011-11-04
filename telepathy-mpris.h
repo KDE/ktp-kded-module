@@ -33,6 +33,8 @@ public:
     TelepathyMPRIS(GlobalPresence *globalPresence, QObject *parent = 0);
     virtual ~TelepathyMPRIS();
 
+    QString pluginName() const;
+
 public Q_SLOTS:
     void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
     void onSettingsChanged();

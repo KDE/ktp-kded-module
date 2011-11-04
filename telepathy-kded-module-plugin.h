@@ -37,6 +37,8 @@ public:
     bool isActive() const { return m_active; };
     bool isEnabled() const { return m_enabled; };
     int pluginPriority() const { return m_pluginPriority; };
+    /// Deriving classes must return a valid plugin name in this method
+    virtual QString pluginName() const = 0;
 
     Tp::Presence requestedPresence() const { return m_requestedPresence; };
 

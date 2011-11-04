@@ -56,6 +56,11 @@ TelepathyMPRIS::~TelepathyMPRIS()
 {
 }
 
+QString TelepathyMPRIS::pluginName() const
+{
+    return QString::fromLatin1("telepathy-mpris");
+}
+
 void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties)
 {
     Q_UNUSED(interface)
@@ -158,10 +163,10 @@ void TelepathyMPRIS::detectPlayers()
             QDBusConnection::sessionBus().connect(
                 service,
                 QLatin1String("/org/mpris/MediaPlayer2"),
-                                                QLatin1String("org.freedesktop.DBus.Properties"),
-                                                QLatin1String("PropertiesChanged"),
-                                                this,
-                                                SLOT(onPlayerSignalReceived(const QString&, const QVariantMap&, const QStringList& )) );
+                QLatin1String("org.freedesktop.DBus.Properties"),
+                QLatin1String("PropertiesChanged"),
+                this,
+                SLOT(onPlayerSignalReceived(const QString&, const QVariantMap&, const QStringList& )) );
 
         }
 

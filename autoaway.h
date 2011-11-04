@@ -37,6 +37,7 @@ public:
     ~AutoAway();
 
     void readConfig();
+    QString pluginName() const;
 
 public Q_SLOTS:
     void onSettingsChanged();

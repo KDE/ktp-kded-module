@@ -138,6 +138,13 @@ void TelepathyModule::onPluginActivated(bool active)
         }
 
         if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
+            //signal all global presence instances that they should not save global presence message
+            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
+                                                              QLatin1String( "org.kde.Telepathy"),
+                                                              QLatin1String("presenceChanger"));
+            message.setArguments(QList<QVariant>() << m_pluginStack.first()->pluginName());
+            QDBusConnection::sessionBus().send(message);
+
             m_globalPresence->setPresence(m_pluginStack.first()->requestedPresence());
         }
     } else {
@@ -152,6 +159,13 @@ void TelepathyModule::onPluginActivated(bool active)
 
         if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
             if (m_pluginStack.isEmpty()) {
+                //signal out that presences are back to user control
+                QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
+                                                                  QLatin1String( "org.kde.Telepathy"),
+                                                                  QLatin1String("presenceChanger"));
+                message.setArguments(QList<QVariant>() << QString::fromLatin1("user"));
+                QDBusConnection::sessionBus().send(message);
+
                 m_globalPresence->restoreSavedPresence();
             } else {
                 m_globalPresence->setPresence(m_pluginStack.first()->requestedPresence());

@@ -48,6 +48,11 @@ AutoAway::~AutoAway()
 {
 }
 
+QString AutoAway::pluginName() const
+{
+    return QString::fromLatin1("auto-away");
+}
+
 void AutoAway::timeoutReached(int id)
 {
     if (!isEnabled()) {
