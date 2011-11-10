@@ -25,6 +25,7 @@
 
 #include <TelepathyQt4/AccountManager>
 
+class ContactRequestHandler;
 namespace Tp {
     class PendingOperation;
 }
@@ -59,7 +60,8 @@ private:
     AutoAway                *m_autoAway;
     TelepathyMPRIS          *m_mpris;
     ErrorHandler            *m_errorHandler;
-    KTp::GlobalPresence          *m_globalPresence;
+    KTp::GlobalPresence     *m_globalPresence;
+    ContactRequestHandler   *m_contactHandler;
 
     QList<TelepathyKDEDModulePlugin*> m_pluginStack;
 };

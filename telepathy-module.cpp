@@ -35,6 +35,7 @@
 #include "telepathy-kded-module-plugin.h"
 
 #include <KConfigGroup>
+#include "contact-request-handler.h"
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
 K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module", "telepathy-kded-module"))
@@ -53,14 +54,20 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
                                                                        Tp::Features() << Tp::Account::FeatureCore);
 
     Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
-                                                                               Tp::Features() << Tp::Connection::FeatureCore);
+                                                                               Tp::Features() << Tp::Connection::FeatureCore
+                                                                                              << Tp::Connection::FeatureRoster);
+
+    Tp::ContactFactoryPtr contactFactory = Tp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
+                                                                                      << Tp::Contact::FeatureSimplePresence
+                                                                                      << Tp::Contact::FeatureCapabilities);
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
     m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
                                                   accountFactory,
                                                   connectionFactory,
-                                                  channelFactory);
+                                                  channelFactory,
+                                                  contactFactory);
 
 
     connect(m_accountManager->becomeReady(),
@@ -100,6 +107,7 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
             m_mpris, SLOT(onSettingsChanged()));
 
     m_errorHandler = new ErrorHandler(m_accountManager, this);
+    m_contactHandler = new ContactRequestHandler(m_accountManager, this);
 }
 
 void TelepathyModule::onPresenceChanged(const Tp::Presence &presence)

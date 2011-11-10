@@ -29,6 +29,7 @@ include_directories (${KDE4_INCLUDES}
 )
 
 set (telepathy_module_SRCS
+     contact-request-handler.cpp
      telepathy-kded-module-plugin.cpp
      telepathy-module.cpp
      autoaway.cpp
