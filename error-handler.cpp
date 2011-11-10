@@ -65,7 +65,7 @@ void ErrorHandler::handleErrors(const Tp::ConnectionStatus status)
                 showMessageToUser(i18n("Could not connect %1. There was a network error, check your connection", account->displayName()), ErrorHandler::SystemMessageError);
                 break;
             default:
-                showMessageToUser(ErrorDictionary::instance()->displayVerboseErrorMessage(connectionError), ErrorHandler::SystemMessageError);
+                showMessageToUser(i18n("There was a problem while trying to connect %1 - %2", account->displayName(), ErrorDictionary::instance()->displayVerboseErrorMessage(connectionError)), ErrorHandler::SystemMessageError);
                 break;
         }
     }
