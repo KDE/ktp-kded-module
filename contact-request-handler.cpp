@@ -149,35 +149,7 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
             m_pendingContacts.insert(contact->id(), contact);
 
-            m_notifierItem = getNotifierItem();
-
-            KMenu *contactMenu = new KMenu(m_notifierMenu);
-            contactMenu->setTitle(i18n("Request from %1", contact->id()));
-            contactMenu->setObjectName(contact->id());
-
-            KAction *menuAction;
-            if (!contact->publishStateMessage().isEmpty()) {
-                contactMenu->addTitle(contact->publishStateMessage());
-            } else {
-                contactMenu->addTitle(contact->alias());
-            }
-            menuAction = new KAction(KIcon(QLatin1String("dialog-ok-apply")), i18n("Approve"), contactMenu);
-            connect(menuAction, SIGNAL(triggered(bool)),
-                    this, SLOT(onContactRequestApproved()));
-            menuAction->setData(contact->id());
-            contactMenu->addAction(menuAction);
-
-            menuAction = new KAction(KIcon(QLatin1String("dialog-close")), i18n("Deny"), contactMenu);
-            menuAction->setData(contact->id());
-
-            connect(menuAction, SIGNAL(triggered(bool)),
-                    this, SLOT(onContactRequestDenied()));
-            contactMenu->addAction(menuAction);
-
-            m_notifierMenu->addMenu(contactMenu);
-            m_notifierItem->setContextMenu(m_notifierMenu);
-
-            updateNotifierItemTooltip();
+            createMenus();
         }
 
         if (op) {
@@ -227,13 +199,15 @@ void ContactRequestHandler::onContactRequestApproved()
     if (!contactId.isEmpty()) {
         Tp::ContactPtr contact = m_pendingContacts.value(contactId);
         if (!contact.isNull()) {
-            Tp::PendingOperation *op = contact->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
+            //Tp::PendingOperation *op = contact->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
             //TODO: connect and let user know the result, find and remove the menu from statusnotifier
             //      don't forget to update the tooltip with -1
             //delete m_notifierMenu->findChild<KMenu*>(contactId);
-            if (contact->manager()->canRequestPresenceSubscription() && contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
-                contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
-            }
+            //if (contact->manager()->canRequestPresenceSubscription() && contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
+            //    contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
+            //}
+            m_pendingContacts.remove(contactId);
+            createMenus();
         }
     }
 }
@@ -251,6 +225,49 @@ QString contactId = qobject_cast<KAction*>(sender())->data().toString();
 //             delete m_notifierMenu->findChild<KMenu*>(contactId);
         }
     }
+}
+
+void ContactRequestHandler::createMenus()
+{
+    m_notifierItem = getNotifierItem();
+
+    kDebug() << m_pendingContacts.keys();
+
+    m_notifierMenu->clear();
+    m_notifierItem->setContextMenu(new KMenu());
+
+    QHash<QString, Tp::ContactPtr>::const_iterator i;
+    for (i = m_pendingContacts.constBegin(); i != m_pendingContacts.constEnd(); ++i) {
+        kDebug();
+        Tp::ContactPtr contact = i.value();
+
+        KMenu *contactMenu = new KMenu(m_notifierMenu);
+        contactMenu->setTitle(i18n("Request from %1", contact->id()));
+        contactMenu->setObjectName(contact->id());
+
+        KAction *menuAction;
+        if (!contact->publishStateMessage().isEmpty()) {
+            contactMenu->addTitle(contact->publishStateMessage());
+        } else {
+            contactMenu->addTitle(contact->alias());
+        }
+        menuAction = new KAction(KIcon(QLatin1String("dialog-ok-apply")), i18n("Approve"), contactMenu);
+        connect(menuAction, SIGNAL(triggered()),
+                this, SLOT(onContactRequestApproved()));
+        menuAction->setData(contact->id());
+        contactMenu->addAction(menuAction);
+
+        menuAction = new KAction(KIcon(QLatin1String("dialog-close")), i18n("Deny"), contactMenu);
+        menuAction->setData(contact->id());
+
+        connect(menuAction, SIGNAL(triggered()),
+                this, SLOT(onContactRequestDenied()));
+        contactMenu->addAction(menuAction);
+
+        m_notifierMenu->addMenu(contactMenu);
+    }
+    m_notifierItem->setContextMenu(m_notifierMenu);
+    updateNotifierItemTooltip();
 }
 
 #include "contact-request-handler.moc"

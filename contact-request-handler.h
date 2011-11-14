@@ -46,6 +46,7 @@ public Q_SLOTS:
     void onAccountsPresenceStatusFiltered();
     void onPresencePublicationRequested(const Tp::Contacts& contacts);
     void onConnectionChanged(const Tp::ConnectionPtr& connection);
+    void createMenus();
 
     void onContactRequestApproved();
     void onContactRequestDenied();
