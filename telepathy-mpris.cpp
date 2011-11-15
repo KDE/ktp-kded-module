@@ -79,24 +79,6 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
 
     //FIXME We can do less lame parsing...maybe.
     Q_FOREACH (const QVariant &property, changedProperties.values()) {
-        //if we're dealing with track's metadata
-        if (property.canConvert<QDBusArgument>() && changedProperties.key(property) == QLatin1String("Metadata")) {
-            QDBusArgument g = property.value<QDBusArgument>();
-            QMap<QString, QVariant> k = qdbus_cast<QMap<QString, QVariant> >(g);
-
-            //amarok sends empty metadata after the playlist has finished, so let's make sure we won't use them
-            if (k.isEmpty()) {
-                break;
-            }
-            title = k.value(QLatin1String("xesam:title")).toString();
-            artist = k.value(QLatin1String("xesam:artist")).toString();
-            album = k.value(QLatin1String("xesam:album")).toString();
-            trackInfoFound = true;
-
-            //we got what we need, bail out
-            break;
-        }
-
         if (property.canConvert<QString>()) {
             if (property.toString() == QLatin1String("Paused") || property.toString() == QLatin1String("Stopped")) {
                 setActive(false);
@@ -138,8 +120,6 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
         if (m_presenceActivated) {
             setActive(true);
         }
-    } else {
-        setActive(false);
     }
 }
 
