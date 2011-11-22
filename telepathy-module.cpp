@@ -137,6 +137,8 @@ void TelepathyModule::onPluginActivated(bool active)
             m_pluginStack.insert(i, plugin);
         }
 
+        kDebug() << "Activating" << plugin->pluginName();
+
         if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
             //signal all global presence instances that they should not save global presence message
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
@@ -151,6 +153,7 @@ void TelepathyModule::onPluginActivated(bool active)
         kDebug() << "Received deactivation request, current active plugins:" << m_pluginStack.size();
         while (!m_pluginStack.isEmpty()) {
             if (!m_pluginStack.first()->isActive()) {
+                kDebug() << "Deactivating" << m_pluginStack.first()->pluginName();
                 m_pluginStack.removeFirst();
             } else {
                 break;
@@ -173,7 +176,10 @@ void TelepathyModule::onPluginActivated(bool active)
         }
     }
 
-    kDebug() << "Number of active plugins:" << m_pluginStack.size();
+    kDebug() << "Active plugins (" << m_pluginStack.size() << ")";
+    for(int i = 0; i < m_pluginStack.size(); i++) {
+        kDebug() << "  " << m_pluginStack.at(i)->pluginName();
+    }
 }
 
 #include "telepathy-module.moc"
