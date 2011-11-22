@@ -195,6 +195,9 @@ void TelepathyMPRIS::onActivateNowPlaying()
 void TelepathyMPRIS::onDeactivateNowPlaying()
 {
     kDebug() << "Plugin deactivated on CL request";
-    m_presenceActivated = false;
-    setActive(false);
+
+    if (m_presenceActivated) {
+        m_presenceActivated = false;
+        setActive(false);
+    }
 }
