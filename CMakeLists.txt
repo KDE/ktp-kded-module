@@ -5,8 +5,10 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
+set(IS_TELEPATHY_KDE_INTERNAL_MODULE TRUE)
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.7.1 REQUIRED)
+find_package (KTelepathy REQUIRED)
 
 # set some default settings
 include (KDE4Defaults)
@@ -23,18 +25,8 @@ include_directories (${KDE4_INCLUDES}
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
+                     ${KTELEPATHY_INCLUDE_DIR}
 )
-
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
-execute_process(COMMAND git submodule init
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-execute_process(COMMAND git submodule update
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
-
 
 set (telepathy_module_SRCS
      telepathy-kded-module-plugin.cpp
@@ -42,8 +34,6 @@ set (telepathy_module_SRCS
      autoaway.cpp
      telepathy-mpris.cpp
      error-handler.cpp
-     common/global-presence.cpp
-     common/error-dictionary.cpp
 )
 
 kde4_add_plugin (kded_telepathy_module
@@ -53,6 +43,7 @@ kde4_add_plugin (kded_telepathy_module
 target_link_libraries (kded_telepathy_module
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
+                       ${KTELEPATHY_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        kidletime
 

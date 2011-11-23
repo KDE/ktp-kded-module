@@ -29,8 +29,11 @@ namespace Tp {
     class PendingOperation;
 }
 
+namespace KTp {
+    class GlobalPresence;
+}
+
 class TelepathyKDEDModulePlugin;
-class GlobalPresence;
 class ErrorHandler;
 class TelepathyMPRIS;
 class AutoAway;
@@ -56,7 +59,7 @@ private:
     AutoAway                *m_autoAway;
     TelepathyMPRIS          *m_mpris;
     ErrorHandler            *m_errorHandler;
-    GlobalPresence          *m_globalPresence;
+    KTp::GlobalPresence          *m_globalPresence;
 
     QList<TelepathyKDEDModulePlugin*> m_pluginStack;
 };

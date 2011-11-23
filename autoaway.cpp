@@ -27,9 +27,9 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-#include "common/global-presence.h"
+#include <KTelepathy/global-presence.h>
 
-AutoAway::AutoAway(GlobalPresence* globalPresence, QObject* parent)
+AutoAway::AutoAway(KTp::GlobalPresence* globalPresence, QObject* parent)
     : TelepathyKDEDModulePlugin(globalPresence, parent),
       m_awayTimeoutId(-1),
       m_extAwayTimeoutId(-1)

@@ -26,14 +26,16 @@
 #include <TelepathyQt4/Presence>
 #include <TelepathyQt4/AccountManager>
 
+namespace KTp {
 class GlobalPresence;
+}
 
 class AutoAway : public TelepathyKDEDModulePlugin
 {
     Q_OBJECT
 
 public:
-    AutoAway(GlobalPresence *globalPresence, QObject* parent = 0);
+    AutoAway(KTp::GlobalPresence *globalPresence, QObject* parent = 0);
     ~AutoAway();
 
     void readConfig();

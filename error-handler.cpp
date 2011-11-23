@@ -23,7 +23,7 @@
 #include <KNotification>
 #include <KAboutData>
 
-#include "common/error-dictionary.h"
+#include <KTelepathy/error-dictionary.h>
 
 ErrorHandler::ErrorHandler(const Tp::AccountManagerPtr& am, QObject* parent)
     : QObject(parent)
@@ -65,7 +65,7 @@ void ErrorHandler::handleErrors(const Tp::ConnectionStatus status)
                 showMessageToUser(i18n("Could not connect %1. There was a network error, check your connection", account->displayName()), ErrorHandler::SystemMessageError);
                 break;
             default:
-                showMessageToUser(i18n("There was a problem while trying to connect %1 - %2", account->displayName(), ErrorDictionary::instance()->displayVerboseErrorMessage(connectionError)), ErrorHandler::SystemMessageError);
+                showMessageToUser(i18n("There was a problem while trying to connect %1 - %2", account->displayName(), KTp::ErrorDictionary::displayVerboseErrorMessage(connectionError)), ErrorHandler::SystemMessageError);
                 break;
         }
     }

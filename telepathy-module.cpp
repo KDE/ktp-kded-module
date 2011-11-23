@@ -27,7 +27,7 @@
 #include <TelepathyQt4/PendingReady>
 #include <TelepathyQt4/Debug>
 
-#include "common/global-presence.h"
+#include <KTelepathy/global-presence.h>
 
 #include "telepathy-mpris.h"
 #include "autoaway.h"
@@ -82,7 +82,7 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
         return;
     }
 
-    m_globalPresence = new GlobalPresence(this);
+    m_globalPresence = new KTp::GlobalPresence(this);
     m_globalPresence->setAccountManager(m_accountManager);
 
     m_autoAway = new AutoAway(m_globalPresence, this);

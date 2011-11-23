@@ -25,13 +25,16 @@
 #include <TelepathyQt4/Presence>
 #include <TelepathyQt4/AccountManager>
 
+namespace KTp {
 class GlobalPresence;
+}
+
 class TelepathyKDEDModulePlugin : public QObject
 {
     Q_OBJECT
 
 public:
-    TelepathyKDEDModulePlugin(GlobalPresence *globalPresence, QObject *parent = 0);
+    TelepathyKDEDModulePlugin(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
     virtual ~TelepathyKDEDModulePlugin();
 
     bool isActive() const { return m_active; };
@@ -52,7 +55,7 @@ protected:
     void setPluginPriority(int priority) { m_pluginPriority = priority; };
     void setRequestedPresence(const Tp::Presence &presence) { m_requestedPresence = presence; };
 
-    GlobalPresence *m_globalPresence;
+    KTp::GlobalPresence *m_globalPresence;
 
 private:
     Tp::Presence m_requestedPresence;

@@ -30,9 +30,9 @@
 
 #include <TelepathyQt4/AccountSet>
 
-#include "common/global-presence.h"
+#include <KTelepathy/global-presence.h>
 
-TelepathyMPRIS::TelepathyMPRIS(GlobalPresence* globalPresence, QObject* parent)
+TelepathyMPRIS::TelepathyMPRIS(KTp::GlobalPresence* globalPresence, QObject* parent)
     : TelepathyKDEDModulePlugin(globalPresence, parent),
       m_presenceActivated(false)
 {

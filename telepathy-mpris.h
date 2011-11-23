@@ -30,7 +30,7 @@ class TelepathyMPRIS : public TelepathyKDEDModulePlugin
     Q_OBJECT
 
 public:
-    TelepathyMPRIS(GlobalPresence *globalPresence, QObject *parent = 0);
+    TelepathyMPRIS(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
     virtual ~TelepathyMPRIS();
 
     QString pluginName() const;
