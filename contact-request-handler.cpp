@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
+    Copyright (C) 2011  Dario Freddi <dario.freddi@collabora.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -25,13 +25,14 @@
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/Account>
 
+#include <QtCore/QFutureWatcher>
+
 #include <KDebug>
 #include <KGlobal>
 #include <KAboutData>
-
-#include <QFutureWatcher>
 #include <KMenu>
 #include <KAction>
+#include <KStatusNotifierItem>
 
 Q_DECLARE_METATYPE(Tp::ContactPtr)
 
@@ -102,7 +103,8 @@ void ContactRequestHandler::onContactManagerStateChanged(Tp::ContactListState st
     onContactManagerStateChanged(Tp::ContactManagerPtr(qobject_cast< Tp::ContactManager* >(sender())), state);
 }
 
-void ContactRequestHandler::onContactManagerStateChanged(const Tp::ContactManagerPtr &contactManager, Tp::ContactListState state)
+void ContactRequestHandler::onContactManagerStateChanged(const Tp::ContactManagerPtr &contactManager,
+                                                         Tp::ContactListState state)
 {
     if (state == Tp::ContactListStateSuccess) {
         QFutureWatcher< Tp::ContactPtr > *watcher = new QFutureWatcher< Tp::ContactPtr >(this);

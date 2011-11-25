@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
+    Copyright (C) 2011  Dario Freddi <dario.freddi@collabora.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -21,16 +21,12 @@
 #ifndef CONTACT_REQUEST_HANDLER_H
 #define CONTACT_REQUEST_HANDLER_H
 
-#include <QObject>
-
 #include <TelepathyQt4/Types>
 #include <TelepathyQt4/AccountManager>
 
-#include <KStatusNotifierItem>
-#include <KNotification>
-
 class KMenu;
 class KAction;
+class KStatusNotifierItem;
 class ContactRequestHandler : public QObject
 {
     Q_OBJECT
@@ -40,7 +36,7 @@ public:
 
     void monitorPresence(const Tp::ConnectionPtr &connection);
 
-public Q_SLOTS:
+private Q_SLOTS:
     void onNewAccountAdded(const Tp::AccountPtr &account);
     void onContactManagerStateChanged(Tp::ContactListState state);
     void onContactManagerStateChanged(const Tp::ContactManagerPtr &contactManager, Tp::ContactListState state);
@@ -56,7 +52,6 @@ public Q_SLOTS:
     void onFinalizeSubscriptionFinished(Tp::PendingOperation*);
 
 private:
-    KStatusNotifierItem *notifierItem();
     void updateNotifierItemTooltip();
 
     QWeakPointer<KStatusNotifierItem> m_notifierItem;
