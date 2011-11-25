@@ -30,6 +30,7 @@
 #include <KNotification>
 
 class KMenu;
+class KAction;
 class ContactRequestHandler : public QObject
 {
     Q_OBJECT
@@ -46,20 +47,22 @@ public Q_SLOTS:
     void onAccountsPresenceStatusFiltered();
     void onPresencePublicationRequested(const Tp::Contacts& contacts);
     void onConnectionChanged(const Tp::ConnectionPtr& connection);
-    void createMenus();
+    void updateMenus();
 
     void onContactRequestApproved();
     void onContactRequestDenied();
 
 private:
-    static QSharedPointer<KStatusNotifierItem> getNotifierItem();
+    KStatusNotifierItem *notifierItem();
     void updateNotifierItemTooltip();
 
     QWeakPointer<KNotification> m_notification;
-    QSharedPointer<KStatusNotifierItem> m_notifierItem;
+    QWeakPointer<KStatusNotifierItem> m_notifierItem;
     Tp::AccountManagerPtr m_accountManager;
     KMenu *m_notifierMenu;
     QHash<QString, Tp::ContactPtr> m_pendingContacts;
+    QHash<QString, KMenu*> m_menuItems;
+    KAction *m_noContactsAction;
 };
 
 #endif // CONTACT_REQUEST_HANDLER_H

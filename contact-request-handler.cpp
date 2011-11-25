@@ -41,8 +41,6 @@ bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &contact)
 ContactRequestHandler::ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent)
     : QObject(parent)
 {
-    m_notifierMenu = new KMenu(0);
-    m_notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
     m_accountManager = am;
     connect(m_accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)),
             this, SLOT(onNewAccountAdded(Tp::AccountPtr)));
@@ -52,6 +50,9 @@ ContactRequestHandler::ContactRequestHandler(const Tp::AccountManagerPtr& am, QO
     Q_FOREACH(const Tp::AccountPtr &account, accounts) {
         onNewAccountAdded(account);
     }
+
+    m_noContactsAction = new KAction(i18n("No pending contact requests at the moment"), this);
+    m_noContactsAction->setEnabled(false);
 }
 
 ContactRequestHandler::~ContactRequestHandler()
@@ -149,7 +150,7 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
             m_pendingContacts.insert(contact->id(), contact);
 
-            createMenus();
+            updateMenus();
         }
 
         if (op) {
@@ -159,37 +160,33 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
     }
 }
 
-K_GLOBAL_STATIC(QWeakPointer<KStatusNotifierItem>, s_notifierItem)
-
-//static
-QSharedPointer<KStatusNotifierItem> ContactRequestHandler::getNotifierItem()
-{
-    QSharedPointer<KStatusNotifierItem> notifierItem = s_notifierItem->toStrongRef();
-    if (!notifierItem) {
-        notifierItem = QSharedPointer<KStatusNotifierItem>(new KStatusNotifierItem);
-        notifierItem->setCategory(KStatusNotifierItem::Communications);
-        notifierItem->setStatus(KStatusNotifierItem::NeedsAttention);
-        notifierItem->setIconByName(QLatin1String("user-identity"));
-        notifierItem->setAttentionIconByName(QLatin1String("list-add-user"));
-        notifierItem->setStandardActionsEnabled(false);
-        notifierItem->setProperty("contact_requests_count", 0U);
-        *s_notifierItem = notifierItem;
-    }
-
-    return notifierItem;
-}
-
 void ContactRequestHandler::updateNotifierItemTooltip()
 {
-    QVariant requestsCount = m_notifierItem->property("contact_requests_count");
-    requestsCount = QVariant(requestsCount.toUInt() + 1);
-    m_notifierItem->setProperty("contact_requests_count", requestsCount);
+    if (!m_menuItems.size()) {
+        // Set passive
+        m_notifierItem.data()->setStatus(KStatusNotifierItem::Passive);
+        // Add the usual "nothing" action, if needed
+        if (!m_notifierMenu->actions().contains(m_noContactsAction)) {
+            m_notifierMenu->addAction(m_noContactsAction);
+        }
 
-    m_notifierItem->setToolTip(QLatin1String("list-add-user"),
-                               i18np("You have 1 incoming contact request",
-                                     "You have %1 incoming contact requests",
-                                     requestsCount.toUInt()),
-                               QString());
+        m_notifierItem.data()->setToolTip(QLatin1String("list-add-user"),
+                                          i18n("No incoming contact requests"),
+                                          QString());
+    } else {
+        // Set active
+        m_notifierItem.data()->setStatus(KStatusNotifierItem::Active);
+        // Remove the "nothing" action, if needed
+        if (m_notifierMenu->actions().contains(m_noContactsAction)) {
+            m_notifierMenu->removeAction(m_noContactsAction);
+        }
+
+        m_notifierItem.data()->setToolTip(QLatin1String("list-add-user"),
+                                          i18np("You have 1 incoming contact request",
+                                                "You have %1 incoming contact requests",
+                                                m_menuItems.size()),
+                                          QString());
+    }
 }
 
 void ContactRequestHandler::onContactRequestApproved()
@@ -207,14 +204,17 @@ void ContactRequestHandler::onContactRequestApproved()
             //    contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
             //}
             m_pendingContacts.remove(contactId);
-            createMenus();
+            updateMenus();
         }
     }
 }
 
 void ContactRequestHandler::onContactRequestDenied()
 {
-QString contactId = qobject_cast<KAction*>(sender())->data().toString();
+    QString contactId = qobject_cast<KAction*>(sender())->data().toString();
+
+    // Disable the action in the meanwhile
+    m_menuItems.value(contactId)->setEnabled(false);
 
     if (!contactId.isEmpty()) {
         Tp::ContactPtr contact = m_pendingContacts.value(contactId);
@@ -227,22 +227,36 @@ QString contactId = qobject_cast<KAction*>(sender())->data().toString();
     }
 }
 
-void ContactRequestHandler::createMenus()
+void ContactRequestHandler::updateMenus()
 {
-    m_notifierItem = getNotifierItem();
+    if (m_notifierItem.isNull()) {
+        m_notifierItem = new KStatusNotifierItem(QLatin1String("telepathy_kde_contact_requests"), this);
+        m_notifierItem.data()->setCategory(KStatusNotifierItem::Communications);
+        m_notifierItem.data()->setStatus(KStatusNotifierItem::NeedsAttention);
+        m_notifierItem.data()->setIconByName(QLatin1String("user-identity"));
+        m_notifierItem.data()->setAttentionIconByName(QLatin1String("list-add-user"));
+        m_notifierItem.data()->setStandardActionsEnabled(false);
+
+        m_notifierMenu = new KMenu(0);
+        m_notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
+
+        m_notifierItem.data()->setContextMenu(m_notifierMenu);
+    }
 
     kDebug() << m_pendingContacts.keys();
 
-    m_notifierMenu->clear();
-    m_notifierItem->setContextMenu(new KMenu());
-
     QHash<QString, Tp::ContactPtr>::const_iterator i;
     for (i = m_pendingContacts.constBegin(); i != m_pendingContacts.constEnd(); ++i) {
+        if (m_menuItems.contains(i.key())) {
+            // Skip
+            continue;
+        }
+
         kDebug();
         Tp::ContactPtr contact = i.value();
 
         KMenu *contactMenu = new KMenu(m_notifierMenu);
-        contactMenu->setTitle(i18n("Request from %1", contact->id()));
+        contactMenu->setTitle(i18n("Request from %1", contact->alias()));
         contactMenu->setObjectName(contact->id());
 
         KAction *menuAction;
@@ -252,21 +266,34 @@ void ContactRequestHandler::createMenus()
             contactMenu->addTitle(contact->alias());
         }
         menuAction = new KAction(KIcon(QLatin1String("dialog-ok-apply")), i18n("Approve"), contactMenu);
+        menuAction->setData(i.key());
         connect(menuAction, SIGNAL(triggered()),
                 this, SLOT(onContactRequestApproved()));
-        menuAction->setData(contact->id());
         contactMenu->addAction(menuAction);
 
         menuAction = new KAction(KIcon(QLatin1String("dialog-close")), i18n("Deny"), contactMenu);
-        menuAction->setData(contact->id());
-
+        menuAction->setData(i.key());
         connect(menuAction, SIGNAL(triggered()),
                 this, SLOT(onContactRequestDenied()));
         contactMenu->addAction(menuAction);
 
         m_notifierMenu->addMenu(contactMenu);
+        m_menuItems.insert(i.key(), contactMenu);
     }
-    m_notifierItem->setContextMenu(m_notifierMenu);
+
+    QHash<QString, KMenu*>::iterator j = m_menuItems.begin();
+    while (j != m_menuItems.end()) {
+        if (m_pendingContacts.contains(j.key())) {
+            // Skip
+            ++j;
+            continue;
+        }
+
+        // Remove
+        m_notifierMenu->removeAction(j.value()->menuAction());
+        j = m_menuItems.erase(j);
+    }
+
     updateNotifierItemTooltip();
 }
 
