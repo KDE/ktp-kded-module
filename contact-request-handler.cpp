@@ -139,6 +139,10 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
         if (contact->subscriptionState() == Tp::Contact::PresenceStateYes) {
             op = manager->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
+            op->setProperty("__contact", QVariant::fromValue(contact));
+
+            connect(op, SIGNAL(finished(Tp::PendingOperation*)),
+                    this, SLOT(onFinalizeSubscriptionFinished(Tp::PendingOperation*)));
         } else {
             m_pendingContacts.insert(contact->id(), contact);
 
@@ -149,11 +153,21 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
                                                     contact->id()),
                                                QLatin1String("list-add-user"));
         }
+    }
+}
 
-        if (op) {
-//             connect(op, SIGNAL(finished(Tp::PendingOperation*)),
-//                     SLOT(onGenericOperationFinished(Tp::PendingOperation*)));
-        }
+void ContactRequestHandler::onFinalizeSubscriptionFinished(Tp::PendingOperation *op)
+{
+    Tp::ContactPtr contact = op->property("__contact").value< Tp::ContactPtr >();
+
+    if (op->isError()) {
+        // ARGH
+        m_notifierItem.data()->showMessage(i18n("Error adding contact"),
+                                           i18n("%1 has been added successfully to your contact list, "
+                                                "but might be unable to see your presence. Error details: %2",
+                                                contact->alias(), op->errorMessage()), QLatin1String("dialog-error"));
+    } else {
+        // Yeah. All fine, so don't notify
     }
 }
 
