@@ -52,6 +52,7 @@ public Q_SLOTS:
     void onContactRequestApproved();
     void onContactRequestDenied();
     void onAuthorizePresencePublicationFinished(Tp::PendingOperation*);
+    void onRemovePresencePublicationFinished(Tp::PendingOperation*);
 
 private:
     KStatusNotifierItem *notifierItem();

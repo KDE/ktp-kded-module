@@ -243,10 +243,35 @@ void ContactRequestHandler::onContactRequestDenied()
         Tp::ContactPtr contact = m_pendingContacts.value(contactId);
         if (!contact.isNull()) {
             Tp::PendingOperation *op = contact->manager()->removePresencePublication(QList< Tp::ContactPtr >() << contact);
-            //TODO: connect and let user know the result, find and remove the menu from statusnotifier
-            //      don't forget to update the tooltip with -1
-//             delete m_notifierMenu->findChild<KMenu*>(contactId);
+            op->setProperty("__contact", QVariant::fromValue(contact));
+
+            connect(op, SIGNAL(finished(Tp::PendingOperation*)),
+                    this, SLOT(onRemovePresencePublicationFinished(Tp::PendingOperation*)));
         }
+    }
+}
+
+void ContactRequestHandler::onRemovePresencePublicationFinished(Tp::PendingOperation *op)
+{
+    Tp::ContactPtr contact = op->property("__contact").value< Tp::ContactPtr >();
+
+    if (op->isError()) {
+        // ARGH
+        m_notifierItem.data()->showMessage(i18n("Error denying contact request"),
+                                           i18n("There was an error while denying the request: %1",
+                                                op->errorMessage()), QLatin1String("dialog-error"));
+
+        // Re-enable the action
+        m_menuItems.value(contact->id())->setEnabled(true);
+    } else {
+        // Yeah
+        m_notifierItem.data()->showMessage(i18n("Contact request denied"),
+                                           i18n("%1 will not be able to see your presence",
+                                                contact->alias()), QLatin1String("dialog-ok-apply"));
+
+        // Update the menu
+        m_pendingContacts.remove(contact->id());
+        updateMenus();
     }
 }
 
