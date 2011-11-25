@@ -34,8 +34,6 @@ public:
     ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
     virtual ~ContactRequestHandler();
 
-    void monitorPresence(const Tp::ConnectionPtr &connection);
-
 private Q_SLOTS:
     void onNewAccountAdded(const Tp::AccountPtr &account);
     void onContactManagerStateChanged(Tp::ContactListState state);
@@ -53,6 +51,7 @@ private Q_SLOTS:
 
 private:
     void updateNotifierItemTooltip();
+    void monitorPresence(const Tp::ConnectionPtr &connection);
 
     QWeakPointer<KStatusNotifierItem> m_notifierItem;
     Tp::AccountManagerPtr m_accountManager;
