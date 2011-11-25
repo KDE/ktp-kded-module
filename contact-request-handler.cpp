@@ -33,6 +33,8 @@
 #include <KMenu>
 #include <KAction>
 
+Q_DECLARE_METATYPE(Tp::ContactPtr)
+
 bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &contact)
 {
     return contact->publishState() == Tp::Contact::PresenceStateAsk;
@@ -191,16 +193,42 @@ void ContactRequestHandler::onContactRequestApproved()
     if (!contactId.isEmpty()) {
         Tp::ContactPtr contact = m_pendingContacts.value(contactId);
         if (!contact.isNull()) {
-            //Tp::PendingOperation *op = contact->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
-            //TODO: connect and let user know the result, find and remove the menu from statusnotifier
-            //      don't forget to update the tooltip with -1
-            //delete m_notifierMenu->findChild<KMenu*>(contactId);
-            //if (contact->manager()->canRequestPresenceSubscription() && contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
-            //    contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
-            //}
-            m_pendingContacts.remove(contactId);
-            updateMenus();
+            Tp::PendingOperation *op = contact->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
+            op->setProperty("__contact", QVariant::fromValue(contact));
+
+            connect (op, SIGNAL(finished(Tp::PendingOperation*)),
+                     this, SLOT(onAuthorizePresencePublicationFinished(Tp::PendingOperation*)));
         }
+    }
+}
+
+void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOperation *op)
+{
+    Tp::ContactPtr contact = op->property("__contact").value< Tp::ContactPtr >();
+
+    if (op->isError()) {
+        // ARGH
+        m_notifierItem.data()->showMessage(i18n("Error accepting contact request"),
+                                           i18n("There was an error while accepting the request: %1",
+                                                op->errorMessage()), QLatin1String("dialog-error"));
+
+        // Re-enable the action
+        m_menuItems.value(contact->id())->setEnabled(true);
+    } else {
+        // Yeah
+        m_notifierItem.data()->showMessage(i18n("Contact request accepted"),
+                                           i18n("%1 will now be able to see your presence",
+                                                contact->alias()), QLatin1String("dialog-ok-apply"));
+
+        // If needed, reiterate the request on the other end
+        if (contact->manager()->canRequestPresenceSubscription() &&
+            contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
+            contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
+        }
+
+        // Update the menu
+        m_pendingContacts.remove(contact->id());
+        updateMenus();
     }
 }
 
