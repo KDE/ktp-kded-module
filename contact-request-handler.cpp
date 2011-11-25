@@ -242,7 +242,9 @@ void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOp
         // If needed, reiterate the request on the other end
         if (contact->manager()->canRequestPresenceSubscription() &&
             contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
-            contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
+            connect(contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact),
+                    SIGNAL(finished(Tp::PendingOperation*)),
+                    this, SLOT(onFinalizeSubscriptionFinished(Tp::PendingOperation*)));
         }
 
         // Update the menu
