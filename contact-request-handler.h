@@ -56,7 +56,6 @@ private:
     KStatusNotifierItem *notifierItem();
     void updateNotifierItemTooltip();
 
-    QWeakPointer<KNotification> m_notification;
     QWeakPointer<KStatusNotifierItem> m_notifierItem;
     Tp::AccountManagerPtr m_accountManager;
     KMenu *m_notifierMenu;

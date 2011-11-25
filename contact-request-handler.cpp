@@ -138,19 +138,14 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
         if (contact->subscriptionState() == Tp::Contact::PresenceStateYes) {
             op = manager->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
         } else {
-            KNotification *notification = new KNotification(QLatin1String("telepathyInfo"), KNotification::CloseOnTimeout);
-
-            KAboutData aboutData("ktelepathy",0,KLocalizedString(),0);
-            notification->setComponentData(KComponentData(aboutData));
-
-            notification->setText(i18n("The contact %1 added you to their contact list. "
-                                       "Do you want to allow this person to see your presence "
-                                       "and add them to your contact list?", contact->id()));
-            notification->sendEvent();
-
             m_pendingContacts.insert(contact->id(), contact);
 
             updateMenus();
+
+            m_notifierItem.data()->showMessage(i18n("New contact request"),
+                                               i18n("The contact %1 added you to its contact list",
+                                                    contact->id()),
+                                               QLatin1String("list-add-user"));
         }
 
         if (op) {
