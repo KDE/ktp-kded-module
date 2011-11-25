@@ -25,6 +25,8 @@
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/Account>
 
+#include <KTelepathy/error-dictionary.h>
+
 #include <QtCore/QFutureWatcher>
 
 #include <KDebug>
@@ -167,7 +169,8 @@ void ContactRequestHandler::onFinalizeSubscriptionFinished(Tp::PendingOperation 
         m_notifierItem.data()->showMessage(i18n("Error adding contact"),
                                            i18n("%1 has been added successfully to your contact list, "
                                                 "but might be unable to see your presence. Error details: %2",
-                                                contact->alias(), op->errorMessage()), QLatin1String("dialog-error"));
+                                                contact->alias(), KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
+                                                QLatin1String("dialog-error"));
     } else {
         // Yeah. All fine, so don't notify
     }
@@ -226,7 +229,8 @@ void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOp
         // ARGH
         m_notifierItem.data()->showMessage(i18n("Error accepting contact request"),
                                            i18n("There was an error while accepting the request: %1",
-                                                op->errorMessage()), QLatin1String("dialog-error"));
+                                                KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
+                                           QLatin1String("dialog-error"));
 
         // Re-enable the action
         m_menuItems.value(contact->id())->setEnabled(true);
@@ -275,7 +279,8 @@ void ContactRequestHandler::onRemovePresencePublicationFinished(Tp::PendingOpera
         // ARGH
         m_notifierItem.data()->showMessage(i18n("Error denying contact request"),
                                            i18n("There was an error while denying the request: %1",
-                                                op->errorMessage()), QLatin1String("dialog-error"));
+                                                KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
+                                                QLatin1String("dialog-error"));
 
         // Re-enable the action
         m_menuItems.value(contact->id())->setEnabled(true);
