@@ -306,6 +306,7 @@ void ContactRequestHandler::updateMenus()
         m_notifierItem.data()->setIconByName(QLatin1String("user-identity"));
         m_notifierItem.data()->setAttentionIconByName(QLatin1String("list-add-user"));
         m_notifierItem.data()->setStandardActionsEnabled(false);
+        m_notifierItem.data()->setTitle(i18nc("Menu title", "Pending contact requests"));
 
         m_notifierMenu = new KMenu(0);
         m_notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
