@@ -135,7 +135,7 @@ void ContactRequestHandler::onAccountsPresenceStatusFiltered()
 
 void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& contacts)
 {
-    kWarning() << "New contact requested";
+    kDebug() << "New contact requested";
 
     Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
         Tp::ContactManagerPtr manager = contact->manager();
