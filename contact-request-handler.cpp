@@ -139,10 +139,9 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
     Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
         Tp::ContactManagerPtr manager = contact->manager();
-        Tp::PendingOperation *op = 0;
 
         if (contact->subscriptionState() == Tp::Contact::PresenceStateYes) {
-            op = manager->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
+            Tp::PendingOperation *op = manager->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
             op->setProperty("__contact", QVariant::fromValue(contact));
 
             connect(op, SIGNAL(finished(Tp::PendingOperation*)),
