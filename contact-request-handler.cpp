@@ -23,6 +23,7 @@
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/PendingOperation>
+#include <TelepathyQt4/PendingComposite>
 #include <TelepathyQt4/Account>
 
 #include <KTelepathy/error-dictionary.h>
@@ -147,7 +148,27 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
             connect(op, SIGNAL(finished(Tp::PendingOperation*)),
                     this, SLOT(onFinalizeSubscriptionFinished(Tp::PendingOperation*)));
         } else {
-            m_pendingContacts.insert(contact->id(), contact);
+            // Handle multiaccount requests properly
+            if (m_pendingContacts.contains(contact->id())) {
+                // It's likely we have a simultaneous request
+                bool newReq = true;
+                QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contact->id());
+                while (i != m_pendingContacts.constEnd() && i.key() == contact->id()) {
+                    if (i.value().data() == contact.data()) {
+                        newReq = false;
+                        break;
+                    }
+                    ++i;
+                }
+
+                if (newReq) {
+                    // Insert multi
+                    m_pendingContacts.insertMulti(contact->id(), contact);
+                }
+            } else {
+                // Simple insertion
+                m_pendingContacts.insert(contact->id(), contact);
+            }
 
             updateMenus();
 
@@ -208,16 +229,31 @@ void ContactRequestHandler::onContactRequestApproved()
 {
     QString contactId = qobject_cast<KAction*>(sender())->data().toString();
 
+    // Disable the action in the meanwhile
+    m_menuItems.value(contactId)->setEnabled(false);
+
     if (!contactId.isEmpty()) {
-        Tp::ContactPtr contact = m_pendingContacts.value(contactId);
-        if (!contact.isNull()) {
-            Tp::PendingOperation *op = contact->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << contact);
+        QList<Tp::PendingOperation*> operations;
+        QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contactId);
+        while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
+            Tp::PendingOperation *op = i.value()->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << i.value());
+            op->setProperty("__contact", QVariant::fromValue(i.value()));
+            operations.append(op);
+            ++i;
+        }
+
+        // Take the first value, if any
+        if (!operations.isEmpty()) {
+            Tp::ContactPtr contact = m_pendingContacts.find(contactId).value();
+
+            Tp::PendingComposite *op = new Tp::PendingComposite(operations, true, contact);
             op->setProperty("__contact", QVariant::fromValue(contact));
 
-            connect (op, SIGNAL(finished(Tp::PendingOperation*)),
-                     this, SLOT(onAuthorizePresencePublicationFinished(Tp::PendingOperation*)));
+            connect(op, SIGNAL(finished(Tp::PendingOperation*)),
+                    this, SLOT(onAuthorizePresencePublicationFinished(Tp::PendingOperation*)));
         }
     }
+
 }
 
 void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOperation *op)
@@ -261,9 +297,20 @@ void ContactRequestHandler::onContactRequestDenied()
     m_menuItems.value(contactId)->setEnabled(false);
 
     if (!contactId.isEmpty()) {
-        Tp::ContactPtr contact = m_pendingContacts.value(contactId);
-        if (!contact.isNull()) {
-            Tp::PendingOperation *op = contact->manager()->removePresencePublication(QList< Tp::ContactPtr >() << contact);
+        QList<Tp::PendingOperation*> operations;
+        QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contactId);
+        while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
+            Tp::PendingOperation *op = i.value()->manager()->removePresencePublication(QList< Tp::ContactPtr >() << i.value());
+            op->setProperty("__contact", QVariant::fromValue(i.value()));
+            operations.append(op);
+            ++i;
+        }
+
+        // Take the first value, if any
+        if (!operations.isEmpty()) {
+            Tp::ContactPtr contact = m_pendingContacts.find(contactId).value();
+
+            Tp::PendingComposite *op = new Tp::PendingComposite(operations, true, contact);
             op->setProperty("__contact", QVariant::fromValue(contact));
 
             connect(op, SIGNAL(finished(Tp::PendingOperation*)),
