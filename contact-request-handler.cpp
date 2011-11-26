@@ -202,6 +202,7 @@ void ContactRequestHandler::updateNotifierItemTooltip()
     if (!m_menuItems.size()) {
         // Set passive
         m_notifierItem.data()->setStatus(KStatusNotifierItem::Passive);
+        m_notifierItem.data()->setIconByName(QLatin1String("user-identity"));
         // Add the usual "nothing" action, if needed
         if (!m_notifierMenu->actions().contains(m_noContactsAction)) {
             m_notifierMenu->addAction(m_noContactsAction);
@@ -213,6 +214,7 @@ void ContactRequestHandler::updateNotifierItemTooltip()
     } else {
         // Set active
         m_notifierItem.data()->setStatus(KStatusNotifierItem::Active);
+        m_notifierItem.data()->setIconByName(QLatin1String("list-add-user"));
         // Remove the "nothing" action, if needed
         if (m_notifierMenu->actions().contains(m_noContactsAction)) {
             m_notifierMenu->removeAction(m_noContactsAction);
@@ -350,7 +352,6 @@ void ContactRequestHandler::updateMenus()
     if (m_notifierItem.isNull()) {
         m_notifierItem = new KStatusNotifierItem(QLatin1String("telepathy_kde_contact_requests"), this);
         m_notifierItem.data()->setCategory(KStatusNotifierItem::Communications);
-        m_notifierItem.data()->setStatus(KStatusNotifierItem::NeedsAttention);
         m_notifierItem.data()->setIconByName(QLatin1String("user-identity"));
         m_notifierItem.data()->setAttentionIconByName(QLatin1String("list-add-user"));
         m_notifierItem.data()->setStandardActionsEnabled(false);
