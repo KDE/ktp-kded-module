@@ -14,4 +14,15 @@ X-KDE-System-Settings-Parent-Category=im-and-voip
 Categories=Qt;KDE;X-KDE-settings-network;
 
 Name=General
+Name[hu]=Általános
+Name[it]=Generali
+Name[pt]=Geral
+Name[pt_BR]=Geral
+Name[uk]=Загальне
+Name[x-test]=xxGeneralxx
 Comment=General settings for IM and VoIP
+Comment[hu]=Az azonnali üzenetküldés és VoIP általános beállításai
+Comment[it]=Impostazioni generali per messaggistica e VoIP
+Comment[pt]=Configuração geral do MI e VoIP
+Comment[uk]=Загальні параметри мереж спілкування
+Comment[x-test]=xxGeneral settings for IM and VoIPxx
