@@ -146,7 +146,7 @@ void TelepathyMPRIS::detectPlayers()
                 QLatin1String("org.freedesktop.DBus.Properties"),
                 QLatin1String("PropertiesChanged"),
                 this,
-                SLOT(onPlayerSignalReceived(const QString&, const QVariantMap&, const QStringList& )) );
+                SLOT(onPlayerSignalReceived(QString,QVariantMap,QStringList)) );
 
         }
 
