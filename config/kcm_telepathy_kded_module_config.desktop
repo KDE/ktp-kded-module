@@ -15,6 +15,7 @@ Categories=Qt;KDE;X-KDE-settings-network;
 
 Name=General
 Name[cs]=Obecné
+Name[da]=Generelt
 Name[hu]=Általános
 Name[it]=Generali
 Name[nds]=Allmeen
@@ -25,6 +26,7 @@ Name[sv]=Allmänt
 Name[uk]=Загальне
 Name[x-test]=xxGeneralxx
 Comment=General settings for IM and VoIP
+Comment[da]=Generelle indstillinger for IM og VoIP
 Comment[hu]=Az azonnali üzenetküldés és VoIP általános beállításai
 Comment[it]=Impostazioni generali per messaggistica e VoIP
 Comment[nds]=Allmeen Instellen för Kortnarichten un VoIP
