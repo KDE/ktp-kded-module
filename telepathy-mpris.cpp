@@ -177,9 +177,11 @@ void TelepathyMPRIS::onSettingsChanged()
     }
 }
 
-void TelepathyMPRIS::serviceOwnerChanged(const QString& a, const QString& b, const QString& c)
+void TelepathyMPRIS::serviceOwnerChanged(const QString &serviceName, const QString &oldOwner, const QString &newOwner)
 {
-    if (a.contains(QLatin1String("org.mpris.MediaPlayer2"))) {
+    Q_UNUSED(oldOwner)
+    Q_UNUSED(newOwner)
+    if (serviceName.contains(QLatin1String("org.mpris.MediaPlayer2"))) {
         kDebug() << "Found new mpris interface, running detection...";
         detectPlayers();
     }

@@ -39,7 +39,7 @@ public Q_SLOTS:
     void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
     void onSettingsChanged();
     void detectPlayers();
-    void serviceOwnerChanged(const QString &a, const QString &b, const QString &c);
+    void serviceOwnerChanged(const QString &serviceName, const QString &oldOwner, const QString &newOwner);
     void onActivateNowPlaying();
     void onDeactivateNowPlaying();
 
