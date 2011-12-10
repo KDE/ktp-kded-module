@@ -19,8 +19,8 @@
 
 #include "autoaway.h"
 
-#include <TelepathyQt4/AccountManager>
-#include <TelepathyQt4/AccountSet>
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountSet>
 
 #include <KDebug>
 #include <KIdleTime>

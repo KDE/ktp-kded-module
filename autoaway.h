@@ -23,8 +23,8 @@
 
 #include "telepathy-kded-module-plugin.h"
 
-#include <TelepathyQt4/Presence>
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/Presence>
+#include <TelepathyQt/AccountManager>
 
 namespace KTp {
 class GlobalPresence;

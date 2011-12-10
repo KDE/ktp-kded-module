@@ -22,7 +22,7 @@
 #define ERROR_HANDLER_H
 
 #include <QObject>
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/AccountManager>
 
 class ErrorHandler : public QObject
 {

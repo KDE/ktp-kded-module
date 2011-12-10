@@ -28,7 +28,7 @@
 #include <KSharedConfig>
 #include <KConfigGroup>
 
-#include <TelepathyQt4/AccountSet>
+#include <TelepathyQt/AccountSet>
 
 #include <KTelepathy/global-presence.h>
 
