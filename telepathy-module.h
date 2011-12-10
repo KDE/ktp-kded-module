@@ -23,7 +23,7 @@
 
 #include <KDEDModule>
 
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/AccountManager>
 
 class ContactRequestHandler;
 namespace Tp {

@@ -22,8 +22,8 @@
 #define TELEPATHY_KDED_MODULE_PLUGIN_H
 
 #include <QObject>
-#include <TelepathyQt4/Presence>
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/Presence>
+#include <TelepathyQt/AccountManager>
 
 namespace KTp {
 class GlobalPresence;

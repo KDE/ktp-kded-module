@@ -20,11 +20,11 @@
 
 #include "contact-request-handler.h"
 
-#include <TelepathyQt4/Connection>
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/PendingComposite>
-#include <TelepathyQt4/Account>
+#include <TelepathyQt/Connection>
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/PendingComposite>
+#include <TelepathyQt/Account>
 
 #include <KTelepathy/error-dictionary.h>
 

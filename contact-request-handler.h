@@ -21,8 +21,8 @@
 #ifndef CONTACT_REQUEST_HANDLER_H
 #define CONTACT_REQUEST_HANDLER_H
 
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/Types>
+#include <TelepathyQt/AccountManager>
 
 class KMenu;
 class KAction;

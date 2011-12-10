@@ -22,10 +22,10 @@
 #include <KPluginFactory>
 #include <KDebug>
 
-#include <TelepathyQt4/AccountFactory>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/PendingReady>
-#include <TelepathyQt4/Debug>
+#include <TelepathyQt/AccountFactory>
+#include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/PendingReady>
+#include <TelepathyQt/Debug>
 
 #include <KTelepathy/global-presence.h>
 
