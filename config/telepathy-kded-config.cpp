@@ -184,6 +184,7 @@ void TelepathyKDEDConfig::autoAwayChecked(bool checked)
     ui->m_xaMessage->setEnabled(checked && ui->m_xaCheckBox->isChecked());
 
     ui->m_awayMins->setEnabled(checked);
+    ui->m_awayMessage->setEnabled(checked);
 
     Q_EMIT changed(true);
 }
