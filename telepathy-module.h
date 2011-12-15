@@ -24,6 +24,7 @@
 #include <KDEDModule>
 
 #include <TelepathyQt/AccountManager>
+#include <KTelepathy/presence.h>
 
 class ContactRequestHandler;
 namespace Tp {
@@ -52,7 +53,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation*);
-    void onPresenceChanged(const Tp::Presence &presence);
+    void onPresenceChanged(const KTp::Presence &presence);
     void onPluginActivated(bool);
 
 private:

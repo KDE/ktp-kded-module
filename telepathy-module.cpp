@@ -81,6 +81,7 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
 
 TelepathyModule::~TelepathyModule()
 {
+    onPresenceChanged(m_globalPresence->currentPresence());
 }
 
 void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
@@ -91,6 +92,8 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
 
     m_globalPresence = new KTp::GlobalPresence(this);
     m_globalPresence->setAccountManager(m_accountManager);
+    connect(m_globalPresence, SIGNAL(currentPresenceChanged(KTp::Presence)),
+            this, SLOT(onPresenceChanged(KTp::Presence)));
 
     m_autoAway = new AutoAway(m_globalPresence, this);
     connect(m_autoAway, SIGNAL(activate(bool)),
@@ -110,7 +113,7 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
 }
 
-void TelepathyModule::onPresenceChanged(const Tp::Presence &presence)
+void TelepathyModule::onPresenceChanged(const KTp::Presence &presence)
 {
     //only save if the presence is not auto-set
     if (m_pluginStack.isEmpty()) {
