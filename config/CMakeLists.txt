@@ -1,4 +1,5 @@
 set(telepathy_kded_module_config_SRCS
+        column-resizer.cpp
         telepathy-kded-config.cpp
 )
 
@@ -19,7 +20,7 @@ target_link_libraries(kcm_telepathy_kded_module_config ${KDE4_KDECORE_LIBS}
 
 
 install(TARGETS kcm_telepathy_kded_module_config
-	  DESTINATION ${PLUGIN_INSTALL_DIR})
+        DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install (FILES kcm_telepathy_kded_module_config.desktop
          DESTINATION ${SERVICES_INSTALL_DIR}

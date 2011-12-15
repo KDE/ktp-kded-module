@@ -64,12 +64,12 @@ void AutoAway::timeoutReached(int id)
             m_globalPresence->currentPresence().type() != Tp::Presence::xa().type() ||
             m_globalPresence->currentPresence().type() != Tp::Presence::hidden().type()) {
 
-            setRequestedPresence(Tp::Presence::away());
+            setRequestedPresence(Tp::Presence::away(m_awayMessage));
             setActive(true);
         }
     } else if (id == m_extAwayTimeoutId) {
         if (m_globalPresence->currentPresence().type() == Tp::Presence::away().type()) {
-            setRequestedPresence(Tp::Presence::xa());
+            setRequestedPresence(Tp::Presence::xa(m_xaMessage));
             setActive(true);
         }
     }
@@ -88,6 +88,9 @@ void AutoAway::readConfig()
 
     bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
     bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
+
+    m_awayMessage = kdedConfig.readEntry(QLatin1String("awayMessage"), QString());
+    m_xaMessage = kdedConfig.readEntry(QLatin1String("xaMessage"), QString());
 
     //remove all our timeouts and only readd them if auto-away is enabled
     //WARNING: can't use removeAllTimeouts because this runs inside KDED, it would remove other KDED timeouts as well

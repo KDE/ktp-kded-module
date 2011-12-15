@@ -51,6 +51,9 @@ private Q_SLOTS:
 private:
     int m_awayTimeoutId;
     int m_extAwayTimeoutId;
+
+    QString m_awayMessage;
+    QString m_xaMessage;
 };
 
 #endif // AUTOAWAY_H

@@ -25,6 +25,7 @@
 #include <KLocalizedString>
 #include <QDBusMessage>
 #include <QDBusConnection>
+#include "column-resizer.h"
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
 K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("telepathy_kded_module_config", "telepathy_kded_module"))
@@ -35,6 +36,10 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
       ui(new Ui::TelepathyKDEDUi())
 {
     ui->setupUi(this);
+    ColumnResizer *resizer = new ColumnResizer(this);
+    resizer->addWidgetsFromLayout(ui->incomingFilesGroupBox->layout(), 0);
+    resizer->addWidgetsFromLayout(ui->autoAwayGroupBox->layout(), 0);
+    resizer->addWidgetsFromLayout(ui->nowPlayingGroupBox->layout(), 0);
 
     //TODO enable this when it is supported by the approver
     ui->m_autoAcceptLabel->setHidden(true);
@@ -46,6 +51,12 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
 
     ui->m_xaMins->setSuffix(i18nc("Unit after number in spinbox, denotes time unit 'minutes', keep the leading whitespace!",
                                     " minutes"));
+
+    ui->m_awayMessage->setClickMessage(i18n("Leave empty for no message"));
+    ui->m_awayMessage->setToolTip(ui->m_awayMessage->clickMessage()); //use the same i18n string
+
+    ui->m_xaMessage->setClickMessage(i18n("Leave empty for no message"));
+    ui->m_xaMessage->setToolTip(ui->m_xaMessage->clickMessage()); //use the same i18n string
 
     connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
@@ -100,9 +111,13 @@ void TelepathyKDEDConfig::load()
     //default away time is 5 minutes
     int awayTime = kdedConfig.readEntry(QLatin1String("awayAfter"), 5);
 
+    QString awayMessage = kdedConfig.readEntry(QLatin1String("awayMessage"), QString());
+
     ui->m_awayCheckBox->setChecked(autoAwayEnabled);
     ui->m_awayMins->setValue(awayTime);
     ui->m_awayMins->setEnabled(autoAwayEnabled);
+    ui->m_awayMessage->setText(awayMessage);
+    ui->m_awayMessage->setEnabled(autoAwayEnabled);
 
     //check for x-away
     bool autoXAEnabled = kdedConfig.readEntry(QLatin1String("autoXAEnabled"), true);
@@ -110,11 +125,15 @@ void TelepathyKDEDConfig::load()
     //default x-away time is 15 minutes
     int xaTime = kdedConfig.readEntry(QLatin1String("xaAfter"), 15);
 
+    QString xaMessage = kdedConfig.readEntry(QLatin1String("xaMessage"), QString());
+
     //enable auto-x-away only if auto-away is enabled
     ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
     ui->m_xaCheckBox->setEnabled(autoAwayEnabled);
     ui->m_xaMins->setValue(xaTime);
     ui->m_xaMins->setEnabled(autoXAEnabled && autoAwayEnabled);
+    ui->m_xaMessage->setText(xaMessage);
+    ui->m_xaMessage->setEnabled(autoXAEnabled && autoAwayEnabled);
 
     //check if 'Now playing..' is enabled
     bool nowPlayingEnabled = kdedConfig.readEntry(QLatin1String("nowPlayingEnabled"), false);
@@ -144,8 +163,10 @@ void TelepathyKDEDConfig::save()
 
     kdedConfig.writeEntry(QLatin1String("autoAwayEnabled"), ui->m_awayCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("awayAfter"), ui->m_awayMins->value());
+    kdedConfig.writeEntry(QLatin1String("awayMessage"), ui->m_awayMessage->text());
     kdedConfig.writeEntry(QLatin1String("autoXAEnabled"), ui->m_xaCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
+    kdedConfig.writeEntry(QLatin1String("xaMessage"), ui->m_xaMessage->text());
     kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("nowPlayingText"), ui->m_nowPlayingText->text());
     kdedConfig.sync();
@@ -160,6 +181,7 @@ void TelepathyKDEDConfig::autoAwayChecked(bool checked)
 {
     ui->m_xaCheckBox->setEnabled(checked);
     ui->m_xaMins->setEnabled(checked && ui->m_xaCheckBox->isChecked());
+    ui->m_xaMessage->setEnabled(checked && ui->m_xaCheckBox->isChecked());
 
     ui->m_awayMins->setEnabled(checked);
 
@@ -169,6 +191,8 @@ void TelepathyKDEDConfig::autoAwayChecked(bool checked)
 void TelepathyKDEDConfig::autoXAChecked(bool checked)
 {
     ui->m_xaMins->setEnabled(checked);
+    ui->m_xaMessage->setEnabled(checked);
+
     Q_EMIT changed(true);
 }
 
