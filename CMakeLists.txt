@@ -1,14 +1,14 @@
-project(telepathy-kded-module)
+project(ktp-kded-integration-module)
 
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
      ${CMAKE_MODULE_PATH}
 )
 
-set(IS_TELEPATHY_KDE_INTERNAL_MODULE TRUE)
+set(IS_KTP_INTERNAL_MODULE TRUE)
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.8.9 REQUIRED)
-find_package (KTelepathy REQUIRED)
+find_package (KTp REQUIRED)
 
 # set some default settings
 include (KDE4Defaults)
@@ -25,10 +25,10 @@ include_directories (${KDE4_INCLUDES}
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
-                     ${KTELEPATHY_INCLUDE_DIR}
+                     ${KTP_INCLUDE_DIR}
 )
 
-set (telepathy_module_SRCS
+set (kded_ktp_integration_module_SRCS
      contact-request-handler.cpp
      telepathy-kded-module-plugin.cpp
      telepathy-module.cpp
@@ -37,24 +37,24 @@ set (telepathy_module_SRCS
      error-handler.cpp
 )
 
-kde4_add_plugin (kded_telepathy_module
-                 ${telepathy_module_SRCS}
+kde4_add_plugin (kded_ktp_integration_module
+                 ${kded_ktp_integration_module_SRCS}
 )
 
-target_link_libraries (kded_telepathy_module
+target_link_libraries (kded_ktp_integration_module
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
-                       ${KTELEPATHY_LIBRARIES}
+                       ${KTP_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        kidletime
 
 )
 
-install (TARGETS kded_telepathy_module
+install (TARGETS kded_ktp_integration_module
          DESTINATION ${PLUGIN_INSTALL_DIR}
 )
 
-install (FILES telepathy_kded_module.desktop
+install (FILES kded_ktp_integration_module.desktop
          DESTINATION ${SERVICES_INSTALL_DIR}/kded
 )
 

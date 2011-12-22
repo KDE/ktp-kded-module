@@ -27,7 +27,7 @@
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/Debug>
 
-#include <KTelepathy/global-presence.h>
+#include <KTp/global-presence.h>
 
 #include "telepathy-mpris.h"
 #include "autoaway.h"
@@ -38,7 +38,7 @@
 #include "contact-request-handler.h"
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
-K_EXPORT_PLUGIN(TelepathyModuleFactory("telepathy_module", "telepathy-kded-module"))
+K_EXPORT_PLUGIN(TelepathyModuleFactory("ktp_integration_module", "kded_ktp_integration_module"))
 
 TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     : KDEDModule(parent)

@@ -23,7 +23,7 @@
 #include <KNotification>
 #include <KAboutData>
 
-#include <KTelepathy/error-dictionary.h>
+#include <KTp/error-dictionary.h>
 
 ErrorHandler::ErrorHandler(const Tp::AccountManagerPtr& am, QObject* parent)
     : QObject(parent)

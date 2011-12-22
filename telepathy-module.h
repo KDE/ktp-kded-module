@@ -24,7 +24,7 @@
 #include <KDEDModule>
 
 #include <TelepathyQt/AccountManager>
-#include <KTelepathy/presence.h>
+#include <KTp/presence.h>
 
 class ContactRequestHandler;
 namespace Tp {

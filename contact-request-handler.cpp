@@ -26,7 +26,7 @@
 #include <TelepathyQt/PendingComposite>
 #include <TelepathyQt/Account>
 
-#include <KTelepathy/error-dictionary.h>
+#include <KTp/error-dictionary.h>
 
 #include <QtCore/QFutureWatcher>
 
