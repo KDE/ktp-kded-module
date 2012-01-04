@@ -141,6 +141,7 @@ void TelepathyKDEDConfig::load()
 
     //now playing text
     QString nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
+                                                  // xgettext: no-c-format
                                                   i18nc("The text displayed by now playing plugin", "Now listening to %title by %author from album %album"));
     ui->m_nowPlayingText->setText(nowPlayingText);
     // TODO enable this
