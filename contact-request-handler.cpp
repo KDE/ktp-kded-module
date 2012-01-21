@@ -39,7 +39,7 @@
 
 Q_DECLARE_METATYPE(Tp::ContactPtr)
 
-bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &contact)
+static bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &contact)
 {
     return contact->publishState() == Tp::Contact::PresenceStateAsk;
 }
