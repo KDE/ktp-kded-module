@@ -239,10 +239,12 @@ void ContactRequestHandler::onContactRequestApproved()
         QList<Tp::PendingOperation*> operations;
         QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contactId);
         while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
-            Tp::PendingOperation *op = i.value()->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << i.value());
-            op->setProperty("__contact", QVariant::fromValue(i.value()));
-            operations.append(op);
-            ++i;
+            if (!i.value()->manager().isNull()) {
+                Tp::PendingOperation *op = i.value()->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << i.value());
+                op->setProperty("__contact", QVariant::fromValue(i.value()));
+                operations.append(op);
+                ++i;
+            }
         }
 
         // Take the first value, if any
@@ -303,10 +305,12 @@ void ContactRequestHandler::onContactRequestDenied()
         QList<Tp::PendingOperation*> operations;
         QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contactId);
         while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
-            Tp::PendingOperation *op = i.value()->manager()->removePresencePublication(QList< Tp::ContactPtr >() << i.value());
-            op->setProperty("__contact", QVariant::fromValue(i.value()));
-            operations.append(op);
-            ++i;
+            if (!i.value()->manager().isNull()) {
+                Tp::PendingOperation *op = i.value()->manager()->removePresencePublication(QList< Tp::ContactPtr >() << i.value());
+                op->setProperty("__contact", QVariant::fromValue(i.value()));
+                operations.append(op);
+                ++i;
+            }
         }
 
         // Take the first value, if any
