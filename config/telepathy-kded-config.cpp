@@ -28,7 +28,7 @@
 #include "column-resizer.h"
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
-K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("telepathy_kded_module_config", "telepathy_kded_module"))
+K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("kcm_ktp_integration_module", "kded_ktp_integration_module"))
 
 
 TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& args)
