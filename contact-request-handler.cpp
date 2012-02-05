@@ -152,7 +152,7 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
             if (m_pendingContacts.contains(contact->id())) {
                 // It's likely we have a simultaneous request
                 bool newReq = true;
-                QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contact->id());
+                QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.constFind(contact->id());
                 while (i != m_pendingContacts.constEnd() && i.key() == contact->id()) {
                     if (i.value().data() == contact.data()) {
                         newReq = false;
@@ -237,7 +237,7 @@ void ContactRequestHandler::onContactRequestApproved()
 
     if (!contactId.isEmpty()) {
         QList<Tp::PendingOperation*> operations;
-        QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contactId);
+        QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.constFind(contactId);
         while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
             if (!i.value()->manager().isNull()) {
                 Tp::PendingOperation *op = i.value()->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << i.value());
@@ -303,7 +303,7 @@ void ContactRequestHandler::onContactRequestDenied()
 
     if (!contactId.isEmpty()) {
         QList<Tp::PendingOperation*> operations;
-        QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.find(contactId);
+        QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.constFind(contactId);
         while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
             if (!i.value()->manager().isNull()) {
                 Tp::PendingOperation *op = i.value()->manager()->removePresencePublication(QList< Tp::ContactPtr >() << i.value());
