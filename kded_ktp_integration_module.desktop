@@ -2,7 +2,7 @@
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=ktp_integration_module
-X-KDE-DBus-ModuleName=ktp_integration_module
+X-KDE-DBus-ModuleName=kded_ktp_integration_module
 X-KDE-Kded-autoload=true
 X-KDE-Kded-phase=2
 X-KDE-Kded-load-on-demand=false
