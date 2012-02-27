@@ -72,6 +72,10 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(settingsHasChanged()));
     connect(ui->m_nowPlayingText, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
+    connect(ui->m_awayMessage, SIGNAL(textChanged(QString)),
+            this, SLOT(settingsHasChanged()));
+    connect(ui->m_xaMessage, SIGNAL(textChanged(QString)),
+            this, SLOT(settingsHasChanged()));
 
     connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoAwayChecked(bool)));
