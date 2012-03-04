@@ -9,6 +9,7 @@ X-KDE-Kded-load-on-demand=false
 Name=Telepathy Integration Module
 Name[ca]=Mòdul d'integració del Telepathy
 Name[da]=Modul til Telepathy-integration
+Name[de]=Telepathy-Integrationsmodul
 Name[el]=Άρθρωμα ολοκλήρωσης telepathy
 Name[es]=Módulo de integración con Telepathy
 Name[et]=Telepathy lõimimismoodul
