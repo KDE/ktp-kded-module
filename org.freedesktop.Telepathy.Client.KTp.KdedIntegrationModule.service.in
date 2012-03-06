@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule
+Exec=@DBUS_SEND_PATH@ --session --type=method_call --dest=org.kde.kded /kded org.kde.kded.loadModule string:"kded_ktp_integration_module"

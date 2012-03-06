@@ -58,5 +58,10 @@ install (FILES kded_ktp_integration_module.desktop
          DESTINATION ${SERVICES_INSTALL_DIR}/kded
 )
 
+find_file(DBUS_SEND_PATH dbus-send HINTS /usr/bin)
+configure_file(org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule.service)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule.service
+        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 
 add_subdirectory(config)
