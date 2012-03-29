@@ -1,6 +1,7 @@
 /*
     KControl Module for general Telepathy integration configs
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
+    Copyright (C) 2012  Othmane Moustaouda <othmane.moustaouda@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -23,8 +24,10 @@
 
 #include <KPluginFactory>
 #include <KLocalizedString>
+
 #include <QDBusMessage>
 #include <QDBusConnection>
+
 #include "column-resizer.h"
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
@@ -36,6 +39,25 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
       ui(new Ui::TelepathyKDEDUi())
 {
     ui->setupUi(this);
+
+    m_tagNames << QLatin1String("%title") << QLatin1String("%artist") << QLatin1String("%album") << QLatin1String("%track");
+    m_localizedTagNames << i18nc("Title tag in now playing plugin, use one word and keep the '%' character.", "%title")
+                        << i18nc("Artist tag in now playing plugin, use one word and keep the '%' character.", "%artist")
+                        << i18nc("Album tag in now playing plugin, use one word and keep the '%' character.", "%album")
+                        << i18nc("Track number tag in now playing plugin, use one word and keep the '%' character.", "%track");
+
+    QStringList itemsIcons;
+    itemsIcons << QLatin1String("view-media-lyrics")   //%title
+               << QLatin1String("view-media-artist")   //%artist
+               << QLatin1String("view-media-playlist") //%album
+               << QLatin1String("mixer-cd");           //%track
+
+    ui->m_tagListWidget->setItemsIcons(itemsIcons);
+    ui->m_tagListWidget->setLocalizedTagNames(m_localizedTagNames);
+    ui->m_tagListWidget->setupItems(); //populate the list, load items icons and set list's maximum size
+
+    ui->m_nowPlayingText->setLocalizedTagNames(m_localizedTagNames);
+
     ColumnResizer *resizer = new ColumnResizer(this);
     resizer->addWidgetsFromLayout(ui->incomingFilesGroupBox->layout(), 0);
     resizer->addWidgetsFromLayout(ui->autoAwayGroupBox->layout(), 0);
@@ -145,11 +167,19 @@ void TelepathyKDEDConfig::load()
 
     //now playing text
     QString nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
-                                                  // xgettext: no-c-format
-                                                  i18nc("The text displayed by now playing plugin", "Now listening to %title by %author from album %album"));
+                                                  i18nc("The default text displayed by now playing plugin. "
+                                                        "track title: %1, artist: %2, album: %3",
+                                                        "Now listening to %1 by %2 from album %3",
+                                                        QLatin1String("%title"), QLatin1String("%artist"), QLatin1String("%album")));
+
+    //in nowPlayingText tag names aren't localized, here they're replaced with the localized ones
+    for (int i = 0; i < m_tagNames.size(); i++) {
+        nowPlayingText.replace(m_tagNames.at(i), m_localizedTagNames.at(i));
+    }
+
     ui->m_nowPlayingText->setText(nowPlayingText);
-    // TODO enable this
-    ui->m_nowPlayingText->setEnabled(nowPlayingEnabled && false);
+    ui->m_nowPlayingText->setEnabled(nowPlayingEnabled);
+    ui->m_tagListWidget->setEnabled(nowPlayingEnabled);
 }
 
 void TelepathyKDEDConfig::save()
@@ -173,7 +203,14 @@ void TelepathyKDEDConfig::save()
     kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
     kdedConfig.writeEntry(QLatin1String("xaMessage"), ui->m_xaMessage->text());
     kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
-    kdedConfig.writeEntry(QLatin1String("nowPlayingText"), ui->m_nowPlayingText->text());
+
+    //we store a nowPlayingText version with untranslated tag names
+    QString modifiedNowPlayingText = ui->m_nowPlayingText->text();
+    for (int i = 0; i < m_tagNames.size(); i++) {
+        modifiedNowPlayingText.replace(m_localizedTagNames.at(i), m_tagNames.at(i));
+    }
+
+    kdedConfig.writeEntry(QLatin1String("nowPlayingText"), modifiedNowPlayingText);
     kdedConfig.sync();
 
     QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
@@ -204,8 +241,8 @@ void TelepathyKDEDConfig::autoXAChecked(bool checked)
 
 void TelepathyKDEDConfig::nowPlayingChecked(bool checked)
 {
-    // TODO Enable this
-    ui->m_nowPlayingText->setEnabled(checked && false);
+    ui->m_nowPlayingText->setEnabled(checked);
+    ui->m_tagListWidget->setEnabled(checked);
     Q_EMIT changed(true);
 }
 

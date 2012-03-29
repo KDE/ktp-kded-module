@@ -1,6 +1,8 @@
 set(kcm_ktp_integration_module_SRCS
         column-resizer.cpp
         telepathy-kded-config.cpp
+        nowplaying-lineedit.cpp
+        nowplaying-listwidget.cpp
 )
 
 set(kcm_ktp_integration_module_UI

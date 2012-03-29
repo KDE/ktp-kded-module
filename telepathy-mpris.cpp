@@ -27,6 +27,7 @@
 #include <KDebug>
 #include <KSharedConfig>
 #include <KConfigGroup>
+#include <KLocalizedString>
 
 #include <TelepathyQt/AccountSet>
 
@@ -76,6 +77,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
     QString artist;
     QString title;
     QString album;
+    QString trackNumber;
 
     //FIXME We can do less lame parsing...maybe.
     Q_FOREACH (const QVariant &property, changedProperties.values()) {
@@ -99,6 +101,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
                         artist = metadata.value(QLatin1String("xesam:artist")).toString();
                         title = metadata.value(QLatin1String("xesam:title")).toString();
                         album = metadata.value(QLatin1String("xesam:album")).toString();
+                        trackNumber = metadata.value(QLatin1String("xesam:trackNumber")).toString();
                         trackInfoFound = true;
                         break;
                     }
@@ -109,12 +112,19 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
     }
 
     if (trackInfoFound) {
-        Tp::Presence currentPresence = m_globalPresence->currentPresence();
+        //we replace track's info in custom nowPlayingText
+        QString statusMessage = m_nowPlayingText;
+        statusMessage.replace(QLatin1String("%title"), title, Qt::CaseInsensitive);
+        statusMessage.replace(QLatin1String("%artist"), artist, Qt::CaseInsensitive);
+        statusMessage.replace(QLatin1String("%album"), album, Qt::CaseInsensitive);
+        statusMessage.replace(QLatin1String("%track"), trackNumber, Qt::CaseInsensitive);
 
+        Tp::Presence currentPresence = m_globalPresence->currentPresence();
         Tp::SimplePresence presence;
+
         presence.type = currentPresence.type();
         presence.status = currentPresence.status();
-        presence.statusMessage = QString(QLatin1String("Now listening to %1 by %2 from album %3")).arg(title, artist, album);
+        presence.statusMessage = statusMessage;
 
         setRequestedPresence(Tp::Presence(presence));
         if (m_presenceActivated) {
@@ -147,7 +157,6 @@ void TelepathyMPRIS::detectPlayers()
                 QLatin1String("PropertiesChanged"),
                 this,
                 SLOT(onPlayerSignalReceived(QString,QVariantMap,QStringList)) );
-
         }
 
         players.append(service);
@@ -173,6 +182,11 @@ void TelepathyMPRIS::onSettingsChanged()
     //if the plugin was disabled and is now enabled
     if (!isEnabled() && pluginEnabled) {
         setEnabled(true);
+        QString m_nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
+                                                  i18nc("The default text displayed by now playing plugin. "
+                                                        "track title: %1, artist: %2, album: %3",
+                                                        "Now listening to %1 by %2 from album %3",
+                                                        QLatin1String("%title"), QLatin1String("%artist"), QLatin1String("%album")));
         detectPlayers();
     }
 }

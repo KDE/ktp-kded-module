@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>669</width>
-    <height>517</height>
+    <width>703</width>
+    <height>560</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -283,6 +283,9 @@
       <string>Now playing</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::ExpandingFieldsGrow</enum>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="m_nowPlayingLabel">
         <property name="text">
@@ -304,27 +307,31 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="m_nowPlayingText">
+       <widget class="NowPlayingLineEdit" name="m_nowPlayingText">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
+      <item row="5" column="1">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="1">
+       <widget class="NowPlayingListWidget" name="m_tagListWidget">
+       </widget>
+      </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
@@ -338,6 +345,16 @@
    <class>KUrlRequester</class>
    <extends>QFrame</extends>
    <header>kurlrequester.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NowPlayingLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>nowplaying-lineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NowPlayingListWidget</class>
+   <extends>QListWidget</extends>
+   <header>nowplaying-listwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -1,6 +1,7 @@
 /*
     KControl Module for general Telepathy integration configs
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
+    Copyright (C) 2012  Othmane Moustaouda <othmane.moustaouda@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -46,8 +47,9 @@ private Q_SLOTS:
     void nowPlayingChecked(bool checked);
 
 private:
+    QStringList m_tagNames;
+    QStringList m_localizedTagNames;
     Ui::TelepathyKDEDUi *ui;
-
 };
 
 #endif // TELEPATHY_KDED_CONFIG_H

@@ -49,6 +49,7 @@ Q_SIGNALS:
 private:
     QStringList m_knownPlayers;
     bool m_presenceActivated;
+    QString m_nowPlayingText;
 };
 
 #endif // TELEPATHY_MPRIS_H
