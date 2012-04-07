@@ -34,7 +34,6 @@ AutoAway::AutoAway(KTp::GlobalPresence* globalPresence, QObject* parent)
       m_awayTimeoutId(-1),
       m_extAwayTimeoutId(-1)
 {
-    setPluginPriority(99);
     readConfig();
 
     connect(KIdleTime::instance(), SIGNAL(timeoutReached(int)),

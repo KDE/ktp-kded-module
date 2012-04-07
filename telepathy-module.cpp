@@ -81,7 +81,6 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
 
 TelepathyModule::~TelepathyModule()
 {
-    onPresenceChanged(m_globalPresence->currentPresence());
 }
 
 void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
@@ -109,88 +108,57 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     connect(this, SIGNAL(settingsChanged()),
             m_mpris, SLOT(onSettingsChanged()));
 
+    //earlier in list = higher priority
+    m_pluginStack << m_autoAway << m_mpris;
+
     m_errorHandler = new ErrorHandler(m_accountManager, this);
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
 }
 
 void TelepathyModule::onPresenceChanged(const KTp::Presence &presence)
 {
-    //only save if the presence is not auto-set
-    if (m_pluginStack.isEmpty()) {
-        KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
-        KConfigGroup presenceConfig = config->group("LastPresence");
-
-        presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)m_globalPresence->currentPresence().type());
-        presenceConfig.writeEntry(QLatin1String("PresenceStatus"), m_globalPresence->currentPresence().status());
-        presenceConfig.writeEntry(QLatin1String("PresenceMessage"), m_globalPresence->currentPresence().statusMessage());
-
-        presenceConfig.sync();
+    //if it's any plugin - ignore it.
+    Q_FOREACH(TelepathyKDEDModulePlugin* plugin, m_pluginStack) {
+        if (plugin->isActive() && plugin->isEnabled()) {
+            return;
+        }
     }
+
+    //FUTURE
+    //instead of monitoring presence we monitor requestedPresence
+    // if this changes and presence != currentPluginPresence.. then it means the user has changed it.
+    // this will fix the kded presence bugs
+
+    //user is manually setting the presnece.
+    m_lastUserPresence = presence;
+
+    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    KConfigGroup presenceConfig = config->group("LastPresence");
+
+    presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)m_globalPresence->currentPresence().type());
+    presenceConfig.writeEntry(QLatin1String("PresenceStatus"), m_globalPresence->currentPresence().status());
+    presenceConfig.writeEntry(QLatin1String("PresenceMessage"), m_globalPresence->currentPresence().statusMessage());
+
+    presenceConfig.sync();
 }
 
 void TelepathyModule::onPluginActivated(bool active)
 {
-    TelepathyKDEDModulePlugin *plugin = qobject_cast<TelepathyKDEDModulePlugin*>(sender());
-    Q_ASSERT(plugin);
+    Q_UNUSED(active);
+    //a plugin has changed state, set presence to whatever a plugin thinks it should be (or restore users setting)
+    m_globalPresence->setPresence(currentPluginPresence());
+}
 
-    if (active) {
-        kDebug() << "Received activation request, current active plugins:" << m_pluginStack.size();
-        if (m_pluginStack.isEmpty()) {
-            m_globalPresence->saveCurrentPresence();
-            m_pluginStack.append(plugin);
-        } else if (!m_pluginStack.contains(plugin)) {
-            int i;
-            for (i = 0; i < m_pluginStack.size(); i++) {
-                if (plugin->pluginPriority() >= m_pluginStack.at(i)->pluginPriority()) {
-                    break;
-                }
-            }
-            m_pluginStack.insert(i, plugin);
-        }
-
-        kDebug() << "Activating" << plugin->pluginName();
-
-        if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
-            //signal all global presence instances that they should not save global presence message
-            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
-                                                              QLatin1String( "org.kde.Telepathy"),
-                                                              QLatin1String("presenceChanger"));
-            message.setArguments(QList<QVariant>() << m_pluginStack.first()->pluginName());
-            QDBusConnection::sessionBus().send(message);
-
-            m_globalPresence->setPresence(m_pluginStack.first()->requestedPresence());
-        }
-    } else {
-        kDebug() << "Received deactivation request, current active plugins:" << m_pluginStack.size();
-        while (!m_pluginStack.isEmpty()) {
-            if (!m_pluginStack.first()->isActive()) {
-                kDebug() << "Deactivating" << m_pluginStack.first()->pluginName();
-                m_pluginStack.removeFirst();
-            } else {
-                break;
-            }
-        }
-
-        if (!m_globalPresence->onlineAccounts()->accounts().isEmpty()) {
-            if (m_pluginStack.isEmpty()) {
-                //signal out that presences are back to user control
-                QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
-                                                                  QLatin1String( "org.kde.Telepathy"),
-                                                                  QLatin1String("presenceChanger"));
-                message.setArguments(QList<QVariant>() << QString::fromLatin1("user"));
-                QDBusConnection::sessionBus().send(message);
-
-                m_globalPresence->restoreSavedPresence();
-            } else {
-                m_globalPresence->setPresence(m_pluginStack.first()->requestedPresence());
-            }
+KTp::Presence TelepathyModule::currentPluginPresence()
+{
+    //search plugins in priority order. If a plugin is active, return the state it thinks it should be in.
+    Q_FOREACH(TelepathyKDEDModulePlugin* plugin, m_pluginStack) {
+        if (plugin->isActive() && plugin->isEnabled()) {
+            return plugin->requestedPresence();
         }
     }
-
-    kDebug() << "Active plugins (" << m_pluginStack.size() << ")";
-    for(int i = 0; i < m_pluginStack.size(); i++) {
-        kDebug() << "  " << m_pluginStack.at(i)->pluginName();
-    }
+    //no plugins active, return the last presence the user set.
+    return m_lastUserPresence;
 }
 
 #include "telepathy-module.moc"

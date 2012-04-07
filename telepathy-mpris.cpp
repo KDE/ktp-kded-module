@@ -37,8 +37,6 @@ TelepathyMPRIS::TelepathyMPRIS(KTp::GlobalPresence* globalPresence, QObject* par
     : TelepathyKDEDModulePlugin(globalPresence, parent),
       m_presenceActivated(false)
 {
-    setPluginPriority(50);
-
     //read settings and detect players if plugin is enabled
     onSettingsChanged();
 

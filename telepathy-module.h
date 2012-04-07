@@ -57,6 +57,10 @@ private Q_SLOTS:
     void onPluginActivated(bool);
 
 private:
+    /** Returns the presence we think we should be in. Either from the highest priority plugin, or if none are active, the last user set.*/
+    KTp::Presence currentPluginPresence();
+
+private:
     Tp::AccountManagerPtr    m_accountManager;
     AutoAway                *m_autoAway;
     TelepathyMPRIS          *m_mpris;
@@ -65,6 +69,7 @@ private:
     ContactRequestHandler   *m_contactHandler;
 
     QList<TelepathyKDEDModulePlugin*> m_pluginStack;
+    KTp::Presence m_lastUserPresence;
 };
 
 #endif // TELEPATHY_MODULE_H

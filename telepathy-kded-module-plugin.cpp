@@ -25,7 +25,7 @@
 TelepathyKDEDModulePlugin::TelepathyKDEDModulePlugin(KTp::GlobalPresence* globalPresence, QObject* parent)
     : QObject(parent),
       m_enabled(false),
-      m_pluginPriority(50)
+      m_active(false)
 {
     m_globalPresence = globalPresence;
 }

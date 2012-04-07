@@ -39,7 +39,6 @@ public:
 
     bool isActive() const { return m_active; };
     bool isEnabled() const { return m_enabled; };
-    int pluginPriority() const { return m_pluginPriority; };
     /// Deriving classes must return a valid plugin name in this method
     virtual QString pluginName() const = 0;
 
@@ -52,7 +51,6 @@ Q_SIGNALS:
 protected:
     void setActive(bool active);
     void setEnabled(bool enabled);
-    void setPluginPriority(int priority) { m_pluginPriority = priority; };
     void setRequestedPresence(const Tp::Presence &presence) { m_requestedPresence = presence; };
 
     KTp::GlobalPresence *m_globalPresence;
@@ -61,7 +59,6 @@ private:
     Tp::Presence m_requestedPresence;
     bool m_enabled;
     bool m_active;
-    int m_pluginPriority;
 };
 
 #endif // TELEPATHY_KDED_MODULE_PLUGIN_H
