@@ -146,10 +146,20 @@ void TelepathyModule::onPluginActivated(bool active)
 {
     Q_UNUSED(active);
     //a plugin has changed state, set presence to whatever a plugin thinks it should be (or restore users setting)
-    m_globalPresence->setPresence(currentPluginPresence());
+    setPresence(currentPluginPresence());
 }
 
-KTp::Presence TelepathyModule::currentPluginPresence()
+void TelepathyModule::setPresence(const KTp::Presence &presence)
+{
+    Q_FOREACH(const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+        //change the state of any online account.
+        if (account->isEnabled() && account->isOnline()) {
+            account->setRequestedPresence(presence);
+        }
+    }
+}
+
+KTp::Presence TelepathyModule::currentPluginPresence() const
 {
     //search plugins in priority order. If a plugin is active, return the state it thinks it should be in.
     Q_FOREACH(TelepathyKDEDModulePlugin* plugin, m_pluginStack) {

@@ -58,7 +58,8 @@ private Q_SLOTS:
 
 private:
     /** Returns the presence we think we should be in. Either from the highest priority plugin, or if none are active, the last user set.*/
-    KTp::Presence currentPluginPresence();
+    KTp::Presence currentPluginPresence() const;
+    void setPresence(const KTp::Presence &presence);
 
 private:
     Tp::AccountManagerPtr    m_accountManager;
