@@ -53,7 +53,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation*);
-    void onPresenceChanged(const KTp::Presence &presence);
+    void onRequestedPresenceChanged(const KTp::Presence &presence);
     void onPluginActivated(bool);
 
 private:

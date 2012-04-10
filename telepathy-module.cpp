@@ -91,8 +91,8 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
 
     m_globalPresence = new KTp::GlobalPresence(this);
     m_globalPresence->setAccountManager(m_accountManager);
-    connect(m_globalPresence, SIGNAL(currentPresenceChanged(KTp::Presence)),
-            this, SLOT(onPresenceChanged(KTp::Presence)));
+    connect(m_globalPresence, SIGNAL(requestedPresenceChanged(KTp::Presence)),
+            this, SLOT(onRequestedPresenceChanged(KTp::Presence)));
 
     m_autoAway = new AutoAway(m_globalPresence, this);
     connect(m_autoAway, SIGNAL(activate(bool)),
@@ -115,19 +115,12 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
 }
 
-void TelepathyModule::onPresenceChanged(const KTp::Presence &presence)
+void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
 {
-    //if it's any plugin - ignore it.
-    Q_FOREACH(TelepathyKDEDModulePlugin* plugin, m_pluginStack) {
-        if (plugin->isActive() && plugin->isEnabled()) {
-            return;
-        }
+    //if it's changed to what we set it to. Ignore it.
+    if (presence == currentPluginPresence()) {
+        return;
     }
-
-    //FUTURE
-    //instead of monitoring presence we monitor requestedPresence
-    // if this changes and presence != currentPluginPresence.. then it means the user has changed it.
-    // this will fix the kded presence bugs
 
     //user is manually setting the presnece.
     m_lastUserPresence = presence;
