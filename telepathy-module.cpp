@@ -31,6 +31,7 @@
 
 #include "telepathy-mpris.h"
 #include "autoaway.h"
+#include "autoconnect.h"
 #include "error-handler.h"
 #include "telepathy-kded-module-plugin.h"
 
@@ -75,7 +76,7 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
     QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
-                                          QLatin1String("settingsChange"), this, SIGNAL(settingsChanged()) );
+                                          QLatin1String("settingsChange"), this, SIGNAL(settingsChanged()));
 
 }
 
@@ -108,6 +109,12 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     connect(this, SIGNAL(settingsChanged()),
             m_mpris, SLOT(onSettingsChanged()));
 
+    m_autoConnect = new AutoConnect(this);
+    m_autoConnect->setAccountManager(m_accountManager);
+
+    connect(this, SIGNAL(settingsChanged()),
+            m_autoConnect, SLOT(onSettingsChanged()));
+
     //earlier in list = higher priority
     m_pluginStack << m_autoAway << m_mpris;
 
@@ -133,6 +140,8 @@ void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
     presenceConfig.writeEntry(QLatin1String("PresenceMessage"), m_globalPresence->currentPresence().statusMessage());
 
     presenceConfig.sync();
+
+    m_autoConnect->setAutomaticPresence(m_globalPresence->currentPresence());
 }
 
 void TelepathyModule::onPluginActivated(bool active)

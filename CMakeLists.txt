@@ -34,6 +34,7 @@ set (kded_ktp_integration_module_SRCS
      telepathy-module.cpp
      autoaway.cpp
      telepathy-mpris.cpp
+     autoconnect.cpp
      error-handler.cpp
 )
 

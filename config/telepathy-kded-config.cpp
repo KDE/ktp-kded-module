@@ -29,6 +29,7 @@
 #include <QDBusConnection>
 
 #include "column-resizer.h"
+#include "autoconnect.h"
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
 K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("kcm_ktp_integration_module", "kded_ktp_integration_module"))
@@ -66,6 +67,7 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     resizer->addWidgetsFromLayout(ui->incomingFilesGroupBox->layout(), 0);
     resizer->addWidgetsFromLayout(ui->autoAwayGroupBox->layout(), 0);
     resizer->addWidgetsFromLayout(ui->nowPlayingGroupBox->layout(), 0);
+    resizer->addWidgetsFromLayout(ui->autoConnectGroupBox->layout(), 0);
 
     //TODO enable this when it is supported by the approver
     ui->m_autoAcceptLabel->setHidden(true);
@@ -101,6 +103,8 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     connect(ui->m_awayMessage, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
     connect(ui->m_xaMessage, SIGNAL(textChanged(QString)),
+            this, SLOT(settingsHasChanged()));
+    connect(ui->m_autoConnectCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
 
     connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
@@ -184,6 +188,26 @@ void TelepathyKDEDConfig::load()
     ui->m_nowPlayingText->setText(nowPlayingText);
     ui->m_nowPlayingText->setEnabled(nowPlayingEnabled);
     ui->m_tagListWidget->setEnabled(nowPlayingEnabled);
+
+    // autoconnect
+    QString autoConnectString = kdedConfig.readEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Manual));
+    AutoConnect::Mode autoConnectMode = AutoConnect::stringToMode(autoConnectString);
+
+    switch (autoConnectMode) {
+    case AutoConnect::Disabled:
+        ui->m_autoConnectCheckBox->setTristate(false);
+        ui->m_autoConnectCheckBox->setChecked(false);
+        break;
+    case AutoConnect::Enabled:
+        ui->m_autoConnectCheckBox->setTristate(false);
+        ui->m_autoConnectCheckBox->setChecked(true);
+        break;
+    case AutoConnect::Manual:
+        // AutoConnect::Manual is the default
+    default:
+        ui->m_autoConnectCheckBox->setTristate(true);
+        ui->m_autoConnectCheckBox->setCheckState(Qt::PartiallyChecked);
+    }
 }
 
 void TelepathyKDEDConfig::save()
@@ -215,10 +239,22 @@ void TelepathyKDEDConfig::save()
     }
 
     kdedConfig.writeEntry(QLatin1String("nowPlayingText"), modifiedNowPlayingText);
+
+    switch (ui->m_autoConnectCheckBox->checkState()) {
+    case Qt::Unchecked:
+        kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Disabled));
+        break;
+    case Qt::PartiallyChecked:
+        kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Manual));
+        break;
+    case Qt::Checked:
+        kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Enabled));
+    }
+
     kdedConfig.sync();
 
     QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
-                                                      QLatin1String( "org.kde.Telepathy"),
+                                                      QLatin1String("org.kde.Telepathy"),
                                                       QLatin1String("settingsChange"));
     QDBusConnection::sessionBus().send(message);
 }

@@ -39,6 +39,7 @@ class TelepathyKDEDModulePlugin;
 class ErrorHandler;
 class TelepathyMPRIS;
 class AutoAway;
+class AutoConnect;
 
 class TelepathyModule : public KDEDModule
 {
@@ -65,6 +66,7 @@ private:
     Tp::AccountManagerPtr    m_accountManager;
     AutoAway                *m_autoAway;
     TelepathyMPRIS          *m_mpris;
+    AutoConnect             *m_autoConnect;
     ErrorHandler            *m_errorHandler;
     KTp::GlobalPresence     *m_globalPresence;
     ContactRequestHandler   *m_contactHandler;

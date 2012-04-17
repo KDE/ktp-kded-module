@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>703</width>
-    <height>560</height>
+    <height>638</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -313,25 +313,66 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="4" column="1">
-       <widget class="NowPlayingListWidget" name="m_tagListWidget">
+       <widget class="NowPlayingListWidget" name="m_tagListWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="autoConnectGroupBox">
+     <property name="title">
+      <string>Auto connect</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="m_autoConnectLabel">
+        <property name="text">
+         <string>Restore last presence on login:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="m_autoConnectCheckBox">
+        <property name="text">
+         <string>Enabled</string>
+        </property>
        </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
