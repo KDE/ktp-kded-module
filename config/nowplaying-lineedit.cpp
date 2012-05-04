@@ -60,7 +60,7 @@ void NowPlayingLineEdit::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         int currentCursorPosition = cursorPositionAt(event->pos());
 
-        Q_FOREACH (const QString tag, m_localizedTagNames) {
+        Q_FOREACH (const QString &tag, m_localizedTagNames) {
             if(text().contains(tag)
             && currentCursorPosition >= text().indexOf(tag) //cursor must be inside tag's bounds
             && currentCursorPosition <= text().indexOf(tag) + tag.size()) {
