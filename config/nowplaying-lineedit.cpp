@@ -18,7 +18,10 @@
 
 #include "nowplaying-lineedit.h"
 
-#include <QtGui>
+#include <QLineEdit>
+#include <QMimeData>
+#include <QMouseEvent>
+#include <QDropEvent>
 
 NowPlayingLineEdit::NowPlayingLineEdit(QWidget *parent)
 : QLineEdit(parent)
