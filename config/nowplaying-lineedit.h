@@ -22,7 +22,7 @@
 
 #include <QLineEdit>
 
-class NowPlayingLineEdit : public QLineEdit
+class NowPlayingLineEdit : public QLineEdit    //krazy:exclude=qclasses
 {
      Q_OBJECT
 

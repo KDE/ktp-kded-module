@@ -78,7 +78,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
     QString trackNumber;
 
     //FIXME We can do less lame parsing...maybe.
-    Q_FOREACH (const QVariant &property, changedProperties.values()) {
+    Q_FOREACH (const QVariant &property, changedProperties.values()) {  //krazy:exclude=foreach
         if (property.canConvert<QString>()) {
             if (property.toString() == QLatin1String("Paused") || property.toString() == QLatin1String("Stopped")) {
                 setActive(false);

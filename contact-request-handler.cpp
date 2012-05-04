@@ -172,7 +172,7 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
             updateMenus();
 
-            m_notifierItem.data()->showMessage(i18n("New contact request"),
+            m_notifierItem.data()->showMessage(i18n("New contact request"),    //krazy:exclude=qmethods
                                                i18n("The contact %1 added you to its contact list. You can answer this "
                                                     "request using the tray icon.",
                                                     contact->id()),
