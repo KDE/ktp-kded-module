@@ -27,6 +27,7 @@
 
 class AutoConnect : public QObject
 {
+    Q_OBJECT
 
 public:
     enum Mode {
