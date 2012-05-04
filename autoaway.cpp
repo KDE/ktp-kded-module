@@ -59,8 +59,8 @@ void AutoAway::timeoutReached(int id)
     }
     KIdleTime::instance()->catchNextResumeEvent();
     if (id == m_awayTimeoutId) {
-        if (m_globalPresence->currentPresence().type() != Tp::Presence::away().type() ||
-            m_globalPresence->currentPresence().type() != Tp::Presence::xa().type() ||
+        if (m_globalPresence->currentPresence().type() != Tp::Presence::away().type() &&
+            m_globalPresence->currentPresence().type() != Tp::Presence::xa().type() &&
             m_globalPresence->currentPresence().type() != Tp::Presence::hidden().type()) {
 
             setRequestedPresence(Tp::Presence::away(m_awayMessage));
