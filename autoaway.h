@@ -35,7 +35,7 @@ class AutoAway : public TelepathyKDEDModulePlugin
     Q_OBJECT
 
 public:
-    AutoAway(KTp::GlobalPresence *globalPresence, QObject* parent = 0);
+    explicit AutoAway(KTp::GlobalPresence *globalPresence, QObject* parent = 0);
     ~AutoAway();
 
     void readConfig();

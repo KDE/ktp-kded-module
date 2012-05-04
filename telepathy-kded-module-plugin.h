@@ -34,7 +34,7 @@ class TelepathyKDEDModulePlugin : public QObject
     Q_OBJECT
 
 public:
-    TelepathyKDEDModulePlugin(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
+    explicit TelepathyKDEDModulePlugin(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
     virtual ~TelepathyKDEDModulePlugin();
 
     bool isActive() const { return m_active; };

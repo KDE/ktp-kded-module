@@ -31,7 +31,7 @@ class ContactRequestHandler : public QObject
 {
     Q_OBJECT
 public:
-    ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
+    explicit ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
     virtual ~ContactRequestHandler();
 
 private Q_SLOTS:

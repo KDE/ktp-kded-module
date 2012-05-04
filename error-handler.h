@@ -28,7 +28,7 @@ class ErrorHandler : public QObject
 {
     Q_OBJECT
 public:
-    ErrorHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
+    explicit ErrorHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
     virtual ~ErrorHandler();
 
     enum SystemMessageType {
