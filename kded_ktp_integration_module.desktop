@@ -35,6 +35,7 @@ Name[zh_TW]=Telepathy 整合模組
 Comment=Module providing deeper integration of Instant Messaging with KDE.
 Comment[ca]=Mòdul que proporciona una integració més gran de la missatgeria instantània amb el KDE.
 Comment[da]=Modul som giver dybere integration af instant messaging i KDE
+Comment[de]=Modul, das eine tiefergehende Integration von Instant Messaging in KDE bietet.
 Comment[el]=Άρθρωμα που παρέχει πληρέστερη ολοκλήρωση εφαρμογών στιγμιαίων μηνυμάτων με το KDE.
 Comment[es]=Módulo que provee de integración más profunda de la mensajería instantánea con KDE.
 Comment[et]=Moodul kiirsuhtluse tihedamaks lõimimiseks KDE-ga.
