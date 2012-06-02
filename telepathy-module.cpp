@@ -135,13 +135,13 @@ void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     KConfigGroup presenceConfig = config->group("LastPresence");
 
-    presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)m_globalPresence->currentPresence().type());
-    presenceConfig.writeEntry(QLatin1String("PresenceStatus"), m_globalPresence->currentPresence().status());
-    presenceConfig.writeEntry(QLatin1String("PresenceMessage"), m_globalPresence->currentPresence().statusMessage());
+    presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)presence.type());
+    presenceConfig.writeEntry(QLatin1String("PresenceStatus"), presence.status());
+    presenceConfig.writeEntry(QLatin1String("PresenceMessage"), presence.statusMessage());
 
     presenceConfig.sync();
 
-    m_autoConnect->setAutomaticPresence(m_globalPresence->currentPresence());
+    m_autoConnect->setAutomaticPresence(presence);
 }
 
 void TelepathyModule::onPluginActivated(bool active)
