@@ -16,7 +16,6 @@ kde4_add_plugin(kcm_ktp_integration_module
 
 target_link_libraries(kcm_ktp_integration_module ${KDE4_KDECORE_LIBS}
                                                        ${KDE4_KDEUI_LIBS}
-                                                       ${KDE4_KCMUTILS_LIBS}
                                                        ${KDE4_KIO_LIBS}
 )
 
