@@ -48,6 +48,7 @@ target_link_libraries (kded_ktp_integration_module
                        ${KTP_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        ${KDE4_KIDLETIME_LIBRARY}
+                       ${KDE4_SOLID_LIBS}
 )
 
 install (TARGETS kded_ktp_integration_module
