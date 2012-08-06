@@ -90,6 +90,8 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(settingsHasChanged()));
     connect(ui->m_autoAcceptCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
+    connect(ui->m_awayCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(settingsHasChanged()));
     connect(ui->m_xaCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
     connect(ui->m_awayMins, SIGNAL(valueChanged(int)),

@@ -167,6 +167,8 @@ void TelepathyMPRIS::detectPlayers()
 void TelepathyMPRIS::onSettingsChanged()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    config.data()->reparseConfiguration();
+
     KConfigGroup kdedConfig = config->group("KDED");
 
     bool pluginEnabled = kdedConfig.readEntry("nowPlayingEnabled", false);

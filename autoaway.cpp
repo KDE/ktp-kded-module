@@ -83,6 +83,8 @@ void AutoAway::backFromIdle()
 void AutoAway::readConfig()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    config.data()->reparseConfiguration();
+
     KConfigGroup kdedConfig = config->group("KDED");
 
     bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
