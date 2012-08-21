@@ -70,63 +70,25 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
         return;
     }
 
-    bool trackInfoFound = false;
-
-    QString artist;
-    QString title;
-    QString album;
-    QString trackNumber;
-
-    //FIXME We can do less lame parsing...maybe.
-    Q_FOREACH (const QVariant &property, changedProperties.values()) {  //krazy:exclude=foreach
-        if (property.canConvert<QString>()) {
-            if (property.toString() == QLatin1String("Paused") || property.toString() == QLatin1String("Stopped")) {
-                setActive(false);
-                return;
-            }
-
-            if (property.toString() == QLatin1String("Playing")) {
-                QStringList mprisServices = QDBusConnection::sessionBus().interface()->registeredServiceNames().value().filter(QLatin1String("org.mpris.MediaPlayer2"));
-
-                Q_FOREACH (const QString &service, mprisServices) {
-                    QDBusInterface mprisInterface(service, QLatin1String("/org/mpris/MediaPlayer2"), QLatin1String("org.mpris.MediaPlayer2.Player"));
-                    if (mprisInterface.property("PlaybackStatus") == QLatin1String("Playing")) {
-                        QMap<QString, QVariant> metadata = mprisInterface.property("Metadata").toMap();
-                        if (metadata.isEmpty()) {
-                            break;
-                        }
-
-                        artist = metadata.value(QLatin1String("xesam:artist")).toString();
-                        title = metadata.value(QLatin1String("xesam:title")).toString();
-                        album = metadata.value(QLatin1String("xesam:album")).toString();
-                        trackNumber = metadata.value(QLatin1String("xesam:trackNumber")).toString();
-                        trackInfoFound = true;
-                        break;
-                    }
-
-                }
-            }
+    //lookup if the PlaybackStatus was changed
+    if (changedProperties.keys().contains(QLatin1String("PlaybackStatus"))) {
+        if (changedProperties.value(QLatin1String("PlaybackStatus")) == QLatin1String("Playing")) {
+            m_playbackActive = true;
+            setTrackToPresence(m_lastReceivedMetadata);
+        } else {
+            //if the player is stopped or paused, deactivate and return to normal presence
+            m_playbackActive = false;
+            m_lastReceivedMetadata.clear();
+            setActive(false);
+            return;
         }
     }
 
-    if (trackInfoFound) {
-        //we replace track's info in custom nowPlayingText
-        QString statusMessage = m_nowPlayingText;
-        statusMessage.replace(QLatin1String("%title"), title, Qt::CaseInsensitive);
-        statusMessage.replace(QLatin1String("%artist"), artist, Qt::CaseInsensitive);
-        statusMessage.replace(QLatin1String("%album"), album, Qt::CaseInsensitive);
-        statusMessage.replace(QLatin1String("%track"), trackNumber, Qt::CaseInsensitive);
-
-        Tp::Presence currentPresence = m_globalPresence->currentPresence();
-        Tp::SimplePresence presence;
-
-        presence.type = currentPresence.type();
-        presence.status = currentPresence.status();
-        presence.statusMessage = statusMessage;
-
-        setRequestedPresence(Tp::Presence(presence));
-        if (m_presenceActivated) {
-            setActive(true);
+    //track data change
+    if (changedProperties.keys().contains(QLatin1String("Metadata"))) {
+        m_lastReceivedMetadata = qdbus_cast<QMap<QString, QVariant> >(changedProperties.value(QLatin1String("Metadata")));
+        if (m_playbackActive) {
+            setTrackToPresence(m_lastReceivedMetadata);
         }
     }
 }
@@ -139,12 +101,13 @@ void TelepathyMPRIS::detectPlayers()
 
     Q_FOREACH (const QString &service, mprisServices) {
         kDebug() << "Found mpris service:" << service;
-        QDBusInterface mprisInterface(service, QLatin1String("/org/mpris/MediaPlayer2"), QLatin1String("org.mpris.MediaPlayer2.Player"));
-        if (mprisInterface.property("PlaybackStatus") == QLatin1String("Playing")) {
-            QVariantMap m;
-            m.insert(QLatin1String("PlaybackStatus"), QVariant(QLatin1String("Playing")));
-            onPlayerSignalReceived(QString(), m, QStringList());
-        }
+        QDBusInterface mprisInterface(service, QLatin1String("/org/mpris/MediaPlayer2"), QLatin1String("org.freedesktop.DBus.Properties"));
+        QDBusPendingCall call = mprisInterface.asyncCall(QLatin1String("GetAll"),
+                                                         QLatin1String("org.mpris.MediaPlayer2.Player"));
+
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                this, SLOT(onPlaybackStatusReceived(QDBusPendingCallWatcher*)));
 
         //check if we are already watching this service
         if (!m_knownPlayers.contains(service)) {
@@ -215,5 +178,51 @@ void TelepathyMPRIS::onDeactivateNowPlaying()
     if (m_presenceActivated) {
         m_presenceActivated = false;
         setActive(false);
+    }
+}
+
+void TelepathyMPRIS::onPlaybackStatusReceived(QDBusPendingCallWatcher *watcher)
+{
+    QDBusPendingReply<QVariantMap> reply = *watcher;
+    if (reply.isError()) {
+        kWarning() << "Received error reply from DBus" << reply.error();
+    } else {
+        QVariantMap replyData = reply.value();
+        if (replyData.value(QLatin1String("PlaybackStatus")).toString() == QLatin1String("Playing")) {
+            setTrackToPresence(qdbus_cast<QMap<QString, QVariant> >(replyData.value(QLatin1String("Metadata")).value<QDBusArgument>()));
+        }
+    }
+
+    watcher->deleteLater();
+}
+
+void TelepathyMPRIS::setTrackToPresence(const QMap<QString, QVariant> &trackData)
+{
+    if (trackData.isEmpty()) {
+        return;
+    }
+
+    QString artist = trackData.value(QLatin1String("xesam:artist")).toString();
+    QString title = trackData.value(QLatin1String("xesam:title")).toString();
+    QString album = trackData.value(QLatin1String("xesam:album")).toString();
+    QString trackNumber = trackData.value(QLatin1String("xesam:trackNumber")).toString();
+
+    //we replace track's info in custom nowPlayingText
+    QString statusMessage = m_nowPlayingText;
+    statusMessage.replace(QLatin1String("%title"), title, Qt::CaseInsensitive);
+    statusMessage.replace(QLatin1String("%artist"), artist, Qt::CaseInsensitive);
+    statusMessage.replace(QLatin1String("%album"), album, Qt::CaseInsensitive);
+    statusMessage.replace(QLatin1String("%track"), trackNumber, Qt::CaseInsensitive);
+
+    Tp::Presence currentPresence = m_globalPresence->currentPresence();
+    Tp::SimplePresence presence;
+
+    presence.type = currentPresence.type();
+    presence.status = currentPresence.status();
+    presence.statusMessage = statusMessage;
+
+    setRequestedPresence(Tp::Presence(presence));
+    if (m_presenceActivated) {
+        setActive(true);
     }
 }

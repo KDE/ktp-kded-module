@@ -35,6 +35,8 @@ public:
 
     QString pluginName() const;
 
+    void setTrackToPresence(const QMap<QString, QVariant> &trackData);
+
 public Q_SLOTS:
     void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
     void onSettingsChanged();
@@ -43,6 +45,8 @@ public Q_SLOTS:
     void onActivateNowPlaying();
     void onDeactivateNowPlaying();
 
+    void onPlaybackStatusReceived(QDBusPendingCallWatcher *watcher);
+
 Q_SIGNALS:
     void togglePlaybackActive(bool);
 
@@ -50,6 +54,9 @@ private:
     QStringList m_knownPlayers;
     bool m_presenceActivated;
     QString m_nowPlayingText;
+
+    QVariantMap m_lastReceivedMetadata;
+    bool m_playbackActive;
 };
 
 #endif // TELEPATHY_MPRIS_H
