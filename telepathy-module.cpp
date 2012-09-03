@@ -34,6 +34,7 @@
 #include "autoconnect.h"
 #include "error-handler.h"
 #include "telepathy-kded-module-plugin.h"
+#include "contactnotify.h"
 
 #include <KConfigGroup>
 #include "contact-request-handler.h"
@@ -120,6 +121,7 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
 
     m_errorHandler = new ErrorHandler(m_accountManager, this);
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
+    m_contactNotify = new ContactNotify(m_accountManager, this);
 }
 
 void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)

@@ -36,6 +36,7 @@ set (kded_ktp_integration_module_SRCS
      telepathy-mpris.cpp
      autoconnect.cpp
      error-handler.cpp
+     contactnotify.cpp
 )
 
 kde4_add_plugin (kded_ktp_integration_module

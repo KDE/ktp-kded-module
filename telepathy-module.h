@@ -40,6 +40,7 @@ class ErrorHandler;
 class TelepathyMPRIS;
 class AutoAway;
 class AutoConnect;
+class ContactNotify;
 
 class TelepathyModule : public KDEDModule
 {
@@ -70,6 +71,7 @@ private:
     ErrorHandler            *m_errorHandler;
     KTp::GlobalPresence     *m_globalPresence;
     ContactRequestHandler   *m_contactHandler;
+    ContactNotify           *m_contactNotify;
 
     QList<TelepathyKDEDModulePlugin*> m_pluginStack;
     KTp::Presence m_lastUserPresence;
