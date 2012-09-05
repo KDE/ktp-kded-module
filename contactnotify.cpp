@@ -21,7 +21,7 @@
 #include <KDebug>
 
 #include <TelepathyQt/ContactManager>
-#include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Contact>
 
 #include <KNotification>
@@ -37,58 +37,78 @@ ContactNotify::ContactNotify(const Tp::AccountManagerPtr accountMgr, QObject *pa
         return;
     }
 
-    QList<Tp::AccountPtr> onlineAccounts = m_accountManager->allAccounts();
-    Q_FOREACH(const Tp::AccountPtr &account, onlineAccounts) {
+    QList<Tp::AccountPtr> accounts = m_accountManager->allAccounts();
+    Q_FOREACH(const Tp::AccountPtr &account, accounts) {
         // Accounts that are already online should be handled immediately
         if (account.data()->isOnline()) {
-            kDebug() << "Account" << account.data()->normalizedName() << "is Online";
-            accountIsOnline(&account);
+            kDebug() << "Account" << account.data()->normalizedName() << "is already Online";
+            accountIsOnline(account.data());
+        } else {
+            // Handle accounts coming online
+            connect(account.data(), SIGNAL(onlinenessChanged(bool)),
+                    SLOT(accountCameOnline(bool)));
         }
-
-        // Handle accounts coming online
-        connect(account.data(), SIGNAL(onlinenessChanged(bool)),
-                SLOT(accountCameOnline(bool)));
     }
 }
 
 void ContactNotify::accountCameOnline(bool online)
 {
     if (online) {
-        const Tp::AccountPtr *account = (Tp::AccountPtr *)QObject::sender();
-        accountIsOnline(account);
+        const Tp::Account *account = (Tp::Account *)QObject::sender();
+        if (account) {
+            kDebug() << "Account" << account->normalizedName() << "came Online";
+            accountIsOnline(account);
+        }
     }
 }
 
-void ContactNotify::accountIsOnline(const Tp::AccountPtr *account)
+void ContactNotify::accountIsOnline(const Tp::Account *account)
 {
-    Tp::Contacts contacts = account->data()->connection()->contactManager()->allKnownContacts();
-    Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
-        connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
-                SLOT(contactPresenceChanged(Tp::Presence)));
+    Q_ASSERT(account);
+    m_connection = account->connection();
+    if(m_connection.data()) {
+        connect(m_connection.data(), SIGNAL(statusChanged(Tp::ConnectionStatus)),
+                SLOT(onStatusChanged(Tp::ConnectionStatus)));
     }
 }
 
-void ContactNotify::contactPresenceChanged(Tp::Presence presence)
+void ContactNotify::onStatusChanged(const Tp::ConnectionStatus status)
 {
-    Tp::Contact *contact = (Tp::Contact *)QObject::sender();
+    if (status == Tp::ConnectionStatusConnected) {
+        Tp::ContactManagerPtr contactManager = m_connection.data()->contactManager();
+        Tp::Contacts contacts = contactManager.data()->allKnownContacts();
+        // This is going to be *slow* when the user has alot of contacts
+        // Optimize it later on
+        Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
+            connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
+                    SLOT(contactPresenceChanged(Tp::Presence)));
+        }
+    }
+}
+
+void ContactNotify::contactPresenceChanged(const Tp::Presence presence)
+{
     KTp::Presence ktpPresence(presence);
+    Tp::Contact *contact = (Tp::Contact *)QObject::sender();
     sendNotification(i18nc("%1 is the contact name, %2 is the presence message",
                            "%1 is now %2",
                            contact->alias(),
                            ktpPresence.displayString()),
-                     ktpPresence.icon());
+                     ktpPresence.icon(),
+                     contact);
 }
 
-void ContactNotify::sendNotification(QString text, KIcon icon)
+void ContactNotify::sendNotification(QString text, KIcon icon, const Tp::Contact *contact)
 {
     //The pointer is automatically deleted when the event is closed
     KNotification *notification;
-    notification = new KNotification(QLatin1String("telepathyInfo"), KNotification::CloseOnTimeout);
+    notification = new KNotification(QLatin1String("contactInfo"), KNotification::CloseOnTimeout);
 
     KAboutData aboutData("ktelepathy",0,KLocalizedString(),0);
     notification->setComponentData(KComponentData(aboutData));
 
     notification->setPixmap(icon.pixmap(48));
     notification->setText(text);
+    notification->addContext(QLatin1String("contact"), contact->id());
     notification->sendEvent();
 }

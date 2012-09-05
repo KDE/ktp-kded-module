@@ -19,8 +19,10 @@
 #ifndef CONTACTNOTIFY_H
 #define CONTACTNOTIFY_H
 
-#include <TelepathyQt/AccountManager>
-#include <KIcon>
+class KIcon;
+
+#include <TelepathyQt/Types>
+#include <TelepathyQt/Connection>
 
 class ContactNotify : public QObject
 {
@@ -30,13 +32,14 @@ public:
 
 private:
     Tp::AccountManagerPtr m_accountManager;
+    Tp::ConnectionPtr m_connection;
+    void sendNotification(QString, KIcon, const Tp::Contact*);
 
 private Q_SLOTS:
     void accountCameOnline(bool);
-    void accountIsOnline(const Tp::AccountPtr*);
-    void contactPresenceChanged(Tp::Presence);
-    void sendNotification(QString, KIcon);
-
+    void accountIsOnline(const Tp::Account *);
+    void contactPresenceChanged(const Tp::Presence);
+    void onStatusChanged(const Tp::ConnectionStatus);
 };
 
 #endif // CONTACTNOTIFY_H
