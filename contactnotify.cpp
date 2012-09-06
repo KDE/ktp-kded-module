@@ -66,7 +66,7 @@ void ContactNotify::accountIsOnline(const Tp::Account *account)
 {
     Q_ASSERT(account);
     m_connection = account->connection();
-    if(m_connection.data()) {
+    if (m_connection.data()) {
         connect(m_connection.data(), SIGNAL(statusChanged(Tp::ConnectionStatus)),
                 SLOT(onStatusChanged(Tp::ConnectionStatus)));
     }
