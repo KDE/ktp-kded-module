@@ -57,8 +57,6 @@ ContactRequestHandler::ContactRequestHandler(const Tp::AccountManagerPtr& am, QO
         onNewAccountAdded(account);
     }
 
-    m_noContactsAction = new KAction(i18n("No pending contact requests at the moment"), this);
-    m_noContactsAction->setEnabled(false);
 }
 
 ContactRequestHandler::~ContactRequestHandler()
@@ -72,7 +70,7 @@ void ContactRequestHandler::onNewAccountAdded(const Tp::AccountPtr& account)
     Q_ASSERT(account->isReady(Tp::Account::FeatureCore));
 
     if (account->connection()) {
-        monitorPresence(account->connection());
+        handleNewConnection(account->connection());
     }
 
     connect(account.data(),
@@ -83,11 +81,11 @@ void ContactRequestHandler::onNewAccountAdded(const Tp::AccountPtr& account)
 void ContactRequestHandler::onConnectionChanged(const Tp::ConnectionPtr& connection)
 {
     if (!connection.isNull()) {
-        monitorPresence(connection);
+        handleNewConnection(connection);
     }
 }
 
-void ContactRequestHandler::monitorPresence(const Tp::ConnectionPtr &connection)
+void ContactRequestHandler::handleNewConnection(const Tp::ConnectionPtr &connection)
 {
     kDebug();
     connect(connection->contactManager().data(), SIGNAL(presencePublicationRequested(Tp::Contacts)),
@@ -172,11 +170,13 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
             updateMenus();
 
-            m_notifierItem.data()->showMessage(i18n("New contact request"),    //krazy:exclude=qmethods
-                                               i18n("The contact %1 added you to its contact list. You can answer this "
-                                                    "request using the tray icon.",
-                                                    contact->id()),
-                                               QLatin1String("list-add-user"));
+            if (!m_notifierItem.isNull()) {
+                m_notifierItem.data()->showMessage(i18n("New contact request"),    //krazy:exclude=qmethods
+                                                   i18n("The contact %1 added you to its contact list. You can answer this "
+                                                        "request using the tray icon.",
+                                                        contact->id()),
+                                                   QLatin1String("list-add-user"));
+            }
         }
     }
 }
@@ -185,46 +185,21 @@ void ContactRequestHandler::onFinalizeSubscriptionFinished(Tp::PendingOperation 
 {
     Tp::ContactPtr contact = op->property("__contact").value< Tp::ContactPtr >();
 
+    Q_ASSERT(!contact.isNull());
+
     if (op->isError()) {
         // ARGH
-        m_notifierItem.data()->showMessage(i18n("Error adding contact"),
-                                           i18n("%1 has been added successfully to your contact list, "
-                                                "but might be unable to see your presence. Error details: %2",
-                                                contact->alias(), KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
-                                                QLatin1String("dialog-error"));
-    } else {
-        // Yeah. All fine, so don't notify
-    }
-}
-
-void ContactRequestHandler::updateNotifierItemTooltip()
-{
-    if (!m_menuItems.size()) {
-        // Set passive
-        m_notifierItem.data()->setStatus(KStatusNotifierItem::Passive);
-        m_notifierItem.data()->setIconByName(QLatin1String("user-identity"));
-        // Add the usual "nothing" action, if needed
-        if (!m_notifierMenu->actions().contains(m_noContactsAction)) {
-            m_notifierMenu->addAction(m_noContactsAction);
+        if (!m_notifierItem.isNull()) {
+            m_notifierItem.data()->showMessage(i18n("Error adding contact"),
+                                               i18n("%1 has been added successfully to your contact list, "
+                                                    "but might be unable to see when you are online. Error details: %2",
+                                                    contact->alias(), KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
+                                               QLatin1String("dialog-error"));
         }
-
-        m_notifierItem.data()->setToolTip(QLatin1String("list-add-user"),
-                                          i18n("No incoming contact requests"),
-                                          QString());
     } else {
-        // Set active
-        m_notifierItem.data()->setStatus(KStatusNotifierItem::Active);
-        m_notifierItem.data()->setIconByName(QLatin1String("list-add-user"));
-        // Remove the "nothing" action, if needed
-        if (m_notifierMenu->actions().contains(m_noContactsAction)) {
-            m_notifierMenu->removeAction(m_noContactsAction);
-        }
-
-        m_notifierItem.data()->setToolTip(QLatin1String("list-add-user"),
-                                          i18np("You have 1 incoming contact request",
-                                                "You have %1 incoming contact requests",
-                                                m_menuItems.size()),
-                                          QString());
+        // Update the menu
+        m_pendingContacts.remove(contact->id());
+        updateMenus();
     }
 }
 
@@ -266,31 +241,38 @@ void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOp
     Tp::ContactPtr contact = op->property("__contact").value< Tp::ContactPtr >();
 
     if (op->isError()) {
-        // ARGH
-        m_notifierItem.data()->showMessage(i18n("Error accepting contact request"),
-                                           i18n("There was an error while accepting the request: %1",
-                                                KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
-                                           QLatin1String("dialog-error"));
+        if (!m_notifierItem.isNull()) {
+            m_notifierItem.data()->showMessage(i18n("Error accepting contact request"),
+                                               i18n("There was an error while accepting the request: %1",
+                                                    KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
+                                               QLatin1String("dialog-error"));
+        }
 
         // Re-enable the action
         m_menuItems.value(contact->id())->setEnabled(true);
     } else {
-        // Yeah
-        m_notifierItem.data()->showMessage(i18n("Contact request accepted"),
-                                           i18n("%1 will now be able to see your presence",
-                                                contact->alias()), QLatin1String("dialog-ok-apply"));
+        // op succeeded
+        if (!m_notifierItem.isNull()) {
+            m_notifierItem.data()->showMessage(i18n("Contact request accepted"),
+                                               i18n("%1 will now be able to see when you are online",
+                                                    contact->alias()), QLatin1String("dialog-ok-apply"));
+        }
 
         // If needed, reiterate the request on the other end
         if (contact->manager()->canRequestPresenceSubscription() &&
-            contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
-            connect(contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact),
+                contact->subscriptionState() == Tp::Contact::PresenceStateNo) {
+
+            Tp::PendingOperation *op = contact->manager()->requestPresenceSubscription(QList< Tp::ContactPtr >() << contact);
+            op->setProperty("__contact", QVariant::fromValue(contact));
+
+            connect(op,
                     SIGNAL(finished(Tp::PendingOperation*)),
                     this, SLOT(onFinalizeSubscriptionFinished(Tp::PendingOperation*)));
+        } else {
+            // Update the menu
+            m_pendingContacts.remove(contact->id());
+            updateMenus();
         }
-
-        // Update the menu
-        m_pendingContacts.remove(contact->id());
-        updateMenus();
     }
 }
 
@@ -335,16 +317,17 @@ void ContactRequestHandler::onRemovePresencePublicationFinished(Tp::PendingOpera
         m_notifierItem.data()->showMessage(i18n("Error denying contact request"),
                                            i18n("There was an error while denying the request: %1",
                                                 KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
-                                                QLatin1String("dialog-error"));
+                                           QLatin1String("dialog-error"));
 
         // Re-enable the action
         m_menuItems.value(contact->id())->setEnabled(true);
     } else {
         // Yeah
-        m_notifierItem.data()->showMessage(i18n("Contact request denied"),
-                                           i18n("%1 will not be able to see your presence",
-                                                contact->alias()), QLatin1String("dialog-ok-apply"));
-
+        if (!m_notifierItem.isNull()) {
+            m_notifierItem.data()->showMessage(i18n("Contact request denied"),
+                                               i18n("%1 will not be able to see when you are online",
+                                                    contact->alias()), QLatin1String("dialog-ok-apply"));
+        }
         // Update the menu
         m_pendingContacts.remove(contact->id());
         updateMenus();
@@ -360,15 +343,17 @@ void ContactRequestHandler::updateMenus()
         m_notifierItem.data()->setAttentionIconByName(QLatin1String("list-add-user"));
         m_notifierItem.data()->setStandardActionsEnabled(false);
         m_notifierItem.data()->setTitle(i18nc("Menu title", "Pending contact requests"));
+        m_notifierItem.data()->setStatus(KStatusNotifierItem::Active);
 
-        m_notifierMenu = new KMenu(0);
-        m_notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
+        KMenu *notifierMenu = new KMenu(0);
+        notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
 
-        m_notifierItem.data()->setContextMenu(m_notifierMenu);
+        m_notifierItem.data()->setContextMenu(notifierMenu);
     }
 
     kDebug() << m_pendingContacts.keys();
 
+    //add members in pending contacts not in the menu to the menu.
     QHash<QString, Tp::ContactPtr>::const_iterator i;
     for (i = m_pendingContacts.constBegin(); i != m_pendingContacts.constEnd(); ++i) {
         if (m_menuItems.contains(i.key())) {
@@ -379,7 +364,7 @@ void ContactRequestHandler::updateMenus()
         kDebug();
         Tp::ContactPtr contact = i.value();
 
-        KMenu *contactMenu = new KMenu(m_notifierMenu);
+        KMenu *contactMenu = new KMenu(m_notifierItem.data()->contextMenu());
         contactMenu->setTitle(i18n("Request from %1", contact->alias()));
         contactMenu->setObjectName(contact->id());
 
@@ -401,10 +386,11 @@ void ContactRequestHandler::updateMenus()
                 this, SLOT(onContactRequestDenied()));
         contactMenu->addAction(menuAction);
 
-        m_notifierMenu->addMenu(contactMenu);
+        m_notifierItem.data()->contextMenu()->addMenu(contactMenu);
         m_menuItems.insert(i.key(), contactMenu);
     }
 
+    //remove items that are still in the menu, but not in pending contacts
     QHash<QString, KMenu*>::iterator j = m_menuItems.begin();
     while (j != m_menuItems.end()) {
         if (m_pendingContacts.contains(j.key())) {
@@ -414,11 +400,22 @@ void ContactRequestHandler::updateMenus()
         }
 
         // Remove
-        m_notifierMenu->removeAction(j.value()->menuAction());
+        m_notifierItem.data()->contextMenu()->removeAction(j.value()->menuAction());
         j = m_menuItems.erase(j);
     }
 
-    updateNotifierItemTooltip();
+    if (m_menuItems.size() > 0) {
+        //if menu still contains items, update the tooltip to have the correct number
+        m_notifierItem.data()->setToolTip(QLatin1String("list-add-user"),
+                                          i18np("You have 1 incoming contact request",
+                                                "You have %1 incoming contact requests",
+                                                m_menuItems.size()),
+                                          QString());
+    } else {
+        //if empty delete the status notifier item
+        m_notifierItem.data()->deleteLater();
+    }
+
 }
 
 #include "contact-request-handler.moc"
