@@ -242,7 +242,7 @@ void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOp
 
     if (op->isError()) {
         if (!m_notifierItem.isNull()) {
-            m_notifierItem.data()->showMessage(i18n("Error accepting contact request"),
+            m_notifierItem.data()->showMessage(i18n("Error granting contact authorization"),
                                                i18n("There was an error while accepting the request: %1",
                                                     KTp::ErrorDictionary::displayVerboseErrorMessage(op->errorName())),
                                                QLatin1String("dialog-error"));
