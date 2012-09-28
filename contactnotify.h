@@ -19,27 +19,29 @@
 #ifndef CONTACTNOTIFY_H
 #define CONTACTNOTIFY_H
 
-class KIcon;
-
 #include <TelepathyQt/Types>
 #include <TelepathyQt/Connection>
+
+#include <KTp/global-contact-manager.h>
+
+class KIcon;
+
+using namespace KTp;
 
 class ContactNotify : public QObject
 {
     Q_OBJECT
 public:
-    ContactNotify(Tp::AccountManagerPtr accountMgr, QObject *parent = 0);
+    ContactNotify(const Tp::AccountManagerPtr &accountMgr, QObject *parent = 0);
+
+private Q_SLOTS:
+    void onContactsChanged(const AccountContactList &contactsAdded, const AccountContactList &contactsRemoved);
+    void contactPresenceChanged(const Tp::Presence &presence);
 
 private:
     Tp::AccountManagerPtr m_accountManager;
-    Tp::ConnectionPtr m_connection;
-    void sendNotification(QString, KIcon, const Tp::Contact*);
-
-private Q_SLOTS:
-    void accountCameOnline(bool);
-    void accountIsOnline(const Tp::Account *);
-    void contactPresenceChanged(const Tp::Presence);
-    void onStatusChanged(const Tp::ConnectionStatus);
+    void sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact);
+    QHash<QString, int> m_presenceHash;
 };
 
 #endif // CONTACTNOTIFY_H

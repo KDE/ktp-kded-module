@@ -28,87 +28,87 @@
 #include <KAboutData>
 
 #include <KTp/presence.h>
+#include <KTp/global-contact-manager.h>
 
-ContactNotify::ContactNotify(const Tp::AccountManagerPtr accountMgr, QObject *parent) :
+using namespace KTp;
+
+ContactNotify::ContactNotify(const Tp::AccountManagerPtr &accountMgr, QObject *parent) :
     QObject(parent)
 {
+    Q_ASSERT(accountMgr);
     m_accountManager = accountMgr;
     if (!m_accountManager) {
         return;
     }
 
-    QList<Tp::AccountPtr> accounts = m_accountManager->allAccounts();
-    Q_FOREACH(const Tp::AccountPtr &account, accounts) {
-        // Accounts that are already online should be handled immediately
-        if (account.data()->isOnline()) {
-            kDebug() << "Account" << account.data()->normalizedName() << "is already Online";
-            accountIsOnline(account.data());
-        } else {
-            // Handle accounts coming online
-            connect(account.data(), SIGNAL(onlinenessChanged(bool)),
-                    SLOT(accountCameOnline(bool)));
-        }
+    GlobalContactManager *contactManager = new GlobalContactManager(m_accountManager, this);
+
+    Tp::Presence currentPresence;
+
+    Q_FOREACH(const AccountContact &contact, contactManager->allKnownContacts()) {
+        connect(contact.contact().data(), SIGNAL(presenceChanged(Tp::Presence)),
+                SLOT(contactPresenceChanged(Tp::Presence)));
+
+        currentPresence = contact.contact()->presence();
+        m_presenceHash[contact.contact()->id()] = Presence::sortPriority(currentPresence.type());
     }
+
+    connect(contactManager, SIGNAL(allKnownContactsChanged(AccountContactList,AccountContactList)),
+            SLOT(onContactsChanged(AccountContactList,AccountContactList)));
 }
 
-void ContactNotify::accountCameOnline(bool online)
-{
-    if (online) {
-        const Tp::Account *account = (Tp::Account *)QObject::sender();
-        if (account) {
-            kDebug() << "Account" << account->normalizedName() << "came Online";
-            accountIsOnline(account);
-        }
-    }
-}
 
-void ContactNotify::accountIsOnline(const Tp::Account *account)
-{
-    Q_ASSERT(account);
-    m_connection = account->connection();
-    if (m_connection.data()) {
-        connect(m_connection.data(), SIGNAL(statusChanged(Tp::ConnectionStatus)),
-                SLOT(onStatusChanged(Tp::ConnectionStatus)));
-    }
-}
-
-void ContactNotify::onStatusChanged(const Tp::ConnectionStatus status)
-{
-    if (status == Tp::ConnectionStatusConnected) {
-        Tp::ContactManagerPtr contactManager = m_connection.data()->contactManager();
-        Tp::Contacts contacts = contactManager.data()->allKnownContacts();
-        // This is going to be *slow* when the user has alot of contacts
-        // Optimize it later on
-        Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
-            connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
-                    SLOT(contactPresenceChanged(Tp::Presence)));
-        }
-    }
-}
-
-void ContactNotify::contactPresenceChanged(const Tp::Presence presence)
+void ContactNotify::contactPresenceChanged(const Tp::Presence &presence)
 {
     KTp::Presence ktpPresence(presence);
-    Tp::Contact *contact = (Tp::Contact *)QObject::sender();
-    sendNotification(i18nc("%1 is the contact name, %2 is the presence message",
-                           "%1 is now %2",
-                           contact->alias(),
-                           ktpPresence.displayString()),
-                     ktpPresence.icon(),
-                     contact);
+    Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(QObject::sender()));
+    int priority = m_presenceHash[contact->id()];
+
+    // Don't show presence messages when moving from a higher priority to a lower
+    // priority, for eg : When a contact changes from Online -> Away, don't send
+    // a notification, but do send a notification when a contact changes from
+    // Away -> Online
+    if (KTp::Presence::sortPriority(presence.type()) < priority) {
+        sendNotification(i18nc("%1 is the contact name, %2 is the presence name",
+                               "%1 is now %2",
+                               contact->alias(),
+                               ktpPresence.displayString()),
+                         ktpPresence.icon(),
+                         contact);
+    }
+
+    m_presenceHash.insert(contact->id(), Presence::sortPriority(presence.type()));
 }
 
-void ContactNotify::sendNotification(QString text, KIcon icon, const Tp::Contact *contact)
+void ContactNotify::sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact)
 {
     //The pointer is automatically deleted when the event is closed
     KNotification *notification;
     notification = new KNotification(QLatin1String("contactInfo"), KNotification::CloseOnTimeout);
 
-    KAboutData aboutData("ktelepathy",0,KLocalizedString(),0);
+    KAboutData aboutData("ktelepathy", 0, KLocalizedString(), 0);
     notification->setComponentData(KComponentData(aboutData));
 
     notification->setPixmap(icon.pixmap(48));
     notification->setText(text);
-    notification->addContext(QLatin1String("contact"), contact->id());
+    notification->addContext(QLatin1String("contact"), contact.data()->id());
     notification->sendEvent();
 }
+
+void ContactNotify::onContactsChanged(const AccountContactList &contactsAdded, const AccountContactList &contactsRemoved)
+{
+    Tp::Presence currentPresence;
+
+    Q_FOREACH(const AccountContact &contact, contactsAdded) {
+        connect(contact.contact().data(), SIGNAL(presenceChanged(Tp::Presence)),
+                SLOT(contactPresenceChanged(Tp::Presence)));
+
+        currentPresence = contact.contact().data()->presence();
+        m_presenceHash[contact.contact()->id()] = Presence::sortPriority(currentPresence.type());
+
+    }
+
+    Q_FOREACH(const AccountContact &contact, contactsRemoved) {
+        m_presenceHash.remove(contact.contact()->id());
+    }
+ }
