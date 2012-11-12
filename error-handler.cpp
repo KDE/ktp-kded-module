@@ -22,6 +22,7 @@
 
 #include <KNotification>
 #include <KAboutData>
+#include <KDebug>
 
 #include <KTp/error-dictionary.h>
 
@@ -53,6 +54,10 @@ void ErrorHandler::onConnectionStatusChanged(const Tp::ConnectionStatus status)
         QString connectionError = account->connectionError();
 
         Tp::ConnectionStatusReason reason = account->connectionStatusReason();
+
+        kDebug() << reason;
+        kDebug() << account->connectionError();
+        kDebug() << account->connectionErrorDetails().allDetails();
 
         switch (reason) {
             case Tp::ConnectionStatusReasonRequested:
