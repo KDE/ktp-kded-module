@@ -33,13 +33,11 @@ ErrorHandler::ErrorHandler(const Tp::AccountManagerPtr& am, QObject* parent)
     m_accountManager = am;
 
     Q_FOREACH(const Tp::AccountPtr &account, am->allAccounts()) {
-        connect(account.data(),
-                SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
-                this, SLOT(handleErrors(Tp::ConnectionStatus)));
+        onNewAccount(account);
     }
 
     connect(m_accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)),
-            this, SLOT(handleNewAccount(Tp::AccountPtr)));
+            this, SLOT(onNewAccount(Tp::AccountPtr)));
 }
 
 ErrorHandler::~ErrorHandler()
@@ -47,7 +45,7 @@ ErrorHandler::~ErrorHandler()
 
 }
 
-void ErrorHandler::handleErrors(const Tp::ConnectionStatus status)
+void ErrorHandler::onConnectionStatusChanged(const Tp::ConnectionStatus status)
 {
     Tp::AccountPtr account(qobject_cast< Tp::Account* >(sender()));
 
@@ -61,16 +59,16 @@ void ErrorHandler::handleErrors(const Tp::ConnectionStatus status)
                 //do nothing
                 break;
             case Tp::ConnectionStatusReasonAuthenticationFailed:
-                showMessageToUser(i18nc("%1 ist the account name", "Could not connect %1. Authentication failed (is your password correct?)", account->displayName()), ErrorHandler::SystemMessageError);
+                showMessageToUser(i18nc("%1 is the account name", "Could not connect %1. Authentication failed (is your password correct?)", account->displayName()), ErrorHandler::SystemMessageError);
                 break;
             case Tp::ConnectionStatusReasonNetworkError:
                 //if connected to the network, and there was a network error - display it. Otherwise do nothing.
                 if (Solid::Networking::status() == Solid::Networking::Connected) {
-                    showMessageToUser(i18nc("%1 ist the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()), ErrorHandler::SystemMessageError);
+                    showMessageToUser(i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()), ErrorHandler::SystemMessageError);
                 }
                 break;
             default:
-                showMessageToUser(i18nc("%1 ist the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), KTp::ErrorDictionary::displayVerboseErrorMessage(connectionError)), ErrorHandler::SystemMessageError);
+                showMessageToUser(i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), KTp::ErrorDictionary::displayVerboseErrorMessage(connectionError)), ErrorHandler::SystemMessageError);
                 break;
         }
     }
@@ -93,8 +91,8 @@ void ErrorHandler::showMessageToUser(const QString &text, const ErrorHandler::Sy
     notification->sendEvent();
 }
 
-void ErrorHandler::handleNewAccount(const Tp::AccountPtr& account)
+void ErrorHandler::onNewAccount(const Tp::AccountPtr& account)
 {
     connect(account.data(), SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
-            this, SLOT(handleErrors(Tp::ConnectionStatus)));
+            this, SLOT(onConnectionStatusChanged(Tp::ConnectionStatus)));
 }
