@@ -45,16 +45,16 @@ ContactNotify::ContactNotify(const Tp::AccountManagerPtr &accountMgr, QObject *p
 
     Tp::Presence currentPresence;
 
-    Q_FOREACH(const AccountContact &contact, contactManager->allKnownContacts()) {
-        connect(contact.contact().data(), SIGNAL(presenceChanged(Tp::Presence)),
+    Q_FOREACH(const Tp::ContactPtr &contact, contactManager->allKnownContacts()) {
+        connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 SLOT(contactPresenceChanged(Tp::Presence)));
 
-        currentPresence = contact.contact()->presence();
-        m_presenceHash[contact.contact()->id()] = Presence::sortPriority(currentPresence.type());
+        currentPresence = contact->presence();
+        m_presenceHash[contact->id()] = Presence::sortPriority(currentPresence.type());
     }
 
-    connect(contactManager, SIGNAL(allKnownContactsChanged(AccountContactList,AccountContactList)),
-            SLOT(onContactsChanged(AccountContactList,AccountContactList)));
+    connect(contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+            SLOT(onContactsChanged(Tp::Contacts,Tp::Contacts)));
 }
 
 
@@ -95,20 +95,20 @@ void ContactNotify::sendNotification(const QString &text, const KIcon &icon, con
     notification->sendEvent();
 }
 
-void ContactNotify::onContactsChanged(const AccountContactList &contactsAdded, const AccountContactList &contactsRemoved)
+void ContactNotify::onContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
     Tp::Presence currentPresence;
 
-    Q_FOREACH(const AccountContact &contact, contactsAdded) {
-        connect(contact.contact().data(), SIGNAL(presenceChanged(Tp::Presence)),
+    Q_FOREACH(const Tp::ContactPtr &contact, contactsAdded) {
+        connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 SLOT(contactPresenceChanged(Tp::Presence)));
 
-        currentPresence = contact.contact().data()->presence();
-        m_presenceHash[contact.contact()->id()] = Presence::sortPriority(currentPresence.type());
+        currentPresence = contact->presence();
+        m_presenceHash[contact->id()] = Presence::sortPriority(currentPresence.type());
 
     }
 
-    Q_FOREACH(const AccountContact &contact, contactsRemoved) {
-        m_presenceHash.remove(contact.contact()->id());
+    Q_FOREACH(const Tp::ContactPtr &contact, contactsRemoved) {
+        m_presenceHash.remove(contact->id());
     }
  }

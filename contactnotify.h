@@ -35,7 +35,7 @@ public:
     ContactNotify(const Tp::AccountManagerPtr &accountMgr, QObject *parent = 0);
 
 private Q_SLOTS:
-    void onContactsChanged(const AccountContactList &contactsAdded, const AccountContactList &contactsRemoved);
+    void onContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
     void contactPresenceChanged(const Tp::Presence &presence);
 
 private:
