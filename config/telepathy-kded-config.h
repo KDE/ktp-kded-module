@@ -45,6 +45,7 @@ private Q_SLOTS:
     void autoAwayChecked(bool checked);
     void autoXAChecked(bool checked);
     void nowPlayingChecked(bool checked);
+    void autoOfflineChecked(bool checked);
 
 private:
     QStringList m_tagNames;

@@ -119,6 +119,8 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(autoXAChecked(bool)));
     connect(ui->m_nowPlayingCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(nowPlayingChecked(bool)));
+    connect(ui->m_autoOfflineCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(autoOfflineChecked(bool)));
 }
 
 TelepathyKDEDConfig::~TelepathyKDEDConfig()
@@ -223,14 +225,11 @@ void TelepathyKDEDConfig::load()
     if (dontCheckForPlasmoid) {
         bool shouldGoOffline = generalConfigGroup.readEntry("go_offline_when_closing", false);
         if (shouldGoOffline == true) {
-            ui->m_autoOfflineCheckBox->setTristate(true);
             ui->m_autoOfflineCheckBox->setChecked(true);
         } else {
-            ui->m_autoOfflineCheckBox->setTristate(true);
             ui->m_autoOfflineCheckBox->setChecked(false);
         }
     } else {
-      ui->m_autoOfflineCheckBox->setTristate(true);
       ui->m_autoOfflineCheckBox->setCheckState(Qt::PartiallyChecked);
     }
 }
@@ -291,10 +290,6 @@ void TelepathyKDEDConfig::save()
             notifyConfigGroup.writeEntry("dont_check_for_plasmoid", true);
             generalConfigGroup.writeEntry("go_offline_when_closing", true);
         break;
-        case Qt::PartiallyChecked:
-            notifyConfigGroup.deleteEntry("dont_check_for_plasmoid");
-            generalConfigGroup.writeEntry("go_offline_when_closing", oldGoOffline);
-        break;
     }
 
     generalConfigGroup.sync();
@@ -338,4 +333,9 @@ void TelepathyKDEDConfig::nowPlayingChecked(bool checked)
 void TelepathyKDEDConfig::settingsHasChanged()
 {
     Q_EMIT changed(true);
+}
+
+void TelepathyKDEDConfig::autoOfflineChecked(bool checked)
+{
+    ui->m_autoOfflineCheckBox->setTristate(false);
 }
