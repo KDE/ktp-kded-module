@@ -279,17 +279,12 @@ void TelepathyKDEDConfig::save()
     KConfigGroup generalConfigGroup(contactListConfig, "General");
     KConfigGroup notifyConfigGroup(contactListConfig, "Notification Messages");
 
-    bool oldGoOffline = generalConfigGroup.readEntry("go_offline_when_closing", false);
-
-    switch (ui->m_autoOfflineCheckBox->checkState()) {
-        case Qt::Unchecked:
+    if (ui->m_autoOfflineCheckBox->checkState() == Qt::Unchecked) {
             notifyConfigGroup.writeEntry("dont_check_for_plasmoid", true);
             generalConfigGroup.writeEntry("go_offline_when_closing", false);
-        break;
-        case Qt::Checked:
+    } else if (ui->m_autoOfflineCheckBox->checkState() == Qt::Checked) {
             notifyConfigGroup.writeEntry("dont_check_for_plasmoid", true);
             generalConfigGroup.writeEntry("go_offline_when_closing", true);
-        break;
     }
 
     generalConfigGroup.sync();
@@ -337,5 +332,7 @@ void TelepathyKDEDConfig::settingsHasChanged()
 
 void TelepathyKDEDConfig::autoOfflineChecked(bool checked)
 {
+    Q_UNUSED(checked)
+
     ui->m_autoOfflineCheckBox->setTristate(false);
 }
