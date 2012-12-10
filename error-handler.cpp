@@ -50,6 +50,11 @@ void ErrorHandler::onConnectionStatusChanged(const Tp::ConnectionStatus status)
 {
     Tp::AccountPtr account(qobject_cast< Tp::Account* >(sender()));
 
+    //if we're not connected to the network, don't display any errors.
+    if (Solid::Networking::status() != Solid::Networking::Connected) {
+        return;
+    }
+
     if (status == Tp::ConnectionStatusDisconnected) {
         QString connectionError = account->connectionError();
 
@@ -67,10 +72,7 @@ void ErrorHandler::onConnectionStatusChanged(const Tp::ConnectionStatus status)
                 showMessageToUser(i18nc("%1 is the account name", "Could not connect %1. Authentication failed (is your password correct?)", account->displayName()), ErrorHandler::SystemMessageError);
                 break;
             case Tp::ConnectionStatusReasonNetworkError:
-                //if connected to the network, and there was a network error - display it. Otherwise do nothing.
-                if (Solid::Networking::status() == Solid::Networking::Connected) {
-                    showMessageToUser(i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()), ErrorHandler::SystemMessageError);
-                }
+                showMessageToUser(i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()), ErrorHandler::SystemMessageError);
                 break;
             default:
                 showMessageToUser(i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), KTp::ErrorDictionary::displayVerboseErrorMessage(connectionError)), ErrorHandler::SystemMessageError);
