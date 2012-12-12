@@ -50,6 +50,9 @@ public Q_SLOTS:
 Q_SIGNALS:
     void togglePlaybackActive(bool);
 
+private Q_SLOTS:
+    void serviceNameFetchFinished(QDBusPendingCallWatcher *callWatcher);
+
 private:
     QStringList m_knownPlayers;
     bool m_presenceActivated;
