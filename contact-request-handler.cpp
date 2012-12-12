@@ -291,8 +291,8 @@ void ContactRequestHandler::onContactRequestDenied()
                 Tp::PendingOperation *op = i.value()->manager()->removePresencePublication(QList< Tp::ContactPtr >() << i.value());
                 op->setProperty("__contact", QVariant::fromValue(i.value()));
                 operations.append(op);
-                ++i;
             }
+            ++i;
         }
 
         // Take the first value, if any

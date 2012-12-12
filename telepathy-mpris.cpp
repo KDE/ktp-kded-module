@@ -95,11 +95,30 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
 
 void TelepathyMPRIS::detectPlayers()
 {
-    QDBusConnectionInterface *i = QDBusConnection::sessionBus().interface();
-    QStringList mprisServices = i->registeredServiceNames().value().filter(QLatin1String("org.mpris.MediaPlayer2"));
+    //get registered service names asynchronously
+    QDBusPendingCall async = QDBusConnection::sessionBus().interface()->asyncCall(QLatin1String("ListNames"));
+    QDBusPendingCallWatcher *callWatcher = new QDBusPendingCallWatcher(async, this);
+    connect(callWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+            this, SLOT(serviceNameFetchFinished(QDBusPendingCallWatcher*)));
+}
+
+void TelepathyMPRIS::serviceNameFetchFinished(QDBusPendingCallWatcher *callWatcher)
+{
+    QDBusPendingReply<QStringList> reply = *callWatcher;
+    if (reply.isError()) {
+        kDebug() << reply.error();
+        return;
+    }
+
+    callWatcher->deleteLater();
+
+    QStringList mprisServices = reply.value();
     QStringList players;
 
     Q_FOREACH (const QString &service, mprisServices) {
+        if (!service.contains(QLatin1String("org.mpris.MediaPlayer2"))) {
+            continue;
+        }
         kDebug() << "Found mpris service:" << service;
         QDBusInterface mprisInterface(service, QLatin1String("/org/mpris/MediaPlayer2"), QLatin1String("org.freedesktop.DBus.Properties"));
         QDBusPendingCall call = mprisInterface.asyncCall(QLatin1String("GetAll"),
