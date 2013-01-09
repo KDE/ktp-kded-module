@@ -20,12 +20,16 @@
 
 #include <KIcon>
 #include <KIconLoader>
+#include <QScrollBar>
 
 NowPlayingListWidget::NowPlayingListWidget(QWidget *parent)
 : QListWidget(parent)
 {
     setFlow(QListWidget::LeftToRight);
     setDragEnabled(true);
+
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollMode(ScrollPerPixel);
 }
 
 NowPlayingListWidget::~NowPlayingListWidget()
@@ -46,8 +50,6 @@ void NowPlayingListWidget::setItemsIcons(QStringList itemsIcons)
 void NowPlayingListWidget::setupItems()
 {
     QString tagName;
-    QFontMetrics *fontMetrics = new QFontMetrics(font()); //needed to calculate total width
-    int totalWidth = 0;
 
     //items adding order is based on that in config/telepathy-kded-config.cpp
     for (int i = 0; i < m_localizedTagNames.size(); i++) {
@@ -57,13 +59,19 @@ void NowPlayingListWidget::setupItems()
 
         QListWidgetItem *newItem = new QListWidgetItem(KIcon(m_itemsIcons.at(i)), tagName);
         addItem(newItem);
+    }
+}
 
-        //+8 because we are considering also spaces between icons and items
-        totalWidth += fontMetrics->boundingRect(tagName).width() + KIconLoader::SizeSmallMedium + 8;
+void NowPlayingListWidget::resizeEvent(QResizeEvent* event)
+{
+    QListWidget::resizeEvent(event);
+
+    int height = sizeHintForRow(0) + 2 * frameWidth();
+    if (horizontalScrollBar() && horizontalScrollBar()->isVisible()) {
+        height += horizontalScrollBar()->size().height();
     }
 
-    setMaximumWidth(totalWidth);
-    setMaximumHeight(size().height());
+    setMaximumHeight(height);
 }
 
 void NowPlayingListWidget::dragEnterEvent(QDragEnterEvent *event)
