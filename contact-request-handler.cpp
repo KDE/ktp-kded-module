@@ -326,7 +326,7 @@ void ContactRequestHandler::onRemovePresencePublicationFinished(Tp::PendingOpera
         if (!m_notifierItem.isNull()) {
             m_notifierItem.data()->showMessage(i18n("Contact request denied"),
                                                i18n("%1 will not be able to see when you are online",
-                                                    contact->alias()), QLatin1String("dialog-ok-apply"));
+                                                    contact->alias()), QLatin1String("dialog-information"));
         }
         // Update the menu
         m_pendingContacts.remove(contact->id());
