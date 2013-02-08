@@ -208,7 +208,7 @@ void ContactRequestHandler::onFinalizeSubscriptionFinished(Tp::PendingOperation 
 
 void ContactRequestHandler::onContactInvalidated()
 {
-    Tp::Contact *contact = qobject_cast<Tp::Contact*>(sender());
+    Tp::ContactPtr contact = Tp::ContactPtr(qobject_cast<Tp::Contact*>(sender()));
 
     m_pendingContacts.remove(contact->id());
     updateMenus();
