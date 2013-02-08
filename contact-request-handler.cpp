@@ -21,6 +21,7 @@
 #include "contact-request-handler.h"
 
 #include <TelepathyQt/Connection>
+#include <TelepathyQt/Contact>
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingComposite>
@@ -168,6 +169,8 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
                 m_pendingContacts.insert(contact->id(), contact);
             }
 
+            connect(contact.data(), SIGNAL(invalidated()), this, SLOT(onContactInvalidated()));
+
             updateMenus();
 
             if (!m_notifierItem.isNull()) {
@@ -201,6 +204,14 @@ void ContactRequestHandler::onFinalizeSubscriptionFinished(Tp::PendingOperation 
         m_pendingContacts.remove(contact->id());
         updateMenus();
     }
+}
+
+void ContactRequestHandler::onContactInvalidated()
+{
+    Tp::Contact *contact = qobject_cast<Tp::Contact*>(sender());
+
+    m_pendingContacts.remove(contact->id());
+    updateMenus();
 }
 
 void ContactRequestHandler::onContactRequestApproved()

@@ -47,6 +47,7 @@ private Q_SLOTS:
     void onAuthorizePresencePublicationFinished(Tp::PendingOperation*);
     void onRemovePresencePublicationFinished(Tp::PendingOperation*);
     void onFinalizeSubscriptionFinished(Tp::PendingOperation*);
+    void onContactInvalidated();
 
 private:
     void updateMenus();
