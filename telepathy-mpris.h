@@ -52,6 +52,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void serviceNameFetchFinished(QDBusPendingCallWatcher *callWatcher);
+    void newMediaPlayer(const QString &player);
 
 private:
     QStringList m_knownPlayers;
