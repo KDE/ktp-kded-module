@@ -175,8 +175,7 @@ void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& c
 
             if (!m_notifierItem.isNull()) {
                 m_notifierItem.data()->showMessage(i18n("New contact request"),    //krazy:exclude=qmethods
-                                                   i18n("The contact %1 added you to its contact list. You can answer this "
-                                                        "request using the tray icon.",
+                                                   i18n("The contact %1 wants to be able to chat with you.",
                                                         contact->id()),
                                                    QLatin1String("list-add-user"));
             }
@@ -418,8 +417,8 @@ void ContactRequestHandler::updateMenus()
     if (m_menuItems.size() > 0) {
         //if menu still contains items, update the tooltip to have the correct number
         m_notifierItem.data()->setToolTip(QLatin1String("list-add-user"),
-                                          i18np("You have 1 incoming contact request",
-                                                "You have %1 incoming contact requests",
+                                          i18np("You have 1 contact wanting to chat with you",
+                                                "You have %1 contacts wanting to chat with you",
                                                 m_menuItems.size()),
                                           QString());
     } else {
