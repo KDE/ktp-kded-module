@@ -22,7 +22,10 @@
 #define ERROR_HANDLER_H
 
 #include <QObject>
+
 #include <TelepathyQt/AccountManager>
+
+class ConnectionError;
 
 class ErrorHandler : public QObject
 {
@@ -47,13 +50,20 @@ public:
         SystemMessageError
     };
 
+public Q_SLOTS:
+    /** Loop through all errors we have yet to show, and show anything*/
+    void showErrorNotification();
+
 private Q_SLOTS:
     void onConnectionStatusChanged(const Tp::ConnectionStatus status);
+    void onRequestedPresenceChanged();
     void onNewAccount(const Tp::AccountPtr &account);
+    void onAccountRemoved();
 
 private:
     void showMessageToUser(const QString &text, const ErrorHandler::SystemMessageType type);
     Tp::AccountManagerPtr m_accountManager;
+    QHash<Tp::AccountPtr, ConnectionError> m_errorMap;
 };
 
 #endif // ERROR_HANDLER_H
