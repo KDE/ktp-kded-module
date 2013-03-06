@@ -129,10 +129,10 @@ void ErrorHandler::showErrorNotification()
 
     QString errorMessage;
 
-    QHash<Tp::AccountPtr, ConnectionError>::const_iterator i = m_errorMap.constBegin();
+    QHash<Tp::AccountPtr, ConnectionError>::iterator i = m_errorMap.begin();
     while (i != m_errorMap.constEnd()) {
         const Tp::AccountPtr account = i.key();
-        ConnectionError error = i.value();
+        ConnectionError &error = i.value();
 
         //try to group as many error messages as we can, but we still want to give accounts a chance to reconnect
         //only want to show messages that are at least 20 seconds old to give the account a chance to connect.
