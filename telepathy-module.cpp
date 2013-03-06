@@ -123,6 +123,8 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_errorHandler = new ErrorHandler(m_accountManager, this);
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
     m_contactNotify = new ContactNotify(m_accountManager, this);
+    
+    m_lastUserPresence = m_globalPresence->requestedPresence();
 }
 
 void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
