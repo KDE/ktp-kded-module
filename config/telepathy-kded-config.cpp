@@ -111,7 +111,7 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     connect(ui->m_autoConnectCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
     connect(ui->m_autoOfflineCheckBox, SIGNAL(stateChanged(int)),
-	    this, SLOT(settingsHasChanged()));
+            this, SLOT(settingsHasChanged()));
 
     connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoAwayChecked(bool)));
