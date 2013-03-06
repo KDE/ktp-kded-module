@@ -44,7 +44,7 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
 
     m_tagNames << QLatin1String("%title") << QLatin1String("%artist") << QLatin1String("%album") << QLatin1String("%track");
     // xgettext: no-c-format
-    m_localizedTagNames << i18nc("Title tag in now playing plugin, use one word and keep the '%' character.", "%titlexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    m_localizedTagNames << i18nc("Title tag in now playing plugin, use one word and keep the '%' character.", "%title")
                         // xgettext: no-c-format
                         << i18nc("Artist tag in now playing plugin, use one word and keep the '%' character.", "%artist")
                         // xgettext: no-c-format
