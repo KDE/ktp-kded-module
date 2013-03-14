@@ -62,6 +62,7 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
 
     Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features() << Tp::Contact::FeatureAlias
                                                                                       << Tp::Contact::FeatureSimplePresence
+                                                                                      << Tp::Contact::FeatureAvatarToken
                                                                                       << Tp::Contact::FeatureCapabilities);
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());

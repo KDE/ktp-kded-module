@@ -26,6 +26,7 @@
 
 #include <KNotification>
 #include <KAboutData>
+#include <KConfigGroup>
 
 #include <KTp/presence.h>
 #include <KTp/global-contact-manager.h>
@@ -78,6 +79,17 @@ void ContactNotify::contactPresenceChanged(const Tp::Presence &presence)
     }
 
     m_presenceHash.insert(contact->id(), Presence::sortPriority(presence.type()));
+
+    //if the contact has gone offline, check if we're not getting an empty token
+    //which would overwrite already stored token
+    if (presence.type() == Tp::ConnectionPresenceTypeOffline) {
+        if (contact->avatarToken().isEmpty() && m_avatarTokensHash.contains(contact->id())) {
+            return;
+        }
+    }
+
+    m_avatarTokensHash.insert(contact->id(), contact->avatarToken());
+    QTimer::singleShot(0, this, SLOT(saveAvatarTokens()));
 }
 
 void ContactNotify::sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact)
@@ -102,13 +114,45 @@ void ContactNotify::onContactsChanged(const Tp::Contacts &contactsAdded, const T
     Q_FOREACH(const Tp::ContactPtr &contact, contactsAdded) {
         connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 SLOT(contactPresenceChanged(Tp::Presence)));
+        connect(contact.data(), SIGNAL(avatarTokenChanged(QString)),
+                SLOT(contactAvatarTokenChanged(QString)));
 
         currentPresence = contact->presence();
         m_presenceHash[contact->id()] = Presence::sortPriority(currentPresence.type());
+        m_avatarTokensHash[contact->id()] = contact->avatarToken();
 
     }
 
     Q_FOREACH(const Tp::ContactPtr &contact, contactsRemoved) {
         m_presenceHash.remove(contact->id());
     }
+
+    QTimer::singleShot(0, this, SLOT(saveAvatarTokens()));
  }
+
+void ContactNotify::saveAvatarTokens()
+{
+    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathy-avatarsrc"));
+
+    QHashIterator<QString, QString> i(m_avatarTokensHash);
+
+    while (i.hasNext()) {
+        i.next();
+        KConfigGroup avatarsGroup = config->group(i.key());
+        avatarsGroup.writeEntry(QLatin1String("avatarToken"), i.value());
+    }
+
+    config->sync();
+}
+
+void ContactNotify::contactAvatarTokenChanged(const QString &avatarToken)
+{
+    Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+
+    if (!contact) {
+        return;
+    }
+
+    m_avatarTokensHash[contact->id()] = avatarToken;
+    QTimer::singleShot(0, this, SLOT(saveAvatarTokens()));
+}

@@ -37,11 +37,15 @@ public:
 private Q_SLOTS:
     void onContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
     void contactPresenceChanged(const Tp::Presence &presence);
+    void contactAvatarTokenChanged(const QString &avatarToken);
+    void saveAvatarTokens();
 
 private:
-    Tp::AccountManagerPtr m_accountManager;
     void sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact);
+
+    Tp::AccountManagerPtr m_accountManager;
     QHash<QString, int> m_presenceHash;
+    QHash<QString, QString> m_avatarTokensHash;
 };
 
 #endif // CONTACTNOTIFY_H
