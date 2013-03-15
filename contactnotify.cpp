@@ -79,17 +79,6 @@ void ContactNotify::contactPresenceChanged(const Tp::Presence &presence)
     }
 
     m_presenceHash.insert(contact->id(), Presence::sortPriority(presence.type()));
-
-    //if the contact has gone offline, check if we're not getting an empty token
-    //which would overwrite already stored token
-    if (presence.type() == Tp::ConnectionPresenceTypeOffline) {
-        if (contact->avatarToken().isEmpty() && m_avatarTokensHash.contains(contact->id())) {
-            return;
-        }
-    }
-
-    m_avatarTokensHash.insert(contact->id(), contact->avatarToken());
-    QTimer::singleShot(0, this, SLOT(saveAvatarTokens()));
 }
 
 void ContactNotify::sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact)
@@ -119,15 +108,12 @@ void ContactNotify::onContactsChanged(const Tp::Contacts &contactsAdded, const T
 
         currentPresence = contact->presence();
         m_presenceHash[contact->id()] = Presence::sortPriority(currentPresence.type());
-        m_avatarTokensHash[contact->id()] = contact->avatarToken();
 
     }
 
     Q_FOREACH(const Tp::ContactPtr &contact, contactsRemoved) {
         m_presenceHash.remove(contact->id());
     }
-
-    QTimer::singleShot(0, this, SLOT(saveAvatarTokens()));
  }
 
 void ContactNotify::saveAvatarTokens()
