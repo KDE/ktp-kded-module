@@ -213,6 +213,15 @@ void ContactRequestHandler::onContactInvalidated()
     updateMenus();
 }
 
+void ContactRequestHandler::onNotifierActivated(bool active, const QPoint &pos)
+{
+    if (active) {
+        if (m_notifierItem) {
+            m_notifierItem.data()->contextMenu()->popup(pos);
+        }
+    }
+}
+
 void ContactRequestHandler::onContactRequestApproved()
 {
     QString contactId = qobject_cast<KAction*>(sender())->data().toString();
@@ -357,6 +366,8 @@ void ContactRequestHandler::updateMenus()
 
         KMenu *notifierMenu = new KMenu(0);
         notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
+
+        connect(m_notifierItem.data(), SIGNAL(activateRequested(bool,QPoint)), SLOT(onNotifierActivated(bool,QPoint)));
 
         m_notifierItem.data()->setContextMenu(notifierMenu);
     }

@@ -49,6 +49,8 @@ private Q_SLOTS:
     void onFinalizeSubscriptionFinished(Tp::PendingOperation*);
     void onContactInvalidated();
 
+    void onNotifierActivated(bool active, const QPoint &pos);
+
 private:
     void updateMenus();
     void handleNewConnection(const Tp::ConnectionPtr &connection);
