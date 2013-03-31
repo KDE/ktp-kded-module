@@ -25,6 +25,10 @@
 #include <KConfigGroup>
 #include <KDebug>
 
+namespace KTp {
+    class Presence;
+}
+
 class AutoConnect : public QObject
 {
     Q_OBJECT
@@ -40,6 +44,7 @@ public:
     ~AutoConnect();
 
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    void savePresence(const KTp::Presence &presence);
 
     /**
      * \brief Returns a string for the given enum value.
@@ -85,14 +90,11 @@ public:
         }
     };
 
-public Q_SLOTS:
-    void onSettingsChanged();
-    void setAutomaticPresence(const Tp::Presence &presence);
-
 private:
     Tp::AccountManagerPtr m_accountManager;
     Tp::Presence m_presence;
     KConfigGroup m_kdedConfig;
+    KConfigGroup m_presenceConfig;
 };
 
 #endif // AUTOCONNECT_H

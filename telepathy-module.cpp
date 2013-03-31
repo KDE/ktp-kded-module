@@ -115,16 +115,13 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_autoConnect = new AutoConnect(this);
     m_autoConnect->setAccountManager(m_accountManager);
 
-    connect(this, SIGNAL(settingsChanged()),
-            m_autoConnect, SLOT(onSettingsChanged()));
-
     //earlier in list = higher priority
     m_pluginStack << m_autoAway << m_mpris;
 
     m_errorHandler = new ErrorHandler(m_accountManager, this);
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
     m_contactNotify = new ContactNotify(m_accountManager, this);
-    
+
     m_lastUserPresence = m_globalPresence->requestedPresence();
 }
 
@@ -138,16 +135,8 @@ void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
     //user is manually setting the presnece.
     m_lastUserPresence = presence;
 
-    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
-    KConfigGroup presenceConfig = config->group("LastPresence");
-
-    presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)presence.type());
-    presenceConfig.writeEntry(QLatin1String("PresenceStatus"), presence.status());
-    presenceConfig.writeEntry(QLatin1String("PresenceMessage"), presence.statusMessage());
-
-    presenceConfig.sync();
-
-    m_autoConnect->setAutomaticPresence(presence);
+    //save presence (needed for autoconnect)
+    m_autoConnect->savePresence(presence);
 }
 
 void TelepathyModule::onPluginActivated(bool active)

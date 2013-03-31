@@ -21,11 +21,14 @@
 
 #include <KConfig>
 
+#include <KTp/presence.h>
+
 AutoConnect::AutoConnect(QObject *parent)
     : QObject(parent)
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     m_kdedConfig = config->group("KDED");
+    m_presenceConfig = config->group("LastPresence");
 }
 
 AutoConnect::~AutoConnect()
@@ -35,41 +38,26 @@ AutoConnect::~AutoConnect()
 void AutoConnect::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     m_accountManager = accountManager;
-    onSettingsChanged();
-}
 
-void AutoConnect::setAutomaticPresence(const Tp::Presence &presence)
-{
+    uint presenceType = m_presenceConfig.readEntry<uint>(QLatin1String("PresenceType"), (uint)Tp::ConnectionPresenceTypeOffline);
+    QString presenceStatus = m_presenceConfig.readEntry(QLatin1String("PresenceStatus"), QString());
+    QString presenceMessage = m_presenceConfig.readEntry(QLatin1String("PresenceMessage"), QString());
+
     QString autoConnectString = m_kdedConfig.readEntry(QLatin1String("autoConnect"), modeToString(AutoConnect::Manual));
     Mode autoConnectMode = stringToMode(autoConnectString);
 
-    // Don't interfere if the user set it to manual.
-    if (autoConnectMode != AutoConnect::Manual) {
+    if (autoConnectMode == AutoConnect::Enabled) {
         Q_FOREACH(Tp::AccountPtr account, m_accountManager->allAccounts()) {
-            if ((autoConnectMode == AutoConnect::Enabled) && (account->automaticPresence() != presence)) {
-                account->setAutomaticPresence(presence);
-            } else if ((autoConnectMode == AutoConnect::Disabled) && (account->automaticPresence() != Tp::Presence::available())) {
-                // The user disabled it, so reset the automatic presence to its default value (available).
-                account->setAutomaticPresence(Tp::Presence::available());
-            }
+            account->setRequestedPresence(Tp::Presence((Tp::ConnectionPresenceType)presenceType, presenceStatus,               presenceMessage));
         }
     }
 }
 
-void AutoConnect::onSettingsChanged()
+void AutoConnect::savePresence(const KTp::Presence &presence)
 {
-    if (m_accountManager) {
-        QString autoConnect = m_kdedConfig.readEntry(QLatin1String("autoConnect"), modeToString(AutoConnect::Manual));
+    m_presenceConfig.writeEntry(QLatin1String("PresenceType"), (uint)presence.type());
+    m_presenceConfig.writeEntry(QLatin1String("PresenceStatus"), presence.status());
+    m_presenceConfig.writeEntry(QLatin1String("PresenceMessage"), presence.statusMessage());
 
-        // Don't interfere if the user set it to manual.
-        if (autoConnect != modeToString(AutoConnect::Manual)) {
-            Q_FOREACH(Tp::AccountPtr account, m_accountManager->allAccounts()) {
-                if ((autoConnect == modeToString(AutoConnect::Enabled)) && (!account->connectsAutomatically())) {
-                    account->setConnectsAutomatically(true);
-                } else if ((autoConnect == modeToString(AutoConnect::Disabled)) && (account->connectsAutomatically())) {
-                    account->setConnectsAutomatically(false);
-                }
-            }
-        }
-    }
+    m_presenceConfig.sync();
 }
