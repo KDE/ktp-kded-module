@@ -237,8 +237,8 @@ void ContactRequestHandler::onContactRequestApproved()
                 Tp::PendingOperation *op = i.value()->manager()->authorizePresencePublication(QList< Tp::ContactPtr >() << i.value());
                 op->setProperty("__contact", QVariant::fromValue(i.value()));
                 operations.append(op);
-                ++i;
             }
+            ++i;
         }
 
         // Take the first value, if any
