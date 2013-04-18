@@ -142,6 +142,9 @@ void ErrorHandler::showErrorNotification()
                 errorMessage += i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()) + QLatin1Char('\n');
                 break;
             default:
+	        if (error.connectionError() == QLatin1String(TP_QT_ERROR_CANCELLED)) {
+		    break;
+		}
                 if (error.connectionErrorDetails().hasServerMessage()) {
                     errorMessage += i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), error.connectionErrorDetails().serverMessage()) + QLatin1Char('\n');
                 } else {
