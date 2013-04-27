@@ -45,6 +45,13 @@ K_EXPORT_PLUGIN(TelepathyModuleFactory("ktp_integration_module", "kded_ktp_integ
 
 TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     : KDEDModule(parent)
+    , m_autoAway( 0 )
+    , m_mpris( 0 )
+    , m_autoConnect( 0 )
+    , m_errorHandler( 0 )
+    , m_globalPresence( 0 )
+    , m_contactHandler( 0 )
+    , m_contactNotify( 0 )
 {
     Q_UNUSED(args)
 
@@ -132,7 +139,7 @@ void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
         return;
     }
 
-    //user is manually setting the presnece.
+    //user is manually setting the presence.
     m_lastUserPresence = presence;
 
     //save presence (needed for autoconnect)

@@ -74,6 +74,7 @@ void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVar
     if (changedProperties.keys().contains(QLatin1String("PlaybackStatus"))) {
         if (changedProperties.value(QLatin1String("PlaybackStatus")) == QLatin1String("Playing")) {
             m_playbackActive = true;
+            setActive(true);
             setTrackToPresence(m_lastReceivedMetadata);
         } else {
             //if the player is stopped or paused, deactivate and return to normal presence
@@ -205,16 +206,23 @@ void TelepathyMPRIS::onActivateNowPlaying()
 {
     kDebug() << "Plugin activated";
     m_presenceActivated = true;
-    detectPlayers();
+    setEnabled(true);
+    if( !m_knownPlayers.isEmpty() )
+        detectPlayers();
 }
 
 void TelepathyMPRIS::onDeactivateNowPlaying()
 {
-    kDebug() << "Plugin deactivated on CL request";
+    kDebug() << "Plugin deactivated on contact list request";
 
     if (m_presenceActivated) {
         m_presenceActivated = false;
         setActive(false);
+        setEnabled(false);
+        KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+        KConfigGroup kdedConfig = config->group("KDED");
+        kdedConfig.writeEntry("nowPlayingEnabled", false);
+        kdedConfig.sync();
     }
 }
 
