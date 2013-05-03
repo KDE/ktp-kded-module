@@ -72,7 +72,6 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     resizer->addWidgetsFromLayout(ui->autoOfflineGroupBox->layout(), 0);
 
     //TODO enable this when it is supported by the approver
-    ui->m_autoAcceptLabel->setHidden(true);
     ui->m_autoAcceptCheckBox->setHidden(true);
 
     //FIXME: figure out how to use i18ncp without argument for suffix
