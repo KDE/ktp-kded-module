@@ -87,6 +87,9 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     ui->m_xaMessage->setClickMessage(i18n("Leave empty for no message"));
     ui->m_xaMessage->setToolTip(ui->m_xaMessage->clickMessage()); //use the same i18n string
 
+    ui->m_screenSaverAwayMessage->setClickMessage(i18n("Leave empty for no message"));
+    ui->m_screenSaverAwayMessage->setToolTip(ui->m_screenSaverAwayMessage->clickMessage()); //use the same i18n stringToMode
+
     connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
     connect(ui->m_autoAcceptCheckBox, SIGNAL(stateChanged(int)),
@@ -111,6 +114,10 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(settingsHasChanged()));
     connect(ui->m_autoOfflineCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(settingsHasChanged()));
+    connect(ui->m_screenSaverAwayCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(settingsHasChanged()));
+    connect(ui->m_screenSaverAwayMessage, SIGNAL(textChanged(QString)),
+            this, SLOT(settingsHasChanged()));
 
     connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoAwayChecked(bool)));
@@ -120,6 +127,8 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(nowPlayingChecked(bool)));
     connect(ui->m_autoOfflineCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoOfflineChecked(bool)));
+    connect(ui->m_screenSaverAwayCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(screenSaverAwayChecked(bool)));
 }
 
 TelepathyKDEDConfig::~TelepathyKDEDConfig()
@@ -175,6 +184,15 @@ void TelepathyKDEDConfig::load()
     ui->m_xaMins->setEnabled(autoXAEnabled && autoAwayEnabled);
     ui->m_xaMessage->setText(xaMessage);
     ui->m_xaMessage->setEnabled(autoXAEnabled && autoAwayEnabled);
+
+        //check if screen-server-away is enabled
+    bool screenSaverAwayEnabled = kdedConfig.readEntry(QLatin1String("screenSaverAwayEnabled"), true);
+
+    QString screenSaverAwayMessage = kdedConfig.readEntry(QLatin1String("screenSaverAwayMessage"), QString());
+
+    ui->m_screenSaverAwayCheckBox->setChecked(screenSaverAwayEnabled);
+    ui->m_screenSaverAwayMessage->setText(screenSaverAwayMessage);
+    ui->m_screenSaverAwayMessage->setEnabled(screenSaverAwayEnabled);
 
     //check if 'Now playing..' is enabled
     bool nowPlayingEnabled = kdedConfig.readEntry(QLatin1String("nowPlayingEnabled"), false);
@@ -254,6 +272,8 @@ void TelepathyKDEDConfig::save()
     kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
     kdedConfig.writeEntry(QLatin1String("xaMessage"), ui->m_xaMessage->text());
     kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("screenSaverAwayEnabled"), ui->m_screenSaverAwayCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("screenSaverAwayMessage"), ui->m_screenSaverAwayMessage->text());
 
     //we store a nowPlayingText version with untranslated tag names
     QString modifiedNowPlayingText = ui->m_nowPlayingText->text();
@@ -306,6 +326,12 @@ void TelepathyKDEDConfig::autoAwayChecked(bool checked)
     ui->m_awayMins->setEnabled(checked);
     ui->m_awayMessage->setEnabled(checked);
 
+    Q_EMIT changed(true);
+}
+
+void TelepathyKDEDConfig::screenSaverAwayChecked(bool checked)
+{
+    ui->m_screenSaverAwayMessage->setEnabled(checked);
     Q_EMIT changed(true);
 }
 

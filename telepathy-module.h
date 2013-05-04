@@ -41,6 +41,7 @@ class TelepathyMPRIS;
 class AutoAway;
 class AutoConnect;
 class ContactNotify;
+class ScreenSaverAway;
 
 class TelepathyModule : public KDEDModule
 {
@@ -72,6 +73,7 @@ private:
     KTp::GlobalPresence     *m_globalPresence;
     ContactRequestHandler   *m_contactHandler;
     ContactNotify           *m_contactNotify;
+    ScreenSaverAway         *m_screenSaverAway;
 
     QList<TelepathyKDEDModulePlugin*> m_pluginStack;
     KTp::Presence m_lastUserPresence;

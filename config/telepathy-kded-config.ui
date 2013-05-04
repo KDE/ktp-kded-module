@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>497</width>
-    <height>584</height>
+    <height>725</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -128,7 +128,7 @@
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="buddy">
-             <cstring>m_awayMessage</cstring>
+             <cstring>m_screenSaverAwayMessage</cstring>
             </property>
            </widget>
           </item>
@@ -233,6 +233,98 @@
           </item>
           <item>
            <widget class="KLineEdit" name="m_xaMessage"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacerScreenSaverAway">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="labelScreenSaverAway">
+          <property name="text">
+           <string>Set my status to Away when screen saver is activated:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayoutScreenSaverAway">
+          <item>
+           <layout class="QHBoxLayout" name="away_check_layout">
+            <item>
+             <widget class="QCheckBox" name="m_screenSaverAwayCheckBox">
+              <property name="text">
+               <string>Enabled</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="screenSaverAway_spaces">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="screenSaverAway_layout">
+            <item>
+             <widget class="QLabel" name="m_screenSaverAwayLabel">
+              <property name="text">
+               <string>With &amp;message:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>m_screenSaverAwayMessage</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KLineEdit" name="m_screenSaverAwayMessage"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

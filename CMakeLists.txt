@@ -38,6 +38,7 @@ set (kded_ktp_integration_module_SRCS
      autoconnect.cpp
      error-handler.cpp
      contactnotify.cpp
+     screensaveraway.cpp
 )
 
 kde4_add_plugin (kded_ktp_integration_module

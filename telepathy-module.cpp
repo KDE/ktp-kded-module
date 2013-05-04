@@ -36,6 +36,7 @@
 #include "error-handler.h"
 #include "telepathy-kded-module-plugin.h"
 #include "contactnotify.h"
+#include "screensaveraway.h"
 
 #include <KConfigGroup>
 #include "contact-request-handler.h"
@@ -52,6 +53,7 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     , m_globalPresence( 0 )
     , m_contactHandler( 0 )
     , m_contactNotify( 0 )
+    , m_screenSaverAway( 0 )
 {
     Q_UNUSED(args)
 
@@ -112,6 +114,13 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     connect(this, SIGNAL(settingsChanged()),
             m_autoAway, SLOT(onSettingsChanged()));
 
+    m_screenSaverAway = new ScreenSaverAway(m_globalPresence, this);
+    connect(m_screenSaverAway, SIGNAL(activate(bool)),
+            this, SLOT(onPluginActivated(bool)));
+
+    connect(this, SIGNAL(settingsChanged()),
+            m_screenSaverAway, SLOT(onSettingsChanged()));
+
     m_mpris = new TelepathyMPRIS(m_globalPresence, this);
     connect(m_mpris, SIGNAL(activate(bool)),
             this, SLOT(onPluginActivated(bool)));
@@ -123,7 +132,7 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_autoConnect->setAccountManager(m_accountManager);
 
     //earlier in list = higher priority
-    m_pluginStack << m_autoAway << m_mpris;
+    m_pluginStack << m_autoAway << m_screenSaverAway << m_mpris;
 
     m_errorHandler = new ErrorHandler(m_accountManager, this);
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
