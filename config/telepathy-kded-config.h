@@ -49,6 +49,8 @@ private Q_SLOTS:
     void screenSaverAwayChecked(bool checked);
 
 private:
+    void enableAwayWidgets(bool enable);
+    void enableXAWidgets(bool enable);
     QStringList m_tagNames;
     QStringList m_localizedTagNames;
     Ui::TelepathyKDEDUi *ui;

@@ -165,9 +165,8 @@ void TelepathyKDEDConfig::load()
 
     ui->m_awayCheckBox->setChecked(autoAwayEnabled);
     ui->m_awayMins->setValue(awayTime);
-    ui->m_awayMins->setEnabled(autoAwayEnabled);
     ui->m_awayMessage->setText(awayMessage);
-    ui->m_awayMessage->setEnabled(autoAwayEnabled);
+    enableAwayWidgets(autoAwayEnabled);
 
     //check for x-away
     bool autoXAEnabled = kdedConfig.readEntry(QLatin1String("autoXAEnabled"), true);
@@ -178,12 +177,11 @@ void TelepathyKDEDConfig::load()
     QString xaMessage = kdedConfig.readEntry(QLatin1String("xaMessage"), QString());
 
     //enable auto-x-away only if auto-away is enabled
-    ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
     ui->m_xaCheckBox->setEnabled(autoAwayEnabled);
+    ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
     ui->m_xaMins->setValue(xaTime);
-    ui->m_xaMins->setEnabled(autoXAEnabled && autoAwayEnabled);
     ui->m_xaMessage->setText(xaMessage);
-    ui->m_xaMessage->setEnabled(autoXAEnabled && autoAwayEnabled);
+    enableXAWidgets(autoXAEnabled && autoAwayEnabled);
 
         //check if screen-server-away is enabled
     bool screenSaverAwayEnabled = kdedConfig.readEntry(QLatin1String("screenSaverAwayEnabled"), true);
@@ -317,29 +315,42 @@ void TelepathyKDEDConfig::save()
     QDBusConnection::sessionBus().send(message);
 }
 
+void TelepathyKDEDConfig::enableAwayWidgets(bool enable)
+{
+    ui->m_awayMins->setEnabled(enable);
+    ui->m_awayMessage->setEnabled(enable);
+    ui->m_awayMessageLabel->setEnabled(enable);
+    ui->m_awayMinsLabel->setEnabled(enable);
+    ui->m_awayInactivityLabel->setEnabled(enable);
+}
+
+void TelepathyKDEDConfig::enableXAWidgets(bool enable)
+{
+    ui->m_xaMins->setEnabled(enable);
+    ui->m_xaMessage->setEnabled(enable);
+    ui->m_xaMessageLabel->setEnabled(enable);
+    ui->m_xaMinsLabel->setEnabled(enable);
+    ui->m_xaInactivityLabel->setEnabled(enable);
+}
+
 void TelepathyKDEDConfig::autoAwayChecked(bool checked)
 {
     ui->m_xaCheckBox->setEnabled(checked);
-    ui->m_xaMins->setEnabled(checked && ui->m_xaCheckBox->isChecked());
-    ui->m_xaMessage->setEnabled(checked && ui->m_xaCheckBox->isChecked());
-
-    ui->m_awayMins->setEnabled(checked);
-    ui->m_awayMessage->setEnabled(checked);
-
+    enableXAWidgets(checked && ui->m_xaCheckBox->isChecked());
+    enableAwayWidgets(checked);
     Q_EMIT changed(true);
 }
 
 void TelepathyKDEDConfig::screenSaverAwayChecked(bool checked)
 {
     ui->m_screenSaverAwayMessage->setEnabled(checked);
+    ui->m_screenSaverAwayLabel->setEnabled(checked);
     Q_EMIT changed(true);
 }
 
 void TelepathyKDEDConfig::autoXAChecked(bool checked)
 {
-    ui->m_xaMins->setEnabled(checked);
-    ui->m_xaMessage->setEnabled(checked);
-
+    enableXAWidgets(checked);
     Q_EMIT changed(true);
 }
 

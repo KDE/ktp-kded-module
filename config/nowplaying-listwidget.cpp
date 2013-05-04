@@ -66,7 +66,7 @@ void NowPlayingListWidget::resizeEvent(QResizeEvent* event)
 {
     QListWidget::resizeEvent(event);
 
-    int height = sizeHintForRow(0) + 2 * frameWidth();
+    int height = sizeHintForRow(0) + 2 * ( frameWidth() + 3 ); // add 2*3 for top/bottom padding
     if (horizontalScrollBar() && horizontalScrollBar()->isVisible()) {
         height += horizontalScrollBar()->size().height();
     }
