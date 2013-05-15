@@ -44,6 +44,7 @@ private Q_SLOTS:
 
     void onContactRequestApproved();
     void onContactRequestDenied();
+    void onShowContactDetails();
     void onAuthorizePresencePublicationFinished(Tp::PendingOperation*);
     void onRemovePresencePublicationFinished(Tp::PendingOperation*);
     void onFinalizeSubscriptionFinished(Tp::PendingOperation*);

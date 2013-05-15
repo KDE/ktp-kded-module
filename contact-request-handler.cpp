@@ -28,6 +28,7 @@
 #include <TelepathyQt/Account>
 
 #include <KTp/error-dictionary.h>
+#include <KTp/contact-info-dialog.h>
 
 #include <QtCore/QFutureWatcher>
 
@@ -255,6 +256,24 @@ void ContactRequestHandler::onContactRequestApproved()
 
 }
 
+void ContactRequestHandler::onShowContactDetails()
+{
+    QString contactId = qobject_cast<KAction*>(sender())->data().toString();
+
+    if (!contactId.isEmpty()) {
+        const Tp::ContactPtr contact = m_pendingContacts.find(contactId).value();
+        const Tp::ContactManagerPtr manager = contact->manager();
+        Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+            if (account->connection() == manager->connection()) {
+                KTp::ContactInfoDialog *dialog = new KTp::ContactInfoDialog(account, contact);
+                connect(dialog, SIGNAL(closeClicked()), dialog, SLOT(deleteLater()));
+                dialog->show();
+                break;
+            }
+        }
+    }
+}
+
 void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOperation *op)
 {
     Tp::ContactPtr contact = op->property("__contact").value< Tp::ContactPtr >();
@@ -395,6 +414,15 @@ void ContactRequestHandler::updateMenus()
         } else {
             contactMenu->addTitle(contact->alias());
         }
+
+        menuAction = new KAction(KIcon(QLatin1String("user-identity")), i18n("Contact Details"), contactMenu);
+        menuAction->setData(i.key());
+        connect(menuAction, SIGNAL(triggered()),
+                this, SLOT(onShowContactDetails()));
+        contactMenu->addAction(menuAction);
+
+        contactMenu->addSeparator();
+
         menuAction = new KAction(KIcon(QLatin1String("dialog-ok-apply")), i18n("Approve"), contactMenu);
         menuAction->setData(i.key());
         connect(menuAction, SIGNAL(triggered()),
