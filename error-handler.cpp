@@ -139,16 +139,16 @@ void ErrorHandler::showErrorNotification()
         if (!error.shown() && error.errorTime().secsTo(QDateTime::currentDateTime()) > 20) {
             switch (error.connectionStatusReason()) {
             case Tp::ConnectionStatusReasonNetworkError:
-                errorMessage += i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()) + QLatin1Char('\n');
+                errorMessage += i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()) + QLatin1String("<br>");
                 break;
             default:
 	        if (error.connectionError() == QLatin1String(TP_QT_ERROR_CANCELLED)) {
 		    break;
 		}
                 if (error.connectionErrorDetails().hasServerMessage()) {
-                    errorMessage += i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), error.connectionErrorDetails().serverMessage()) + QLatin1Char('\n');
+                    errorMessage += i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), error.connectionErrorDetails().serverMessage()) + QLatin1String("<br>");
                 } else {
-                    errorMessage += i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), KTp::ErrorDictionary::displayVerboseErrorMessage(error.connectionError())) + QLatin1Char('\n');
+                    errorMessage += i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), KTp::ErrorDictionary::displayVerboseErrorMessage(error.connectionError())) + QLatin1String("<br>");
                 }
                 break;
             }
@@ -158,8 +158,8 @@ void ErrorHandler::showErrorNotification()
     }
 
     if (!errorMessage.isEmpty()) {
-        if (errorMessage.endsWith(QLatin1Char('\n'))) {
-            errorMessage.chop(1);
+        if (errorMessage.endsWith(QLatin1String("<br>"))) {
+            errorMessage.chop(4);
         }
 
         showMessageToUser(errorMessage, ErrorHandler::SystemMessageError);
