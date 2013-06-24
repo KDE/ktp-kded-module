@@ -47,6 +47,7 @@ private Q_SLOTS:
     void nowPlayingChecked(bool checked);
     void autoOfflineChecked(bool checked);
     void screenSaverAwayChecked(bool checked);
+    void downloadUrlCheckBoxChanged(bool checked);
 
 private:
     void enableAwayWidgets(bool enable);

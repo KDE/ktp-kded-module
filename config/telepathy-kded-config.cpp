@@ -118,6 +118,8 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(settingsHasChanged()));
     connect(ui->m_screenSaverAwayMessage, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
+    connect(ui->m_downloadUrlCheckBox, SIGNAL(clicked(bool)),
+            this, SLOT(downloadUrlCheckBoxChanged(bool)));
 
     connect(ui->m_awayCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoAwayChecked(bool)));
@@ -147,6 +149,8 @@ void TelepathyKDEDConfig::load()
     QString downloadDirectory = filetransferConfig.readPathEntry(QLatin1String("downloadDirectory"),
                     QDir::homePath() + QLatin1String("/") + i18nc("This is the download directory in user's home", "Downloads"));
     ui->m_downloadUrlRequester->setUrl(KUrl(downloadDirectory));
+    ui->m_downloadUrlCheckBox->setChecked(filetransferConfig.readEntry(QLatin1String("alwaysAsk"), false));
+    ui->m_downloadUrlRequester->setEnabled(!ui->m_downloadUrlCheckBox->isChecked());
 
     // check if auto-accept file transfers is enabled
     bool autoAcceptEnabled = filetransferConfig.readEntry(QLatin1String("autoAccept"), false);
@@ -258,6 +262,7 @@ void TelepathyKDEDConfig::save()
 
     filetransferConfig.writeEntry(QLatin1String("downloadDirectory"), ui->m_downloadUrlRequester->url().toLocalFile());
     filetransferConfig.writeEntry(QLatin1String("autoAccept"), ui->m_autoAcceptCheckBox->isChecked());
+    filetransferConfig.writeEntry(QLatin1String("alwaysAsk"), ui->m_downloadUrlCheckBox->isChecked());
     filetransferConfig.sync();
 
 // KDED module config
@@ -371,4 +376,10 @@ void TelepathyKDEDConfig::autoOfflineChecked(bool checked)
     Q_UNUSED(checked)
 
     ui->m_autoOfflineCheckBox->setTristate(false);
+}
+
+void TelepathyKDEDConfig::downloadUrlCheckBoxChanged(bool checked)
+{
+    ui->m_downloadUrlRequester->setEnabled(!checked);
+    Q_EMIT changed(true);
 }
