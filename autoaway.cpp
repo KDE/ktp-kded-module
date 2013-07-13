@@ -62,12 +62,13 @@ void AutoAway::timeoutReached(int id)
         if (m_globalPresence->currentPresence().type() != Tp::Presence::away().type() &&
             m_globalPresence->currentPresence().type() != Tp::Presence::xa().type() &&
             m_globalPresence->currentPresence().type() != Tp::Presence::hidden().type()) {
-
+            m_awayMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss (%t)")), Qt::CaseInsensitive);
             setRequestedPresence(Tp::Presence::away(m_awayMessage));
             setActive(true);
         }
     } else if (id == m_extAwayTimeoutId) {
         if (m_globalPresence->currentPresence().type() == Tp::Presence::away().type()) {
+            m_xaMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss (%t)")), Qt::CaseInsensitive);
             setRequestedPresence(Tp::Presence::xa(m_xaMessage));
             setActive(true);
         }

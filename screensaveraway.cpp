@@ -59,6 +59,7 @@ void ScreenSaverAway::onActiveChanged(bool newState)
     }
 
     if (newState) {
+      m_screenSaverAwayMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss")), Qt::CaseInsensitive);
       setRequestedPresence(Tp::Presence::away(m_screenSaverAwayMessage));
       setActive(true);
     } else {

@@ -82,13 +82,13 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
                                     " minutes"));
 
     ui->m_awayMessage->setClickMessage(i18n("Leave empty for no message"));
-    ui->m_awayMessage->setToolTip(ui->m_awayMessage->clickMessage()); //use the same i18n string
+    ui->m_awayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went idle"));
 
     ui->m_xaMessage->setClickMessage(i18n("Leave empty for no message"));
-    ui->m_xaMessage->setToolTip(ui->m_xaMessage->clickMessage()); //use the same i18n string
+    ui->m_xaMessage->setToolTip(i18n("Use %time to insert UTC time of when you went idle"));
 
     ui->m_screenSaverAwayMessage->setClickMessage(i18n("Leave empty for no message"));
-    ui->m_screenSaverAwayMessage->setToolTip(ui->m_screenSaverAwayMessage->clickMessage()); //use the same i18n stringToMode
+    ui->m_screenSaverAwayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went idle"));
 
     connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
