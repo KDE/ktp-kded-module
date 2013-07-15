@@ -54,6 +54,7 @@ private:
     void enableXAWidgets(bool enable);
     QStringList m_tagNames;
     QStringList m_localizedTagNames;
+    QString m_localizedTimeTagName;
     Ui::TelepathyKDEDUi *ui;
 };
 

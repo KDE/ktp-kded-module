@@ -51,6 +51,7 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
                         << i18nc("Album tag in now playing plugin, use one word and keep the '%' character.", "%album")
                         // xgettext: no-c-format
                         << i18nc("Track number tag in now playing plugin, use one word and keep the '%' character.", "%track");
+    m_localizedTimeTagName = i18nc("Time tag. Use one word and keep the '%' character.", "%time");
 
     QStringList itemsIcons;
     itemsIcons << QLatin1String("view-media-lyrics")   //%title
@@ -82,13 +83,13 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
                                     " minutes"));
 
     ui->m_awayMessage->setClickMessage(i18n("Leave empty for no message"));
-    ui->m_awayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went idle"));
+    ui->m_awayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went away"));
 
     ui->m_xaMessage->setClickMessage(i18n("Leave empty for no message"));
-    ui->m_xaMessage->setToolTip(i18n("Use %time to insert UTC time of when you went idle"));
+    ui->m_xaMessage->setToolTip(i18n("Use %time to insert UTC time of when you went not available"));
 
     ui->m_screenSaverAwayMessage->setClickMessage(i18n("Leave empty for no message"));
-    ui->m_screenSaverAwayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went idle"));
+    ui->m_screenSaverAwayMessage->setToolTip(i18n("Use %time to insert UTC time of when the screen saver was activated"));
 
     connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
@@ -169,7 +170,8 @@ void TelepathyKDEDConfig::load()
 
     ui->m_awayCheckBox->setChecked(autoAwayEnabled);
     ui->m_awayMins->setValue(awayTime);
-    ui->m_awayMessage->setText(awayMessage);
+    // Display the localized tag because the unlocalized one is saved
+    ui->m_awayMessage->setText(awayMessage.replace(QLatin1String("%time"), m_localizedTimeTagName));
     enableAwayWidgets(autoAwayEnabled);
 
     //check for x-away
@@ -184,7 +186,9 @@ void TelepathyKDEDConfig::load()
     ui->m_xaCheckBox->setEnabled(autoAwayEnabled);
     ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
     ui->m_xaMins->setValue(xaTime);
-    ui->m_xaMessage->setText(xaMessage);
+    // Display the localized tag because the unlocalized one is saved
+    ui->m_xaMessage->setText(xaMessage.replace(QLatin1String("%time"),
+            m_localizedTimeTagName));
     enableXAWidgets(autoXAEnabled && autoAwayEnabled);
 
         //check if screen-server-away is enabled
@@ -193,7 +197,8 @@ void TelepathyKDEDConfig::load()
     QString screenSaverAwayMessage = kdedConfig.readEntry(QLatin1String("screenSaverAwayMessage"), QString());
 
     ui->m_screenSaverAwayCheckBox->setChecked(screenSaverAwayEnabled);
-    ui->m_screenSaverAwayMessage->setText(screenSaverAwayMessage);
+    // Display the localized tag because the unlocalized one is saved
+    ui->m_screenSaverAwayMessage->setText(screenSaverAwayMessage.replace(QLatin1String("%time"), m_localizedTimeTagName));
     ui->m_screenSaverAwayMessage->setEnabled(screenSaverAwayEnabled);
 
     //check if 'Now playing..' is enabled
@@ -270,13 +275,22 @@ void TelepathyKDEDConfig::save()
 
     kdedConfig.writeEntry(QLatin1String("autoAwayEnabled"), ui->m_awayCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("awayAfter"), ui->m_awayMins->value());
-    kdedConfig.writeEntry(QLatin1String("awayMessage"), ui->m_awayMessage->text());
+    // We store the unlocalized tag name
+    QString awayMessage = ui->m_awayMessage->text();
+    kdedConfig.writeEntry(QLatin1String("awayMessage"),
+                          awayMessage.replace(m_localizedTimeTagName, QLatin1String("%time")));
     kdedConfig.writeEntry(QLatin1String("autoXAEnabled"), ui->m_xaCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
-    kdedConfig.writeEntry(QLatin1String("xaMessage"), ui->m_xaMessage->text());
+    // We store the unlocalized tag name
+    QString xaMessage = ui->m_xaMessage->text();
+    kdedConfig.writeEntry(QLatin1String("xaMessage"),
+                          xaMessage.replace(m_localizedTimeTagName, QLatin1String("%time")));
     kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("screenSaverAwayEnabled"), ui->m_screenSaverAwayCheckBox->isChecked());
-    kdedConfig.writeEntry(QLatin1String("screenSaverAwayMessage"), ui->m_screenSaverAwayMessage->text());
+    // We store the unlocalized tag name
+    QString screenSaverAwayMessage = ui->m_screenSaverAwayMessage->text();
+    kdedConfig.writeEntry(QLatin1String("screenSaverAwayMessage"),
+                          screenSaverAwayMessage.replace(m_localizedTimeTagName, QLatin1String("%time")));
 
     //we store a nowPlayingText version with untranslated tag names
     QString modifiedNowPlayingText = ui->m_nowPlayingText->text();
