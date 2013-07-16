@@ -10,428 +10,450 @@
     <height>725</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="QGroupBox" name="autoConnectGroupBox">
-     <property name="title">
-      <string>Auto connect</string>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="flat">
-      <bool>false</bool>
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="m_autoConnectCheckBox">
-        <property name="text">
-         <string>Restore last presence on login</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="autoAwayGroupBox">
-     <property name="title">
-      <string>Auto away</string>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Set my status to:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <layout class="QHBoxLayout" name="away_check_layout">
-          <item>
-           <widget class="QCheckBox" name="m_awayCheckBox">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>489</width>
+        <height>717</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="autoConnectGroupBox">
+         <property name="title">
+          <string>Auto connect</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="m_autoConnectCheckBox">
             <property name="text">
-             <string>Away</string>
+             <string>Restore last presence on login</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="autoAwayGroupBox">
+         <property name="title">
+          <string>Auto away</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Set my status to:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="away_check_layout">
+              <item>
+               <widget class="QCheckBox" name="m_awayCheckBox">
+                <property name="text">
+                 <string>Away</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="away_spaces">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="m_awayMinsLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>After:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy">
+                 <cstring>m_awayMins</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="m_awayMins">
+                <property name="suffix">
+                 <string/>
+                </property>
+                <property name="value">
+                 <number>5</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="m_awayInactivityLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>of inactivity</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="away_message_layout">
+              <item>
+               <widget class="QLabel" name="m_awayMessageLabel">
+                <property name="text">
+                 <string>With &amp;message:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy">
+                 <cstring>m_screenSaverAwayMessage</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="KLineEdit" name="m_awayMessage"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="not_available_check_layout">
+              <item>
+               <widget class="QCheckBox" name="m_xaCheckBox">
+                <property name="text">
+                 <string>Not available</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="not_available_spacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="m_xaMinsLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Aft&amp;er:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy">
+                 <cstring>m_xaMins</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="m_xaMins">
+                <property name="suffix">
+                 <string/>
+                </property>
+                <property name="value">
+                 <number>15</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="m_xaInactivityLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>of inactivity</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="not_available_message_layout">
+              <item>
+               <widget class="QLabel" name="m_xaMessageLabel">
+                <property name="text">
+                 <string>With messa&amp;ge:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy">
+                 <cstring>m_xaMessage</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="KLineEdit" name="m_xaMessage"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <layout class="QVBoxLayout" name="verticalLayoutScreenSaverAway">
+            <item>
+             <layout class="QHBoxLayout" name="screensaver_layout">
+              <item>
+               <widget class="QCheckBox" name="m_screenSaverAwayCheckBox">
+                <property name="text">
+                 <string>Set my status to Away when the screen saver is activated</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="screenSaverAway_spaces">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="screenSaverAway_layout">
+              <item>
+               <widget class="QLabel" name="m_screenSaverAwayLabel">
+                <property name="text">
+                 <string>With &amp;message:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy">
+                 <cstring>m_screenSaverAwayMessage</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="KLineEdit" name="m_screenSaverAwayMessage"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="autoOfflineGroupBox">
+         <property name="title">
+          <string>Auto Offline</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="m_autoOfflineCheckBox">
+            <property name="text">
+             <string>Go offline when closing the contact list</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="incomingFilesGroupBox">
+         <property name="title">
+          <string>Incoming files</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="downloadFolderLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="m_downloadUrlLabel">
+              <property name="text">
+               <string>Download folder:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>m_downloadUrlRequester</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="m_downloadUrlCheckBox">
+              <property name="text">
+               <string>Always Ask</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="KUrlRequester" name="m_downloadUrlRequester">
+              <property name="toolTip">
+               <string>This is the folder where received files will be saved.</string>
+              </property>
+              <property name="whatsThis">
+               <string>This is the folder where received files will be saved.</string>
+              </property>
+              <property name="mode">
+               <set>KFile::Directory|KFile::ExistingOnly|KFile::LocalOnly</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="m_autoAcceptCheckBox">
+            <property name="text">
+             <string>Automatically accept file transfers</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="nowPlayingGroupBox">
+         <property name="title">
+          <string>Now playing</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="m_nowPlayingCheckBox">
+            <property name="text">
+             <string>Enable &quot;Now playing...&quot; presence</string>
             </property>
             <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item>
-           <spacer name="away_spaces">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="m_awayMinsLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>After:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>m_awayMins</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="m_awayMins">
-            <property name="suffix">
-             <string/>
-            </property>
-            <property name="value">
-             <number>5</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="m_awayInactivityLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>of inactivity</string>
-            </property>
-           </widget>
+          <item row="1" column="0">
+           <layout class="QFormLayout" name="nowPlayingMessageFormatLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="message_format_label">
+              <property name="text">
+               <string>Message format:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="NowPlayingLineEdit" name="m_nowPlayingText">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="NowPlayingListWidget" name="m_tagListWidget"/>
+            </item>
+           </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="away_message_layout">
-          <item>
-           <widget class="QLabel" name="m_awayMessageLabel">
-            <property name="text">
-             <string>With &amp;message:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>m_screenSaverAwayMessage</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="KLineEdit" name="m_awayMessage"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="not_available_check_layout">
-          <item>
-           <widget class="QCheckBox" name="m_xaCheckBox">
-            <property name="text">
-             <string>Not available</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="not_available_spacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="m_xaMinsLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Aft&amp;er:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>m_xaMins</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="m_xaMins">
-            <property name="suffix">
-             <string/>
-            </property>
-            <property name="value">
-             <number>15</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="m_xaInactivityLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>of inactivity</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="not_available_message_layout">
-          <item>
-           <widget class="QLabel" name="m_xaMessageLabel">
-            <property name="text">
-             <string>With messa&amp;ge:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>m_xaMessage</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="KLineEdit" name="m_xaMessage"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <layout class="QVBoxLayout" name="verticalLayoutScreenSaverAway">
-        <item>
-         <layout class="QHBoxLayout" name="screensaver_layout">
-          <item>
-           <widget class="QCheckBox" name="m_screenSaverAwayCheckBox">
-            <property name="text">
-             <string>Set my status to Away when the screen saver is activated</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="screenSaverAway_spaces">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="screenSaverAway_layout">
-          <item>
-           <widget class="QLabel" name="m_screenSaverAwayLabel">
-            <property name="text">
-             <string>With &amp;message:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>m_screenSaverAwayMessage</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="KLineEdit" name="m_screenSaverAwayMessage"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-     </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="autoOfflineGroupBox">
-     <property name="title">
-      <string>Auto Offline</string>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="m_autoOfflineCheckBox">
-        <property name="text">
-         <string>Go offline when closing the contact list</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="incomingFilesGroupBox">
-     <property name="title">
-      <string>Incoming files</string>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="downloadFolderLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="m_downloadUrlLabel">
-          <property name="text">
-           <string>Download folder:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy">
-           <cstring>m_downloadUrlRequester</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QCheckBox" name="m_downloadUrlCheckBox">
-          <property name="text">
-           <string>Always Ask</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="KUrlRequester" name="m_downloadUrlRequester">
-          <property name="toolTip">
-           <string>This is the folder where received files will be saved.</string>
-          </property>
-          <property name="whatsThis">
-           <string>This is the folder where received files will be saved.</string>
-          </property>
-          <property name="mode">
-           <set>KFile::Directory|KFile::ExistingOnly|KFile::LocalOnly</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="m_autoAcceptCheckBox">
-        <property name="text">
-         <string>Automatically accept file transfers</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="nowPlayingGroupBox">
-     <property name="title">
-      <string>Now playing</string>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="m_nowPlayingCheckBox">
-        <property name="text">
-         <string>Enable &quot;Now playing...&quot; presence</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <layout class="QFormLayout" name="nowPlayingMessageFormatLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="message_format_label">
-          <property name="text">
-           <string>Message format:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="NowPlayingLineEdit" name="m_nowPlayingText">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="NowPlayingListWidget" name="m_tagListWidget"/>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_5">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::MinimumExpanding</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
