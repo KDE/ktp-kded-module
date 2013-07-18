@@ -51,6 +51,7 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
                         << i18nc("Album tag in now playing plugin, use one word and keep the '%' character.", "%album")
                         // xgettext: no-c-format
                         << i18nc("Track number tag in now playing plugin, use one word and keep the '%' character.", "%track");
+    // xgettext: no-c-format
     m_localizedTimeTagName = i18nc("Time tag. Use one word and keep the '%' character.", "%time");
 
     QStringList itemsIcons;
@@ -83,12 +84,15 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
                                     " minutes"));
 
     ui->m_awayMessage->setClickMessage(i18n("Leave empty for no message"));
+    // xgettext: no-c-format
     ui->m_awayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went away"));
 
     ui->m_xaMessage->setClickMessage(i18n("Leave empty for no message"));
+    // xgettext: no-c-format
     ui->m_xaMessage->setToolTip(i18n("Use %time to insert UTC time of when you went not available"));
 
     ui->m_screenSaverAwayMessage->setClickMessage(i18n("Leave empty for no message"));
+    // xgettext: no-c-format
     ui->m_screenSaverAwayMessage->setToolTip(i18n("Use %time to insert UTC time of when the screen saver was activated"));
 
     connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
