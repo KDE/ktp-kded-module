@@ -107,6 +107,9 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     connect(m_globalPresence, SIGNAL(requestedPresenceChanged(KTp::Presence)),
             this, SLOT(onRequestedPresenceChanged(KTp::Presence)));
 
+    connect(m_globalPresence, SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
+            this, SLOT(onConnectionStatusChanged(Tp::ConnectionStatus)));
+
     m_autoAway = new AutoAway(m_globalPresence, this);
     connect(m_autoAway, SIGNAL(activate(bool)),
             this, SLOT(onPluginActivated(bool)));
@@ -159,7 +162,17 @@ void TelepathyModule::onPluginActivated(bool active)
 {
     Q_UNUSED(active);
     //a plugin has changed state, set presence to whatever a plugin thinks it should be (or restore users setting)
-    setPresence(currentPluginPresence());
+    //only do this if we are connected, otherwise this actually doesn't work since all account are offline
+    if (m_globalPresence->connectionStatus() == Tp::ConnectionStatusConnected) {
+        setPresence(currentPluginPresence());
+    }
+}
+
+void TelepathyModule::onConnectionStatusChanged(const Tp::ConnectionStatus status)
+{
+    if (status == Tp::ConnectionStatusConnected) {
+        setPresence(currentPluginPresence());
+    }
 }
 
 void TelepathyModule::setPresence(const KTp::Presence &presence)

@@ -58,6 +58,7 @@ private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation*);
     void onRequestedPresenceChanged(const KTp::Presence &presence);
     void onPluginActivated(bool);
+    void onConnectionStatusChanged(const Tp::ConnectionStatus status);
 
 private:
     /** Returns the presence we think we should be in. Either from the highest priority plugin, or if none are active, the last user set.*/
