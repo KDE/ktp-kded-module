@@ -146,6 +146,13 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
 
 void TelepathyModule::onRequestedPresenceChanged(const KTp::Presence &presence)
 {
+    // the difference between user requested offline and network related offline is the connectionStatus is connected or not
+    // offline caused by network offline shold not be recorded as user requested.
+    if (presence.type() == Tp::ConnectionPresenceTypeOffline
+     && m_globalPresence->connectionStatus() != Tp::ConnectionStatusConnected) {
+        return;
+    }
+
     //if it's changed to what we set it to. Ignore it.
     if (presence == currentPluginPresence()) {
         return;
