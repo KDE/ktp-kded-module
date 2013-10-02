@@ -148,14 +148,15 @@ void TelepathyMPRIS::onSettingsChanged()
         return;
     }
 
+    m_nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
+                                              i18nc("The default text displayed by now playing plugin. "
+                                                    "track title: %1, artist: %2, album: %3",
+                                                    "Now listening to %1 by %2 from album %3",
+                                                    QLatin1String("%title"), QLatin1String("%artist"), QLatin1String("%album")));
+
     //if the plugin was disabled and is now enabled
     if (!isEnabled() && pluginEnabled) {
         setEnabled(true);
-        m_nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
-                                                  i18nc("The default text displayed by now playing plugin. "
-                                                        "track title: %1, artist: %2, album: %3",
-                                                        "Now listening to %1 by %2 from album %3",
-                                                        QLatin1String("%title"), QLatin1String("%artist"), QLatin1String("%album")));
         detectPlayers();
     }
 }
