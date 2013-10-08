@@ -222,8 +222,6 @@ void TelepathyKDEDConfig::load()
     }
 
     ui->m_nowPlayingText->setText(nowPlayingText);
-    ui->m_nowPlayingText->setEnabled(nowPlayingEnabled);
-    ui->m_tagListWidget->setEnabled(nowPlayingEnabled);
 
     // autoconnect
     QString autoConnectString = kdedConfig.readEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Manual));
@@ -379,8 +377,7 @@ void TelepathyKDEDConfig::autoXAChecked(bool checked)
 
 void TelepathyKDEDConfig::nowPlayingChecked(bool checked)
 {
-    ui->m_nowPlayingText->setEnabled(checked);
-    ui->m_tagListWidget->setEnabled(checked);
+    Q_UNUSED(checked)
     Q_EMIT changed(true);
 }
 
