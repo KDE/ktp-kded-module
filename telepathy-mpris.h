@@ -25,7 +25,7 @@
 #include <TelepathyQt/Presence>
 #include <TelepathyQt/AccountManager>
 
-class TelepathyMPRIS : public TelepathyKDEDModulePlugin
+class TelepathyMPRIS : public TelepathyKDEDModulePlugin, protected QDBusContext
 {
     Q_OBJECT
 
@@ -34,8 +34,6 @@ public:
     virtual ~TelepathyMPRIS();
 
     QString pluginName() const;
-
-    void setTrackToPresence(const QMap<QString, QVariant> &trackData);
 
 public Q_SLOTS:
     void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
@@ -55,8 +53,14 @@ private Q_SLOTS:
     void newMediaPlayer(const QString &player);
 
 private:
+    void requestPlaybackStatus(const QString& service);
+    void setPlaybackStatus(const QVariantMap &reply);
+    void setTrackToPresence();
+    void activatePlugin(bool enabled);
+    void unwatchAllPlayers();
+
+    bool m_enabledInConfig;
     QStringList m_knownPlayers;
-    bool m_presenceActivated;
     QString m_nowPlayingText;
 
     QVariantMap m_lastReceivedMetadata;
