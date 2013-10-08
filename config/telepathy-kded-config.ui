@@ -404,7 +404,7 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="m_nowPlayingCheckBox">
             <property name="text">
-             <string>Enable &quot;Now playing...&quot; presence</string>
+             <string>Enable &quot;Now playing...&quot; presence on login</string>
             </property>
             <property name="checked">
              <bool>true</bool>
