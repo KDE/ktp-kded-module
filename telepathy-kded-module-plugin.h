@@ -23,7 +23,6 @@
 
 #include <QObject>
 #include <TelepathyQt/Presence>
-#include <TelepathyQt/AccountManager>
 
 namespace KTp {
 class GlobalPresence;
@@ -37,12 +36,12 @@ public:
     explicit TelepathyKDEDModulePlugin(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
     virtual ~TelepathyKDEDModulePlugin();
 
-    bool isActive() const { return m_active; };
-    bool isEnabled() const { return m_enabled; };
+    bool isActive() const { return m_active; }
+    bool isEnabled() const { return m_enabled; }
     /// Deriving classes must return a valid plugin name in this method
     virtual QString pluginName() const = 0;
 
-    Tp::Presence requestedPresence() const { return m_requestedPresence; };
+    Tp::Presence requestedPresence() const { return m_requestedPresence; }
 
 Q_SIGNALS:
     void requestPresenceChange(const Tp::Presence &presence);
@@ -51,7 +50,7 @@ Q_SIGNALS:
 protected:
     void setActive(bool active);
     void setEnabled(bool enabled);
-    void setRequestedPresence(const Tp::Presence &presence) { m_requestedPresence = presence; };
+    void setRequestedPresence(const Tp::Presence &presence) { m_requestedPresence = presence; }
 
     KTp::GlobalPresence *m_globalPresence;
 
