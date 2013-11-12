@@ -22,8 +22,6 @@
 #define TELEPATHY_MPRIS_H
 
 #include "telepathy-kded-module-plugin.h"
-#include <TelepathyQt/Presence>
-#include <TelepathyQt/AccountManager>
 
 class TelepathyMPRIS : public TelepathyKDEDModulePlugin, protected QDBusContext
 {
@@ -36,23 +34,22 @@ public:
     QString pluginName() const;
 
 public Q_SLOTS:
-    void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
     void onSettingsChanged();
-    void detectPlayers();
-    void serviceOwnerChanged(const QString &serviceName, const QString &oldOwner, const QString &newOwner);
     void onActivateNowPlaying();
     void onDeactivateNowPlaying();
-
-    void onPlaybackStatusReceived(QDBusPendingCallWatcher *watcher);
 
 Q_SIGNALS:
     void togglePlaybackActive(bool);
 
 private Q_SLOTS:
     void serviceNameFetchFinished(QDBusPendingCallWatcher *callWatcher);
-    void newMediaPlayer(const QString &player);
+    void serviceOwnerChanged(const QString &serviceName, const QString &oldOwner, const QString &newOwner);
+    void onPlaybackStatusReceived(QDBusPendingCallWatcher *watcher);
+    void onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
 
 private:
+    void detectPlayers();
+    void watchPlayer(const QString &player);
     void requestPlaybackStatus(const QString& service);
     void setPlaybackStatus(const QVariantMap &reply);
     void setTrackToPresence();
@@ -60,7 +57,7 @@ private:
     void unwatchAllPlayers();
 
     bool m_enabledInConfig;
-    QStringList m_knownPlayers;
+    QStringList m_watchedPlayers;
     QString m_nowPlayingText;
 
     QVariantMap m_lastReceivedMetadata;
