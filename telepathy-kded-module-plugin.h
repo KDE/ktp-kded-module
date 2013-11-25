@@ -43,6 +43,10 @@ public:
 
     Tp::Presence requestedPresence() const { return m_requestedPresence; }
 
+public Q_SLOTS:
+    /// Deriving classes with configuration must have this method reimplemented
+    virtual void reloadConfig() = 0;
+
 Q_SIGNALS:
     void requestPresenceChange(const Tp::Presence &presence);
     void activate(bool);

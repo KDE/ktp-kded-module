@@ -34,7 +34,7 @@ public:
     QString pluginName() const;
 
 public Q_SLOTS:
-    void onSettingsChanged();
+    void reloadConfig();
     void onActivateNowPlaying();
     void onDeactivateNowPlaying();
 

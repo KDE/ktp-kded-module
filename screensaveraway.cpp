@@ -22,8 +22,6 @@
 #include <QDBusConnectionInterface>
 #include <QDBusInterface>
 
-#include <TelepathyQt/AccountManager>
-#include <TelepathyQt/AccountSet>
 #include <KDebug>
 #include <KConfig>
 #include <KConfigGroup>
@@ -32,7 +30,7 @@
 ScreenSaverAway::ScreenSaverAway(KTp::GlobalPresence *globalPresence, QObject *parent)
     : TelepathyKDEDModulePlugin(globalPresence, parent)
 {
-    readConfig();
+    reloadConfig();
 
   //watch for screen locked
   QDBusConnection::sessionBus().connect(QString(),
@@ -68,7 +66,7 @@ void ScreenSaverAway::onActiveChanged(bool newState)
     }
 }
 
-void ScreenSaverAway::readConfig()
+void ScreenSaverAway::reloadConfig()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     config.data()->reparseConfiguration();
@@ -84,9 +82,4 @@ void ScreenSaverAway::readConfig()
     } else {
         setEnabled(false);
     }
-}
-
-void ScreenSaverAway::onSettingsChanged()
-{
-    readConfig();
 }

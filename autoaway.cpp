@@ -19,9 +19,6 @@
 
 #include "autoaway.h"
 
-#include <TelepathyQt/AccountManager>
-#include <TelepathyQt/AccountSet>
-
 #include <KDebug>
 #include <KIdleTime>
 #include <KConfig>
@@ -34,7 +31,7 @@ AutoAway::AutoAway(KTp::GlobalPresence* globalPresence, QObject* parent)
       m_awayTimeoutId(-1),
       m_extAwayTimeoutId(-1)
 {
-    readConfig();
+    reloadConfig();
 
     connect(KIdleTime::instance(), SIGNAL(timeoutReached(int)),
             this, SLOT(timeoutReached(int)));
@@ -82,7 +79,7 @@ void AutoAway::backFromIdle()
     setActive(false);
 }
 
-void AutoAway::readConfig()
+void AutoAway::reloadConfig()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     config.data()->reparseConfiguration();
@@ -111,9 +108,4 @@ void AutoAway::readConfig()
         int xaTime = kdedConfig.readEntry("xaAfter", 15);
         m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime * 60 * 1000);
     }
-}
-
-void AutoAway::onSettingsChanged()
-{
-    readConfig();
 }

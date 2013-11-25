@@ -43,7 +43,7 @@ TelepathyMPRIS::TelepathyMPRIS(KTp::GlobalPresence* globalPresence, QObject* par
       m_playbackActive(false)
 {
     //read settings and detect players if plugin is enabled
-    onSettingsChanged();
+    reloadConfig();
 
     QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
                                           QLatin1String("activateNowPlaying"), this, SLOT(onActivateNowPlaying()) );
@@ -122,7 +122,7 @@ void TelepathyMPRIS::serviceNameFetchFinished(QDBusPendingCallWatcher *callWatch
     }
 }
 
-void TelepathyMPRIS::onSettingsChanged()
+void TelepathyMPRIS::reloadConfig()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     config.data()->reparseConfiguration();

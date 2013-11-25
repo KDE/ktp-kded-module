@@ -23,9 +23,6 @@
 
 #include "telepathy-kded-module-plugin.h"
 
-#include <TelepathyQt/Presence>
-#include <TelepathyQt/AccountManager>
-
 namespace KTp {
 class GlobalPresence;
 }
@@ -38,11 +35,10 @@ public:
     explicit ScreenSaverAway(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
     ~ScreenSaverAway();
 
-    void readConfig();
     QString pluginName() const;
 
 public Q_SLOTS:
-    void onSettingsChanged();
+    void reloadConfig();
 
 private Q_SLOTS:
     void onActiveChanged(bool newState);

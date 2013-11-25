@@ -112,21 +112,21 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
             this, SLOT(onPluginActivated(bool)));
 
     connect(this, SIGNAL(settingsChanged()),
-            m_autoAway, SLOT(onSettingsChanged()));
+            m_autoAway, SLOT(reloadConfig()));
 
     m_screenSaverAway = new ScreenSaverAway(m_globalPresence, this);
     connect(m_screenSaverAway, SIGNAL(activate(bool)),
             this, SLOT(onPluginActivated(bool)));
 
     connect(this, SIGNAL(settingsChanged()),
-            m_screenSaverAway, SLOT(onSettingsChanged()));
+            m_screenSaverAway, SLOT(reloadConfig()));
 
     m_mpris = new TelepathyMPRIS(m_globalPresence, this);
     connect(m_mpris, SIGNAL(activate(bool)),
             this, SLOT(onPluginActivated(bool)));
 
     connect(this, SIGNAL(settingsChanged()),
-            m_mpris, SLOT(onSettingsChanged()));
+            m_mpris, SLOT(reloadConfig()));
 
     m_autoConnect = new AutoConnect(this);
     m_autoConnect->setAccountManager(m_accountManager);

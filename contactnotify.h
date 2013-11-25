@@ -20,7 +20,6 @@
 #define CONTACTNOTIFY_H
 
 #include <TelepathyQt/Types>
-#include <TelepathyQt/Connection>
 
 #include <KTp/global-contact-manager.h>
 
