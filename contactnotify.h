@@ -23,7 +23,7 @@
 
 #include <KTp/global-contact-manager.h>
 
-class KIcon;
+class QPixmap;
 
 using namespace KTp;
 
@@ -40,7 +40,7 @@ private Q_SLOTS:
     void saveAvatarTokens();
 
 private:
-    void sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact);
+    void sendNotification(const QString &text, const QPixmap &pixmap, const Tp::ContactPtr &contact);
 
     Tp::AccountManagerPtr m_accountManager;
     QHash<QString, int> m_presenceHash;

@@ -62,7 +62,7 @@ ContactNotify::ContactNotify(const Tp::AccountManagerPtr &accountMgr, QObject *p
 void ContactNotify::contactPresenceChanged(const Tp::Presence &presence)
 {
     KTp::Presence ktpPresence(presence);
-    Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(QObject::sender()));
+    KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(QObject::sender()));
     int priority = m_presenceHash[contact->id()];
 
     // Don't show presence messages when moving from a higher priority to a lower
@@ -74,14 +74,14 @@ void ContactNotify::contactPresenceChanged(const Tp::Presence &presence)
                                "%1 is now %2",
                                contact->alias(),
                                ktpPresence.displayString()),
-                         ktpPresence.icon(),
+                         contact->avatarPixmap(),
                          contact);
     }
 
     m_presenceHash.insert(contact->id(), Presence::sortPriority(presence.type()));
 }
 
-void ContactNotify::sendNotification(const QString &text, const KIcon &icon, const Tp::ContactPtr &contact)
+void ContactNotify::sendNotification(const QString &text, const QPixmap &pixmap, const Tp::ContactPtr &contact)
 {
     //The pointer is automatically deleted when the event is closed
     KNotification *notification;
@@ -90,7 +90,7 @@ void ContactNotify::sendNotification(const QString &text, const KIcon &icon, con
     KAboutData aboutData("ktelepathy", 0, KLocalizedString(), 0);
     notification->setComponentData(KComponentData(aboutData));
 
-    notification->setPixmap(icon.pixmap(48));
+    notification->setPixmap(pixmap);
     notification->setText(text);
     notification->addContext(QLatin1String("contact"), contact.data()->id());
     notification->sendEvent();
