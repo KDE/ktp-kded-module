@@ -164,12 +164,10 @@ void TelepathyMPRIS::watchPlayer(const QString &service)
 
 void TelepathyMPRIS::requestPlaybackStatus(const QString& service)
 {
-    QDBusInterface mprisInterface(service,
-                                  mprisPath,
-                                  dbusInterfaceProperties);
+    QDBusMessage mprisMsg = QDBusMessage::createMethodCall(service, mprisPath, dbusInterfaceProperties, QLatin1String("GetAll"));
+    mprisMsg.setArguments(QList<QVariant>() << mprisInterfaceName);
 
-    QDBusPendingCall call = mprisInterface.asyncCall(QLatin1String("GetAll"),
-                                                     mprisInterfaceName);
+    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(mprisMsg);
 
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
