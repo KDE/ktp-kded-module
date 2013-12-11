@@ -160,12 +160,13 @@ void TelepathyMPRIS::newMediaPlayer(const QString &service)
 
 void TelepathyMPRIS::requestPlaybackStatus(const QString& service)
 {
-    QDBusInterface mprisInterface(service,
-                                  QLatin1String("/org/mpris/MediaPlayer2"),
-                                  QLatin1String("org.freedesktop.DBus.Properties"));
+    QDBusMessage mprisMsg = QDBusMessage::createMethodCall(service,
+                                                           QLatin1String("/org/mpris/MediaPlayer2"),
+                                                           QLatin1String("org.freedesktop.DBus.Properties"),
+                                                           QLatin1String("GetAll"));
+    mprisMsg.setArguments(QList<QVariant>() << QLatin1String("org.mpris.MediaPlayer2.Player"));
 
-    QDBusPendingCall call = mprisInterface.asyncCall(QLatin1String("GetAll"),
-                                                     QLatin1String("org.mpris.MediaPlayer2.Player"));
+    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(mprisMsg);
 
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
