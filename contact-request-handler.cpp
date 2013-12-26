@@ -43,7 +43,7 @@ Q_DECLARE_METATYPE(Tp::ContactPtr)
 
 static bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &contact)
 {
-    return contact->publishState() == Tp::Contact::PresenceStateAsk;
+    return contact->publishState() == Tp::Contact::PresenceStateAsk && !contact->isBlocked();
 }
 
 ContactRequestHandler::ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent)
@@ -326,14 +326,21 @@ void ContactRequestHandler::onContactRequestDenied()
         QHash<QString, Tp::ContactPtr>::const_iterator i = m_pendingContacts.constFind(contactId);
         while (i != m_pendingContacts.constEnd() && i.key() == contactId) {
             if (!i.value()->manager().isNull()) {
+                //don't publish our presence to that user
                 Tp::PendingOperation *op = i.value()->manager()->removePresencePublication(QList< Tp::ContactPtr >() << i.value());
                 op->setProperty("__contact", QVariant::fromValue(i.value()));
                 operations.append(op);
+
+                //and block that contact
+                if (i.value()->manager()->canBlockContacts()) {
+                    Tp::PendingOperation *blockOp = i.value()->manager()->blockContacts(QList<Tp::ContactPtr>() << i.value());
+                    operations.append(blockOp);
+                }
             }
             ++i;
         }
 
-        // Take the first value, if any
+        // Wait until all operations complete
         if (!operations.isEmpty()) {
             Tp::ContactPtr contact = m_pendingContacts.find(contactId).value();
 
