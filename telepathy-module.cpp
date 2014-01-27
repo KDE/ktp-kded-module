@@ -37,6 +37,7 @@
 #include "telepathy-kded-module-plugin.h"
 #include "contactnotify.h"
 #include "screensaveraway.h"
+#include "contact-cache.h"
 
 #include <KConfigGroup>
 #include "contact-request-handler.h"
@@ -137,6 +138,8 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
     m_errorHandler = new ErrorHandler(m_accountManager, this);
     m_contactHandler = new ContactRequestHandler(m_accountManager, this);
     m_contactNotify = new ContactNotify(m_accountManager, this);
+
+    new ContactCache(this);
 
     m_lastUserPresence = m_globalPresence->requestedPresence();
 }

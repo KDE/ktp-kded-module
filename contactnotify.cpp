@@ -28,6 +28,7 @@
 #include <KAboutData>
 #include <KConfigGroup>
 
+#include <KTp/core.h>
 #include <KTp/presence.h>
 #include <KTp/global-contact-manager.h>
 
@@ -42,8 +43,7 @@ ContactNotify::ContactNotify(const Tp::AccountManagerPtr &accountMgr, QObject *p
         return;
     }
 
-    GlobalContactManager *contactManager = new GlobalContactManager(m_accountManager, this);
-
+    GlobalContactManager *contactManager = KTp::contactManager();
     Tp::Presence currentPresence;
 
     Q_FOREACH(const Tp::ContactPtr &contact, contactManager->allKnownContacts()) {
