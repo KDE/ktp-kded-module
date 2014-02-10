@@ -20,10 +20,10 @@
 #ifndef AUTOCONNECT_H
 #define AUTOCONNECT_H
 
-#include <TelepathyQt/AccountManager>
-
 #include <KConfigGroup>
 #include <KDebug>
+
+#include <TelepathyQt/Presence>
 
 namespace KTp {
     class Presence;
@@ -43,7 +43,6 @@ public:
     AutoConnect(QObject *parent = 0 );
     ~AutoConnect();
 
-    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
     void savePresence(const KTp::Presence &presence);
 
     /**
@@ -67,7 +66,7 @@ public:
             kWarning() << "Treat as AutoConnect::Manual (" << AutoConnect::Manual << ").";
             return QString::fromLatin1("manual");
         }
-    };
+    }
 
     /**
      * \brief Returns the enum value for the given string.
@@ -88,10 +87,9 @@ public:
             kWarning() << "Got not recognized string: '" << mode << "'. Treat as 'manual'";
             return AutoConnect::Manual;
         }
-    };
+    }
 
 private:
-    Tp::AccountManagerPtr m_accountManager;
     Tp::Presence m_presence;
     KConfigGroup m_kdedConfig;
     KConfigGroup m_presenceConfig;

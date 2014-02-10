@@ -21,8 +21,9 @@
 #ifndef CONTACT_REQUEST_HANDLER_H
 #define CONTACT_REQUEST_HANDLER_H
 
+#include <TelepathyQt/Constants>
 #include <TelepathyQt/Types>
-#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/PendingOperation>
 
 class KMenu;
 class KAction;
@@ -31,7 +32,7 @@ class ContactRequestHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
+    explicit ContactRequestHandler(QObject *parent = 0);
     virtual ~ContactRequestHandler();
 
 private Q_SLOTS:
@@ -39,15 +40,15 @@ private Q_SLOTS:
     void onContactManagerStateChanged(Tp::ContactListState state);
     void onContactManagerStateChanged(const Tp::ContactManagerPtr &contactManager, Tp::ContactListState state);
     void onAccountsPresenceStatusFiltered();
-    void onPresencePublicationRequested(const Tp::Contacts& contacts);
-    void onConnectionChanged(const Tp::ConnectionPtr& connection);
+    void onPresencePublicationRequested(const Tp::Contacts &contacts);
+    void onConnectionChanged(const Tp::ConnectionPtr &connection);
 
     void onContactRequestApproved();
     void onContactRequestDenied();
     void onShowContactDetails();
-    void onAuthorizePresencePublicationFinished(Tp::PendingOperation*);
-    void onRemovePresencePublicationFinished(Tp::PendingOperation*);
-    void onFinalizeSubscriptionFinished(Tp::PendingOperation*);
+    void onAuthorizePresencePublicationFinished(Tp::PendingOperation *op);
+    void onRemovePresencePublicationFinished(Tp::PendingOperation *op);
+    void onFinalizeSubscriptionFinished(Tp::PendingOperation *op);
     void onContactInvalidated();
 
     void onNotifierActivated(bool active, const QPoint &pos);
@@ -57,7 +58,6 @@ private:
     void handleNewConnection(const Tp::ConnectionPtr &connection);
 
     QWeakPointer<KStatusNotifierItem> m_notifierItem;
-    Tp::AccountManagerPtr m_accountManager;
     QHash<QString, Tp::ContactPtr> m_pendingContacts;
     QHash<QString, KMenu*> m_menuItems;
 };

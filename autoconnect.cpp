@@ -19,9 +19,12 @@
 
 #include "autoconnect.h"
 
-#include <KConfig>
-
 #include <KTp/presence.h>
+#include <KTp/core.h>
+
+#include <TelepathyQt/AccountManager>
+
+#include <KConfig>
 
 AutoConnect::AutoConnect(QObject *parent)
     : QObject(parent)
@@ -29,15 +32,6 @@ AutoConnect::AutoConnect(QObject *parent)
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     m_kdedConfig = config->group("KDED");
     m_presenceConfig = config->group("LastPresence");
-}
-
-AutoConnect::~AutoConnect()
-{
-}
-
-void AutoConnect::setAccountManager(const Tp::AccountManagerPtr &accountManager)
-{
-    m_accountManager = accountManager;
 
     uint presenceType = m_presenceConfig.readEntry<uint>(QLatin1String("PresenceType"), (uint)Tp::ConnectionPresenceTypeOffline);
     QString presenceStatus = m_presenceConfig.readEntry(QLatin1String("PresenceStatus"), QString());
@@ -47,10 +41,14 @@ void AutoConnect::setAccountManager(const Tp::AccountManagerPtr &accountManager)
     Mode autoConnectMode = stringToMode(autoConnectString);
 
     if (autoConnectMode == AutoConnect::Enabled) {
-        Q_FOREACH(Tp::AccountPtr account, m_accountManager->allAccounts()) {
-            account->setRequestedPresence(Tp::Presence((Tp::ConnectionPresenceType)presenceType, presenceStatus,               presenceMessage));
+        Q_FOREACH(Tp::AccountPtr account, KTp::accountManager()->allAccounts()) {
+            account->setRequestedPresence(Tp::Presence((Tp::ConnectionPresenceType)presenceType, presenceStatus, presenceMessage));
         }
     }
+}
+
+AutoConnect::~AutoConnect()
+{
 }
 
 void AutoConnect::savePresence(const KTp::Presence &presence)

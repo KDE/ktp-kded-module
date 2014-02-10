@@ -20,19 +20,21 @@
 
 #include "error-handler.h"
 
-#include <QScopedPointer>
-#include <QTimer>
+#include <KTp/core.h>
+#include <KTp/error-dictionary.h>
+
+#include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/Connection>
 
 #include <KNotification>
 #include <KAboutData>
 #include <KDebug>
 
-#include <KTp/error-dictionary.h>
-
-#include <TelepathyQt/Account>
-#include <TelepathyQt/Connection>
-
 #include <Solid/Networking>
+
+#include <QScopedPointer>
+#include <QTimer>
 
 /** Stores the last error message for an account
     For every new error if we're online we wait 30 seconds and show 1 notification for all errors. This will be the only error we show for that account until the user reconnects.
@@ -102,16 +104,14 @@ void ConnectionError::setShown(bool)
 }
 
 
-ErrorHandler::ErrorHandler(const Tp::AccountManagerPtr& am, QObject* parent)
+ErrorHandler::ErrorHandler(QObject *parent)
     : QObject(parent)
 {
-    m_accountManager = am;
-
-    Q_FOREACH(const Tp::AccountPtr &account, am->allAccounts()) {
+    Q_FOREACH(const Tp::AccountPtr &account, KTp::accountManager()->allAccounts()) {
         onNewAccount(account);
     }
 
-    connect(m_accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)),
+    connect(KTp::accountManager().data(), SIGNAL(newAccount(Tp::AccountPtr)),
             this, SLOT(onNewAccount(Tp::AccountPtr)));
 }
 
@@ -142,9 +142,9 @@ void ErrorHandler::showErrorNotification()
                 errorMessage += i18nc("%1 is the account name", "Could not connect %1. There was a network error, check your connection", account->displayName()) + QLatin1String("<br>");
                 break;
             default:
-	        if (error.connectionError() == QLatin1String(TP_QT_ERROR_CANCELLED)) {
-		    break;
-		}
+                if (error.connectionError() == QLatin1String(TP_QT_ERROR_CANCELLED)) {
+                    break;
+                }
                 if (error.connectionErrorDetails().hasServerMessage()) {
                     errorMessage += i18nc("%1 is the account name, %2 the error message", "There was a problem while trying to connect %1 - %2", account->displayName(), error.connectionErrorDetails().serverMessage()) + QLatin1String("<br>");
                 } else {
@@ -213,12 +213,12 @@ void ErrorHandler::showMessageToUser(const QString &text, const ErrorHandler::Sy
     notification->sendEvent();
 }
 
-void ErrorHandler::onNewAccount(const Tp::AccountPtr& account)
+void ErrorHandler::onNewAccount(const Tp::AccountPtr &account)
 {
     connect(account.data(), SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
             this, SLOT(onConnectionStatusChanged(Tp::ConnectionStatus)));
 
-    connect(account.data(), SIGNAL(requestedPresenceChanged(Tp::Presence)) , SLOT(onRequestedPresenceChanged()));
+    connect(account.data(), SIGNAL(requestedPresenceChanged(Tp::Presence)), SLOT(onRequestedPresenceChanged()));
     connect(account.data(), SIGNAL(removed()), SLOT(onAccountRemoved()));
 }
 

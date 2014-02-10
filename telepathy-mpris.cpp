@@ -19,17 +19,17 @@
 
 #include "telepathy-mpris.h"
 
+#include <KTp/global-presence.h>
+
+#include <KConfigGroup>
+#include <KDebug>
+#include <KLocalizedString>
+#include <KSharedConfig>
+
 #include <QDBusConnectionInterface>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QVariant>
-
-#include <KDebug>
-#include <KSharedConfig>
-#include <KConfigGroup>
-#include <KLocalizedString>
-
-#include <KTp/global-presence.h>
 
 static const QLatin1String dbusInterfaceProperties("org.freedesktop.DBus.Properties");
 

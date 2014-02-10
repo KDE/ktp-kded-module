@@ -19,26 +19,27 @@
 
 #include "screensaveraway.h"
 
-#include <QDBusConnectionInterface>
-#include <QDBusInterface>
+#include <KTp/global-presence.h>
 
 #include <KDebug>
 #include <KConfig>
 #include <KConfigGroup>
-#include <KTp/global-presence.h>
+
+#include <QDBusConnectionInterface>
+#include <QDBusInterface>
 
 ScreenSaverAway::ScreenSaverAway(KTp::GlobalPresence *globalPresence, QObject *parent)
     : TelepathyKDEDModulePlugin(globalPresence, parent)
 {
     reloadConfig();
 
-  //watch for screen locked
-  QDBusConnection::sessionBus().connect(QString(),
-				      QLatin1String("/ScreenSaver"),
-				      QLatin1String("org.freedesktop.ScreenSaver"),
-				      QLatin1String("ActiveChanged"),
-				      this,
-				      SLOT(onActiveChanged(bool)) );
+    //watch for screen locked
+    QDBusConnection::sessionBus().connect(QString(),
+                                          QLatin1String("/ScreenSaver"),
+                                          QLatin1String("org.freedesktop.ScreenSaver"),
+                                          QLatin1String("ActiveChanged"),
+                                          this,
+                                          SLOT(onActiveChanged(bool)));
 }
 
 ScreenSaverAway::~ScreenSaverAway()
@@ -53,16 +54,16 @@ QString ScreenSaverAway::pluginName() const
 void ScreenSaverAway::onActiveChanged(bool newState)
 {
     if (!isEnabled()) {
-      return;
+        return;
     }
 
     if (newState) {
-      m_screenSaverAwayMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss")), Qt::CaseInsensitive);
-      setRequestedPresence(Tp::Presence::away(m_screenSaverAwayMessage));
-      setActive(true);
+        m_screenSaverAwayMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss")), Qt::CaseInsensitive);
+        setRequestedPresence(Tp::Presence::away(m_screenSaverAwayMessage));
+        setActive(true);
     } else {
-      kDebug();
-      setActive(false);
+        kDebug();
+        setActive(false);
     }
 }
 

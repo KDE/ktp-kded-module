@@ -19,33 +19,33 @@
 
 #include "telepathy-module.h"
 
-#include <KPluginFactory>
-#include <KDebug>
+#include "autoaway.h"
+#include "autoconnect.h"
+#include "contact-cache.h"
+#include "contact-request-handler.h"
+#include "contactnotify.h"
+#include "error-handler.h"
+#include "screensaveraway.h"
+#include "telepathy-kded-module-plugin.h"
+#include "telepathy-mpris.h"
+
+#include <KTp/contact-factory.h>
+#include <KTp/core.h>
+#include <KTp/global-presence.h>
 
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/Debug>
 
-#include <KTp/contact-factory.h>
-#include <KTp/global-presence.h>
-
-#include "telepathy-mpris.h"
-#include "autoaway.h"
-#include "autoconnect.h"
-#include "error-handler.h"
-#include "telepathy-kded-module-plugin.h"
-#include "contactnotify.h"
-#include "screensaveraway.h"
-#include "contact-cache.h"
-
 #include <KConfigGroup>
-#include "contact-request-handler.h"
+#include <KDebug>
+#include <KPluginFactory>
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
 K_EXPORT_PLUGIN(TelepathyModuleFactory("ktp_integration_module", "kded_ktp_integration_module"))
 
-TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
+TelepathyModule::TelepathyModule(QObject *parent, const QList<QVariant> &args)
     : KDEDModule(parent)
     , m_autoAway( 0 )
     , m_mpris( 0 )
@@ -62,30 +62,7 @@ TelepathyModule::TelepathyModule(QObject* parent, const QList<QVariant>& args)
     Tp::enableDebug(false);
     Tp::enableWarnings(false);
 
-    // Start setting up the Telepathy AccountManager.
-    Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
-                                                                       Tp::Features() << Tp::Account::FeatureCore);
-
-    Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
-                                                                               Tp::Features() << Tp::Connection::FeatureCore
-                                                                                              << Tp::Connection::FeatureRoster);
-
-    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features() << Tp::Contact::FeatureAlias
-                                                                                      << Tp::Contact::FeatureSimplePresence
-                                                                                      << Tp::Contact::FeatureAvatarToken
-                                                                                      << Tp::Contact::FeatureCapabilities);
-
-    Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
-
-    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
-                                                  accountFactory,
-                                                  connectionFactory,
-                                                  channelFactory,
-                                                  contactFactory);
-
-
-    connect(m_accountManager->becomeReady(),
-            SIGNAL(finished(Tp::PendingOperation*)),
+    connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
     QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
@@ -97,14 +74,14 @@ TelepathyModule::~TelepathyModule()
 {
 }
 
-void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
+void TelepathyModule::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
         return;
     }
 
     m_globalPresence = new KTp::GlobalPresence(this);
-    m_globalPresence->setAccountManager(m_accountManager);
+    m_globalPresence->setAccountManager(KTp::accountManager());
     connect(m_globalPresence, SIGNAL(requestedPresenceChanged(KTp::Presence)),
             this, SLOT(onRequestedPresenceChanged(KTp::Presence)));
 
@@ -130,14 +107,13 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation* op)
             m_mpris, SLOT(reloadConfig()));
 
     m_autoConnect = new AutoConnect(this);
-    m_autoConnect->setAccountManager(m_accountManager);
 
     //earlier in list = higher priority
     m_pluginStack << m_autoAway << m_screenSaverAway << m_mpris;
 
-    m_errorHandler = new ErrorHandler(m_accountManager, this);
-    m_contactHandler = new ContactRequestHandler(m_accountManager, this);
-    m_contactNotify = new ContactNotify(m_accountManager, this);
+    m_errorHandler = new ErrorHandler(this);
+    m_contactHandler = new ContactRequestHandler(this);
+    m_contactNotify = new ContactNotify(this);
 
     new ContactCache(this);
 
@@ -174,7 +150,7 @@ void TelepathyModule::onPluginActivated(bool active)
 
 void TelepathyModule::setPresence(const KTp::Presence &presence)
 {
-    Q_FOREACH(const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+    Q_FOREACH(const Tp::AccountPtr &account, KTp::accountManager()->allAccounts()) {
         if (account->isEnabled() &&
             (account->connectionStatusReason() == Tp::ConnectionStatusReasonNoneSpecified ||
              account->connectionStatusReason() == Tp::ConnectionStatusReasonRequested)) {

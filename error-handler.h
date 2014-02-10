@@ -23,7 +23,8 @@
 
 #include <QObject>
 
-#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/Constants>
+#include <TelepathyQt/Types>
 
 class ConnectionError;
 
@@ -31,7 +32,7 @@ class ErrorHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit ErrorHandler(const Tp::AccountManagerPtr& am, QObject *parent = 0);
+    explicit ErrorHandler(QObject *parent = 0);
     virtual ~ErrorHandler();
 
     enum SystemMessageType {
@@ -62,7 +63,6 @@ private Q_SLOTS:
 
 private:
     void showMessageToUser(const QString &text, const ErrorHandler::SystemMessageType type);
-    Tp::AccountManagerPtr m_accountManager;
     QHash<Tp::AccountPtr, ConnectionError> m_errorMap;
 };
 

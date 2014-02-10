@@ -55,7 +55,7 @@ Q_SIGNALS:
     void settingsChanged();
 
 private Q_SLOTS:
-    void onAccountManagerReady(Tp::PendingOperation*);
+    void onAccountManagerReady(Tp::PendingOperation *op);
     void onRequestedPresenceChanged(const KTp::Presence &presence);
     void onPluginActivated(bool);
 
@@ -65,7 +65,6 @@ private:
     void setPresence(const KTp::Presence &presence);
 
 private:
-    Tp::AccountManagerPtr    m_accountManager;
     AutoAway                *m_autoAway;
     TelepathyMPRIS          *m_mpris;
     AutoConnect             *m_autoConnect;

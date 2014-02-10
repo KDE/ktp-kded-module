@@ -20,17 +20,17 @@
 
 #include "contact-request-handler.h"
 
+#include <KTp/error-dictionary.h>
+#include <KTp/contact-info-dialog.h>
+#include <KTp/core.h>
+
+#include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/ContactManager>
-#include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingComposite>
-#include <TelepathyQt/Account>
-
-#include <KTp/error-dictionary.h>
-#include <KTp/contact-info-dialog.h>
-
-#include <QtCore/QFutureWatcher>
+#include <TelepathyQt/PendingOperation>
 
 #include <KDebug>
 #include <KGlobal>
@@ -39,6 +39,8 @@
 #include <KAction>
 #include <KStatusNotifierItem>
 
+#include <QtCore/QFutureWatcher>
+
 Q_DECLARE_METATYPE(Tp::ContactPtr)
 
 static bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &contact)
@@ -46,14 +48,13 @@ static bool kde_tp_filter_contacts_by_publication_status(const Tp::ContactPtr &c
     return contact->publishState() == Tp::Contact::PresenceStateAsk && !contact->isBlocked();
 }
 
-ContactRequestHandler::ContactRequestHandler(const Tp::AccountManagerPtr& am, QObject *parent)
+ContactRequestHandler::ContactRequestHandler(QObject *parent)
     : QObject(parent)
 {
-    m_accountManager = am;
-    connect(m_accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)),
+    connect(KTp::accountManager().data(), SIGNAL(newAccount(Tp::AccountPtr)),
             this, SLOT(onNewAccountAdded(Tp::AccountPtr)));
 
-    QList<Tp::AccountPtr> accounts = m_accountManager->allAccounts();
+    QList<Tp::AccountPtr> accounts = KTp::accountManager()->allAccounts();
 
     Q_FOREACH(const Tp::AccountPtr &account, accounts) {
         onNewAccountAdded(account);
@@ -66,7 +67,7 @@ ContactRequestHandler::~ContactRequestHandler()
 
 }
 
-void ContactRequestHandler::onNewAccountAdded(const Tp::AccountPtr& account)
+void ContactRequestHandler::onNewAccountAdded(const Tp::AccountPtr &account)
 {
     kWarning();
     Q_ASSERT(account->isReady(Tp::Account::FeatureCore));
@@ -80,7 +81,7 @@ void ContactRequestHandler::onNewAccountAdded(const Tp::AccountPtr& account)
             this, SLOT(onConnectionChanged(Tp::ConnectionPtr)));
 }
 
-void ContactRequestHandler::onConnectionChanged(const Tp::ConnectionPtr& connection)
+void ContactRequestHandler::onConnectionChanged(const Tp::ConnectionPtr &connection)
 {
     if (!connection.isNull()) {
         handleNewConnection(connection);
@@ -134,7 +135,7 @@ void ContactRequestHandler::onAccountsPresenceStatusFiltered()
     watcher->deleteLater();
 }
 
-void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts& contacts)
+void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts &contacts)
 {
     kDebug() << "New contact requested";
 
@@ -263,7 +264,7 @@ void ContactRequestHandler::onShowContactDetails()
     if (!contactId.isEmpty()) {
         const Tp::ContactPtr contact = m_pendingContacts.find(contactId).value();
         const Tp::ContactManagerPtr manager = contact->manager();
-        Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+        Q_FOREACH (const Tp::AccountPtr &account, KTp::accountManager()->allAccounts()) {
             if (account->connection() == manager->connection()) {
                 KTp::ContactInfoDialog *dialog = new KTp::ContactInfoDialog(account, contact);
                 connect(dialog, SIGNAL(closeClicked()), dialog, SLOT(deleteLater()));

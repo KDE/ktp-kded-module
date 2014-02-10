@@ -32,7 +32,7 @@ class AutoAway : public TelepathyKDEDModulePlugin
     Q_OBJECT
 
 public:
-    explicit AutoAway(KTp::GlobalPresence *globalPresence, QObject* parent = 0);
+    explicit AutoAway(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
     ~AutoAway();
 
     QString pluginName() const;
