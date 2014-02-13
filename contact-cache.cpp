@@ -143,6 +143,10 @@ void ContactCache::onAccountConnectionChanged(const Tp::ConnectionPtr &connectio
         return;
     }
 
+    //this is needed to make the contact manager roster
+    //when this finishes the contact manager will change state
+    connection->becomeReady(Tp::Connection::FeatureRoster);
+
     if (connect(connection->contactManager().data(), SIGNAL(stateChanged(Tp::ContactListState)), this, SLOT(onContactManagerStateChanged()), Qt::UniqueConnection)) {
         /* Check current contactManager state and do sync contact only if it is not performed due to already connected contactManager. */
         checkContactManagerState(connection->contactManager());
