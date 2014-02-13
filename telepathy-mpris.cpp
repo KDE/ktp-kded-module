@@ -261,14 +261,7 @@ void TelepathyMPRIS::setTrackToPresence()
     statusMessage.replace(QLatin1String("%album"), album, Qt::CaseInsensitive);
     statusMessage.replace(QLatin1String("%track"), trackNumber, Qt::CaseInsensitive);
 
-    Tp::Presence requestedPresence = m_globalPresence->requestedPresence();
-    Tp::SimplePresence presence;
-
-    presence.type = requestedPresence.type();
-    presence.status = requestedPresence.status();
-    presence.statusMessage = statusMessage;
-
-    setRequestedPresence(Tp::Presence(presence));
+    setRequestedStatusMessage(statusMessage);
     setActive(true);
 }
 

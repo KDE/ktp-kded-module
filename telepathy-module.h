@@ -62,6 +62,11 @@ private Q_SLOTS:
 private:
     /** Returns the presence we think we should be in. Either from the highest priority plugin, or if none are active, the last user set.*/
     KTp::Presence currentPluginPresence() const;
+    QString currentPluginStatusMessage();
+    KTp::Presence presenceThrottle();
+    const QString statusMessageStack();
+    bool activePlugin();
+    bool activeStatusMessagePlugin();
     void setPresence(const KTp::Presence &presence);
 
 private:
@@ -75,6 +80,7 @@ private:
     ScreenSaverAway         *m_screenSaverAway;
 
     QList<TelepathyKDEDModulePlugin*> m_pluginStack;
+    QList<TelepathyKDEDModulePlugin*> m_statusMessagePluginStack;
     KTp::Presence m_lastUserPresence;
 };
 

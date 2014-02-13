@@ -42,6 +42,7 @@ public:
     virtual QString pluginName() const = 0;
 
     Tp::Presence requestedPresence() const { return m_requestedPresence; }
+    QString requestedStatusMessage() const { return m_requestedStatusMessage; }
 
 public Q_SLOTS:
     /// Deriving classes with configuration must have this method reimplemented
@@ -49,17 +50,20 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void requestPresenceChange(const Tp::Presence &presence);
+    void requestStatusMessageChange(const QString statusMessage);
     void activate(bool);
 
 protected:
     void setActive(bool active);
     void setEnabled(bool enabled);
     void setRequestedPresence(const Tp::Presence &presence) { m_requestedPresence = presence; }
+    void setRequestedStatusMessage(const QString statusMessage) { m_requestedStatusMessage = statusMessage; }
 
     KTp::GlobalPresence *m_globalPresence;
 
 private:
     Tp::Presence m_requestedPresence;
+    QString m_requestedStatusMessage;
     bool m_enabled;
     bool m_active;
 };
