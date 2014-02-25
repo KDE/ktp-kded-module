@@ -190,9 +190,7 @@ KTp::Presence TelepathyModule::presenceThrottle()
 void TelepathyModule::setPresence(const KTp::Presence &presence)
 {
     Q_FOREACH(const Tp::AccountPtr &account, KTp::accountManager()->allAccounts()) {
-        if (account->isEnabled() &&
-            (account->connectionStatusReason() == Tp::ConnectionStatusReasonNoneSpecified ||
-             account->connectionStatusReason() == Tp::ConnectionStatusReasonRequested)) {
+        if (account->requestedPresence() != Tp::Presence::offline()) {
             account->setRequestedPresence(presence);
         }
     }
