@@ -22,11 +22,16 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include <QStringList>
 #include <TelepathyQt/Types>
 
 namespace Tp {
 class PendingOperation;
 }
+
+QT_BEGIN_NAMESPACE
+class QSqlQuery;
+QT_END_NAMESPACE
 
 class ContactCache : public QObject
 {
@@ -48,7 +53,11 @@ private:
     bool accountIsInteresting(const Tp::AccountPtr &account) const;
     void syncContactsOfAccount(const Tp::AccountPtr &account);
     void checkContactManagerState(const Tp::ContactManagerPtr &contactManager);
+
+    int askIdFromGroup(const QString &groupName);
+    void bindContactToQuery(QSqlQuery *query, const Tp::ContactPtr &contact);
     QSqlDatabase m_db;
+    QStringList m_groups;
 };
 
 #endif // CONTACTCACHE_H

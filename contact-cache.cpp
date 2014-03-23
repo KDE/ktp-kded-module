@@ -61,10 +61,15 @@ ContactCache::ContactCache(QObject *parent):
     m_db.setDatabaseName(KGlobal::dirs()->locateLocal("data", QLatin1String("ktp/cache.db")));
     m_db.open();
 
-    if (!m_db.tables().contains(QLatin1String("contacts"))) {
-        QSqlQuery createTables(m_db);
-        createTables.exec(QLatin1String("CREATE TABLE contacts (accountID VARCHAR NOT NULL, contactID VARCHAR NOT NULL, alias VARCHAR, avatarFileName VARCHAR);"));
-        createTables.exec(QLatin1String("CREATE UNIQUE INDEX idIndex ON contacts (accountId, contactId);"));
+    if (!m_db.tables().contains(QLatin1String("groups"))) {
+        QSqlQuery preparationsQuery(m_db);
+        if (m_db.tables().contains(QLatin1String("contacts"))) {
+            preparationsQuery.exec(QLatin1String("DROP TABLE contacts;"));
+        }
+
+        preparationsQuery.exec(QLatin1String("CREATE TABLE contacts (accountId VARCHAR NOT NULL, contactId VARCHAR NOT NULL, alias VARCHAR, avatarFileName VARCHAR, groupsIds VARCHAR);"));
+        preparationsQuery.exec(QLatin1String("CREATE TABLE groups (groupId INTEGER, groupName VARCHAR);"));
+        preparationsQuery.exec(QLatin1String("CREATE UNIQUE INDEX idIndex ON contacts (accountId, contactId);"));
     }
 
     connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onAccountManagerReady(Tp::PendingOperation*)));
@@ -97,12 +102,36 @@ void ContactCache::onAccountManagerReady(Tp::PendingOperation *op)
         formattedAccountsIds.append(formatString(purgeQuery, account->uniqueIdentifier()));
     }
 
+    // Cleanup contacts
     if (formattedAccountsIds.isEmpty()) {
         purgeQuery.prepare(QLatin1String("DELETE * FROM contacts;"));
     } else {
-        purgeQuery.prepare(QString(QLatin1String("DELETE FROM contacts WHERE accountID not in (%1);")).arg(formattedAccountsIds.join(QLatin1String(","))));
+        purgeQuery.prepare(QString(QLatin1String("DELETE FROM contacts WHERE accountId not in (%1);")).arg(formattedAccountsIds.join(QLatin1String(","))));
     }
     purgeQuery.exec();
+
+    // Cleanup groups
+    QStringList usedGroups;
+
+    QSqlQuery usedGroupsQuery(m_db);
+    usedGroupsQuery.prepare(QLatin1String("SELECT groupsIds FROM contacts;"));
+    usedGroupsQuery.exec();
+
+    while (usedGroupsQuery.next()) {
+        usedGroups.append(usedGroupsQuery.value(0).toString().split(QLatin1String(",")));
+    }
+    usedGroups.removeDuplicates();
+
+    purgeQuery.prepare(QString(QLatin1String("UPDATE groups SET groupName = '' WHERE groupId not in (%1);")).arg(usedGroups.join(QLatin1String(","))));
+    purgeQuery.exec();
+
+    // Load groups
+    QSqlQuery groupsQuery(m_db);
+    groupsQuery.exec(QLatin1String("SELECT groupName FROM groups ORDER BY groupId;"));
+
+    while (groupsQuery.next()) {
+        m_groups.append(groupsQuery.value(0).toString());
+    }
 }
 
 void ContactCache::onNewAccount(const Tp::AccountPtr &account)
@@ -126,7 +155,7 @@ void ContactCache::onAccountRemoved()
     }
 
     QSqlQuery purgeQuery(m_db);
-    purgeQuery.prepare(QLatin1String("DELETE FROM contacts WHERE accountID = ?;"));
+    purgeQuery.prepare(QLatin1String("DELETE FROM contacts WHERE accountId = ?;"));
     purgeQuery.bindValue(0, account->uniqueIdentifier());
     purgeQuery.exec();
 }
@@ -145,7 +174,7 @@ void ContactCache::onAccountConnectionChanged(const Tp::ConnectionPtr &connectio
 
     //this is needed to make the contact manager roster
     //when this finishes the contact manager will change state
-    connection->becomeReady(Tp::Connection::FeatureRoster);
+    connection->becomeReady(Tp::Features() << Tp::Connection::FeatureRoster << Tp::Connection::FeatureRosterGroups);
 
     if (connect(connection->contactManager().data(), SIGNAL(stateChanged(Tp::ContactListState)), this, SLOT(onContactManagerStateChanged()), Qt::UniqueConnection)) {
         /* Check current contactManager state and do sync contact only if it is not performed due to already connected contactManager. */
@@ -170,17 +199,13 @@ void ContactCache::onAllKnownContactsChanged(const Tp::Contacts &added, const Tp
     }
 
     QSqlQuery insertQuery(m_db);
-    insertQuery.prepare(QLatin1String("INSERT INTO contacts (accountId, contactId, alias, avatarFileName) VALUES (?, ?, ?, ?);"));
+    insertQuery.prepare(QLatin1String("INSERT INTO contacts (accountId, contactId, alias, avatarFileName, groupsIds) VALUES (?, ?, ?, ?, ?);"));
     Q_FOREACH (const Tp::ContactPtr &c, added) {
         if (c->manager()->connection()->protocolName() == QLatin1String("local-xmpp")) {
             continue;
         }
 
-        const KTp::ContactPtr &contact = KTp::ContactPtr::qObjectCast(c);
-        insertQuery.bindValue(0, contact->accountUniqueIdentifier());
-        insertQuery.bindValue(1, contact->id());
-        insertQuery.bindValue(2, contact->alias());
-        insertQuery.bindValue(3, contact->avatarData().fileName);
+        bindContactToQuery(&insertQuery, c);
         insertQuery.exec();
     }
 
@@ -208,18 +233,14 @@ void ContactCache::syncContactsOfAccount(const Tp::AccountPtr &account)
 {
     m_db.transaction();
     QSqlQuery purgeQuery(m_db);
-    purgeQuery.prepare(QLatin1String("DELETE FROM contacts WHERE accountID = ?;"));
+    purgeQuery.prepare(QLatin1String("DELETE FROM contacts WHERE accountId = ?;"));
     purgeQuery.bindValue(0, account->uniqueIdentifier());
     purgeQuery.exec();
 
     QSqlQuery insertQuery(m_db);
-    insertQuery.prepare(QLatin1String("INSERT INTO contacts (accountId, contactId, alias, avatarFileName) VALUES (?, ?, ?, ?);"));
+    insertQuery.prepare(QLatin1String("INSERT INTO contacts (accountId, contactId, alias, avatarFileName, groupsIds) VALUES (?, ?, ?, ?, ?);"));
     Q_FOREACH (const Tp::ContactPtr &c, account->connection()->contactManager()->allKnownContacts()) {
-        const KTp::ContactPtr &contact = KTp::ContactPtr::qObjectCast(c);
-        insertQuery.bindValue(0, contact->accountUniqueIdentifier());
-        insertQuery.bindValue(1, contact->id());
-        insertQuery.bindValue(2, contact->alias());
-        insertQuery.bindValue(3, contact->avatarData().fileName);
+        bindContactToQuery(&insertQuery, c);
         insertQuery.exec();
     }
 
@@ -241,4 +262,50 @@ void ContactCache::checkContactManagerState(const Tp::ContactManagerPtr &contact
             kWarning() << "Can't access to account by contactManager";
         }
     }
+}
+
+int ContactCache::askIdFromGroup(const QString &groupName)
+{
+    int index = m_groups.indexOf(groupName);
+    if (index >= 0) {
+        return index;
+    }
+
+    QSqlQuery updateGroupsQuery(m_db);
+
+    for (index = 0; index < m_groups.count(); ++index) {
+        if (m_groups.at(index).isEmpty()) {
+            m_groups[index] = groupName;
+            updateGroupsQuery.prepare(QLatin1String("UPDATE groups SET groupName = :newGroupName WHERE groupId = :index;"));
+            break;
+        }
+    }
+
+    if (index >= m_groups.count()) {
+        m_groups.append(groupName);
+        updateGroupsQuery.prepare(QLatin1String("INSERT INTO groups (groupId, groupName) VALUES (:index, :newGroupName);"));
+    }
+
+    updateGroupsQuery.bindValue(QLatin1String(":newGroupName"), groupName);
+    updateGroupsQuery.bindValue(QLatin1String(":index"), index);
+    updateGroupsQuery.exec();
+
+    return index;
+}
+
+void ContactCache::bindContactToQuery(QSqlQuery *query, const Tp::ContactPtr &contact)
+{
+    const KTp::ContactPtr &ktpContact = KTp::ContactPtr::qObjectCast(contact);
+    query->bindValue(0, ktpContact->accountUniqueIdentifier());
+    query->bindValue(1, ktpContact->id());
+    query->bindValue(2, ktpContact->alias());
+    query->bindValue(3, ktpContact->avatarData().fileName);
+
+    QStringList groupsIds;
+
+    Q_FOREACH (const QString &group, ktpContact->groups()) {
+        groupsIds.append(QString::number(askIdFromGroup(group)));
+    }
+
+    query->bindValue(4, groupsIds.join(QLatin1String(",")));
 }
