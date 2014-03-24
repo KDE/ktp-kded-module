@@ -130,7 +130,7 @@ void ErrorHandler::showErrorNotification()
     QString errorMessage;
 
     QHash<Tp::AccountPtr, ConnectionError>::iterator i = m_errorMap.begin();
-    while (i != m_errorMap.constEnd()) {
+    while (i != m_errorMap.end()) {
         const Tp::AccountPtr account = i.key();
         ConnectionError &error = i.value();
 
