@@ -35,13 +35,10 @@ namespace KTp {
     class GlobalPresence;
 }
 
-class TelepathyKDEDModulePlugin;
 class ErrorHandler;
-class TelepathyMPRIS;
-class AutoAway;
 class AutoConnect;
 class ContactNotify;
-class ScreenSaverAway;
+class StatusHandler;
 
 class TelepathyModule : public KDEDModule
 {
@@ -56,32 +53,13 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
-    void onRequestedPresenceChanged(const KTp::Presence &presence);
-    void onPluginActivated(bool);
 
 private:
-    /** Returns the presence we think we should be in. Either from the highest priority plugin, or if none are active, the last user set.*/
-    KTp::Presence currentPluginPresence() const;
-    QString currentPluginStatusMessage();
-    KTp::Presence presenceThrottle();
-    const QString statusMessageStack();
-    bool activePlugin();
-    bool activeStatusMessagePlugin();
-    void setPresence(const KTp::Presence &presence);
-
-private:
-    AutoAway                *m_autoAway;
-    TelepathyMPRIS          *m_mpris;
-    AutoConnect             *m_autoConnect;
-    ErrorHandler            *m_errorHandler;
-    KTp::GlobalPresence     *m_globalPresence;
+    StatusHandler           *m_statusHandler;
     ContactRequestHandler   *m_contactHandler;
     ContactNotify           *m_contactNotify;
-    ScreenSaverAway         *m_screenSaverAway;
+    ErrorHandler            *m_errorHandler;
 
-    QList<TelepathyKDEDModulePlugin*> m_pluginStack;
-    QList<TelepathyKDEDModulePlugin*> m_statusMessagePluginStack;
-    KTp::Presence m_lastUserPresence;
 };
 
 #endif // TELEPATHY_MODULE_H
