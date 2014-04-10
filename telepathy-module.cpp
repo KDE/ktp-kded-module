@@ -52,6 +52,8 @@ TelepathyModule::TelepathyModule(QObject *parent, const QList<QVariant> &args)
     Tp::registerTypes();
     Tp::enableDebug(false);
     Tp::enableWarnings(false);
+
+    connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
 TelepathyModule::~TelepathyModule()
