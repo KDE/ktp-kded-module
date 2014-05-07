@@ -24,24 +24,31 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>489</width>
-        <height>717</height>
+        <width>479</width>
+        <height>707</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QGroupBox" name="autoConnectGroupBox">
-         <property name="title">
-          <string>Auto connect</string>
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="flat">
-          <bool>false</bool>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
            <widget class="QCheckBox" name="m_autoConnectCheckBox">
             <property name="text">
              <string>Restore last presence on login</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_autoOfflineCheckBox">
+            <property name="text">
+             <string>Go offline when closing the contact list</string>
             </property>
            </widget>
           </item>
@@ -318,25 +325,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="autoOfflineGroupBox">
-         <property name="title">
-          <string>Auto Offline</string>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="m_autoOfflineCheckBox">
-            <property name="text">
-             <string>Go offline when closing the contact list</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="incomingFilesGroupBox">
          <property name="title">
           <string>Incoming files</string>
@@ -374,9 +362,6 @@
               </property>
               <property name="whatsThis">
                <string>This is the folder where received files will be saved.</string>
-              </property>
-              <property name="mode">
-               <set>KFile::Directory|KFile::ExistingOnly|KFile::LocalOnly</set>
               </property>
              </widget>
             </item>
@@ -467,6 +452,7 @@
    <class>KUrlRequester</class>
    <extends>QFrame</extends>
    <header>kurlrequester.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>NowPlayingLineEdit</class>
