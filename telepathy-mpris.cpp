@@ -230,7 +230,23 @@ void TelepathyMPRIS::setPlaybackStatus(const QVariantMap& replyData)
 
     //track data change
     if (replyData.keys().contains(QLatin1String("Metadata"))) {
-        m_lastReceivedMetadata = qdbus_cast<QVariantMap>(replyData.value(QLatin1String("Metadata")));
+        QVariantMap metadata = qdbus_cast<QVariantMap>(replyData.value(QLatin1String("Metadata")));
+
+        QString artist = m_lastReceivedMetadata.value(QLatin1String("xesam:artist")).toString();
+        QString title = m_lastReceivedMetadata.value(QLatin1String("xesam:title")).toString();
+        QString album = m_lastReceivedMetadata.value(QLatin1String("xesam:album")).toString();
+        QString trackNumber = m_lastReceivedMetadata.value(QLatin1String("xesam:trackNumber")).toString();
+
+        QString newArtist = metadata.value(QLatin1String("xesam:artist")).toString();
+        QString newTitle = metadata.value(QLatin1String("xesam:title")).toString();
+        QString newAlbum = metadata.value(QLatin1String("xesam:album")).toString();
+        QString newTrackNumber = metadata.value(QLatin1String("xesam:trackNumber")).toString();
+
+        if (artist == newArtist && title == newTitle && album == newAlbum && trackNumber == newTrackNumber) {
+            return;
+        } else {
+            m_lastReceivedMetadata = metadata;
+        }
     }
 
     setTrackToPresence();
