@@ -1,6 +1,6 @@
 project(ktp-kded-integration-module)
 
-set(KTP_CONTACT_LIST_VERSION "0.8.80")
+set(KTP_CONTACT_LIST_VERSION "0.9.0")
 
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
