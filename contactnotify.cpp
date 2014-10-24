@@ -26,8 +26,9 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Contact>
 
-#include <KAboutData>
+#include <KSharedConfig>
 #include <KConfigGroup>
+#include <KLocalizedString>
 #include <KDebug>
 #include <KNotification>
 
@@ -78,8 +79,7 @@ void ContactNotify::sendNotification(const QString &text, const QPixmap &pixmap,
     KNotification *notification;
     notification = new KNotification(QLatin1String("contactInfo"), KNotification::CloseOnTimeout);
 
-    KAboutData aboutData("ktelepathy", 0, KLocalizedString(), 0);
-    notification->setComponentData(KComponentData(aboutData));
+    notification->setComponentName(QStringLiteral("ktelepathy"));
 
     notification->setPixmap(pixmap);
     notification->setText(text);

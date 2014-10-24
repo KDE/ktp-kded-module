@@ -27,8 +27,8 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Connection>
 
+#include <KLocalizedString>
 #include <KNotification>
-#include <KAboutData>
 #include <KDebug>
 
 #include <Solid/Networking>
@@ -208,8 +208,7 @@ void ErrorHandler::showMessageToUser(const QString &text, const ErrorHandler::Sy
         notification = new KNotification(QLatin1String("telepathyInfo"), KNotification::CloseOnTimeout);
     }
 
-    KAboutData aboutData("ktelepathy",0,KLocalizedString(),0);
-    notification->setComponentData(KComponentData(aboutData));
+    notification->setComponentName(QStringLiteral("ktelepathy"));
 
     notification->setText(text);
     notification->sendEvent();

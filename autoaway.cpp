@@ -24,6 +24,7 @@
 #include <KDebug>
 #include <KIdleTime>
 #include <KConfig>
+#include <KSharedConfig>
 #include <KConfigGroup>
 
 AutoAway::AutoAway(KTp::GlobalPresence *globalPresence, QObject *parent)

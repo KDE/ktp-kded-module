@@ -21,6 +21,8 @@
 #include <KIcon>
 #include <KIconLoader>
 #include <QScrollBar>
+#include <QDrag>
+#include <QMimeData>
 
 NowPlayingListWidget::NowPlayingListWidget(QWidget *parent)
 : QListWidget(parent)

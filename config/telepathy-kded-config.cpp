@@ -25,6 +25,7 @@
 #include <KPluginFactory>
 #include <KSharedConfig>
 #include <KLocalizedString>
+#include <KUrl>
 
 #include <QDBusMessage>
 #include <QDBusConnection>
@@ -33,11 +34,10 @@
 #include "autoconnect.h"
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
-K_EXPORT_PLUGIN(KCMTelepathyKDEDModuleConfigFactory("kcm_ktp_integration_module", "kded_ktp_integration_module"))
 
 
 TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& args)
-    : KCModule(KCMTelepathyKDEDModuleConfigFactory::componentData(), parent, args),
+    : KCModule(parent, args),
       ui(new Ui::TelepathyKDEDUi())
 {
     ui->setupUi(this);
@@ -398,3 +398,5 @@ void TelepathyKDEDConfig::downloadUrlCheckBoxChanged(bool checked)
     ui->m_downloadUrlRequester->setEnabled(!checked);
     Q_EMIT changed(true);
 }
+
+#include "telepathy-kded-config.moc"

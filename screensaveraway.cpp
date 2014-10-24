@@ -22,6 +22,7 @@
 #include <KTp/global-presence.h>
 
 #include <KDebug>
+#include <KSharedConfig>
 #include <KConfig>
 #include <KConfigGroup>
 

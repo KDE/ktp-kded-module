@@ -37,9 +37,11 @@
 #include <KAboutData>
 #include <KMenu>
 #include <KAction>
+#include <KIcon>
 #include <KStatusNotifierItem>
 
 #include <QtCore/QFutureWatcher>
+#include <QtConcurrentFilter>
 
 Q_DECLARE_METATYPE(Tp::ContactPtr)
 

@@ -24,6 +24,7 @@
 
 #include <TelepathyQt/AccountManager>
 
+#include <KSharedConfig>
 #include <KConfig>
 
 AutoConnect::AutoConnect(QObject *parent)
