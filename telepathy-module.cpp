@@ -34,7 +34,6 @@
 #include <TelepathyQt/Debug>
 
 #include <KConfigGroup>
-#include <KDebug>
 #include <KPluginFactory>
 
 K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )

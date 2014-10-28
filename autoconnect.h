@@ -20,8 +20,9 @@
 #ifndef AUTOCONNECT_H
 #define AUTOCONNECT_H
 
+#include <QDebug>
+
 #include <KConfigGroup>
-#include <KDebug>
 
 #include <TelepathyQt/Presence>
 
@@ -62,8 +63,8 @@ public:
         case AutoConnect::Manual:
             return QString::fromLatin1("manual");
         default:
-            kWarning() << "Got not recognized mode: '" << mode << "'.";
-            kWarning() << "Treat as AutoConnect::Manual (" << AutoConnect::Manual << ").";
+            qWarning() << "Got not recognized mode: '" << mode << "'.";
+            qWarning() << "Treat as AutoConnect::Manual (" << AutoConnect::Manual << ").";
             return QString::fromLatin1("manual");
         }
     }
@@ -84,7 +85,7 @@ public:
         } else if (mode == modeToString(AutoConnect::Manual)) {
             return AutoConnect::Manual;
         } else {
-            kWarning() << "Got not recognized string: '" << mode << "'. Treat as 'manual'";
+            qWarning() << "Got not recognized string: '" << mode << "'. Treat as 'manual'";
             return AutoConnect::Manual;
         }
     }

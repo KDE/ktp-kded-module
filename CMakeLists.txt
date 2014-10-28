@@ -34,6 +34,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (kded_ktp_integration_module_SRCS
+     ktp_kded_debug.cpp
      contact-cache.cpp
      contact-request-handler.cpp
      telepathy-kded-module-plugin.cpp

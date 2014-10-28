@@ -19,6 +19,7 @@
 
 
 #include "contact-request-handler.h"
+#include "ktp_kded_debug.h"
 
 #include <KTp/error-dictionary.h>
 #include <KTp/contact-info-dialog.h>
@@ -32,7 +33,6 @@
 #include <TelepathyQt/PendingComposite>
 #include <TelepathyQt/PendingOperation>
 
-#include <KDebug>
 #include <KGlobal>
 #include <KAboutData>
 #include <KMenu>
@@ -71,7 +71,7 @@ ContactRequestHandler::~ContactRequestHandler()
 
 void ContactRequestHandler::onNewAccountAdded(const Tp::AccountPtr &account)
 {
-    kWarning();
+    qCWarning(KTP_KDED_MODULE);
     Q_ASSERT(account->isReady(Tp::Account::FeatureCore));
 
     if (account->connection()) {
@@ -92,7 +92,7 @@ void ContactRequestHandler::onConnectionChanged(const Tp::ConnectionPtr &connect
 
 void ContactRequestHandler::handleNewConnection(const Tp::ConnectionPtr &connection)
 {
-    kDebug();
+    qCDebug(KTP_KDED_MODULE);
     connect(connection->contactManager().data(), SIGNAL(presencePublicationRequested(Tp::Contacts)),
             this, SLOT(onPresencePublicationRequested(Tp::Contacts)));
 
@@ -118,19 +118,19 @@ void ContactRequestHandler::onContactManagerStateChanged(const Tp::ContactManage
         watcher->setFuture(QtConcurrent::filtered(contactManager->allKnownContacts(),
                                                   kde_tp_filter_contacts_by_publication_status));
 
-        kDebug() << "Watcher is on";
+        qCDebug(KTP_KDED_MODULE) << "Watcher is on";
     } else {
-        kDebug() << "Watcher still off, state is" << state << "contactManager is" << contactManager.isNull();
+        qCDebug(KTP_KDED_MODULE) << "Watcher still off, state is" << state << "contactManager is" << contactManager.isNull();
     }
 }
 
 void ContactRequestHandler::onAccountsPresenceStatusFiltered()
 {
-    kDebug() << "Watcher is here";
+    qCDebug(KTP_KDED_MODULE) << "Watcher is here";
     QFutureWatcher< Tp::ContactPtr > *watcher = dynamic_cast< QFutureWatcher< Tp::ContactPtr > * >(sender());
-    kDebug() << "Watcher is casted";
+    qCDebug(KTP_KDED_MODULE) << "Watcher is casted";
     Tp::Contacts contacts = watcher->future().results().toSet();
-    kDebug() << "Watcher is used";
+    qCDebug(KTP_KDED_MODULE) << "Watcher is used";
     if (!contacts.isEmpty()) {
         onPresencePublicationRequested(contacts);
     }
@@ -139,7 +139,7 @@ void ContactRequestHandler::onAccountsPresenceStatusFiltered()
 
 void ContactRequestHandler::onPresencePublicationRequested(const Tp::Contacts &contacts)
 {
-    kDebug() << "New contact requested";
+    qCDebug(KTP_KDED_MODULE) << "New contact requested";
 
     Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
         Tp::ContactManagerPtr manager = contact->manager();
@@ -401,7 +401,7 @@ void ContactRequestHandler::updateMenus()
         m_notifierItem.data()->setContextMenu(notifierMenu);
     }
 
-    kDebug() << m_pendingContacts.keys();
+    qCDebug(KTP_KDED_MODULE) << m_pendingContacts.keys();
 
     //add members in pending contacts not in the menu to the menu.
     QHash<QString, Tp::ContactPtr>::const_iterator i;
@@ -411,7 +411,7 @@ void ContactRequestHandler::updateMenus()
             continue;
         }
 
-        kDebug();
+        qCDebug(KTP_KDED_MODULE);
         Tp::ContactPtr contact = i.value();
 
         KMenu *contactMenu = new KMenu(m_notifierItem.data()->contextMenu());

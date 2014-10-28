@@ -29,7 +29,6 @@
 
 #include <KLocalizedString>
 #include <KNotification>
-#include <KDebug>
 
 #include <Solid/Networking>
 

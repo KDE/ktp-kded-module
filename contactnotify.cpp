@@ -29,7 +29,6 @@
 #include <KSharedConfig>
 #include <KConfigGroup>
 #include <KLocalizedString>
-#include <KDebug>
 #include <KNotification>
 
 ContactNotify::ContactNotify(QObject *parent) :

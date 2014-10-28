@@ -18,11 +18,11 @@
 */
 
 #include "telepathy-mpris.h"
+#include "ktp_kded_debug.h"
 
 #include <KTp/global-presence.h>
 
 #include <KConfigGroup>
-#include <KDebug>
 #include <KLocalizedString>
 #include <KSharedConfig>
 
@@ -95,7 +95,7 @@ void TelepathyMPRIS::serviceNameFetchFinished(QDBusPendingCallWatcher *callWatch
 {
     QDBusPendingReply<QStringList> reply = *callWatcher;
     if (reply.isError()) {
-        kDebug() << reply.error();
+        qCDebug(KTP_KDED_MODULE) << reply.error();
         return;
     }
 
@@ -113,7 +113,7 @@ void TelepathyMPRIS::serviceNameFetchFinished(QDBusPendingCallWatcher *callWatch
     }
 
     if (m_watchedPlayers.isEmpty()) {
-        kDebug() << "Received empty players list while active, deactivating (player quit)";
+        qCDebug(KTP_KDED_MODULE) << "Received empty players list while active, deactivating (player quit)";
         m_lastReceivedMetadata.clear();
         m_playbackActive = false;
         if (isActive()) {
@@ -147,7 +147,7 @@ void TelepathyMPRIS::reloadConfig()
 
 void TelepathyMPRIS::watchPlayer(const QString &service)
 {
-    kDebug() << "Found mpris service:" << service;
+    qCDebug(KTP_KDED_MODULE) << "Found mpris service:" << service;
     requestPlaybackStatus(service);
 
     //check if we are already watching this service
@@ -181,11 +181,11 @@ void TelepathyMPRIS::serviceOwnerChanged(const QString &serviceName, const QStri
     if (serviceName.startsWith(mprisServicePrefix)) {
         if (!newOwner.isEmpty()) {
             //if we have newOwner, we have new player registered at dbus
-            kDebug() << "New player appeared on dbus, connecting...";
+            qCDebug(KTP_KDED_MODULE) << "New player appeared on dbus, connecting...";
             watchPlayer(serviceName);
         } else if (newOwner.isEmpty()) {
             //if there's no owner, the player quit, look if there are any other players
-            kDebug() << "Player disappeared from dbus, looking for other players...";
+            qCDebug(KTP_KDED_MODULE) << "Player disappeared from dbus, looking for other players...";
             detectPlayers();
         }
     }
@@ -193,13 +193,13 @@ void TelepathyMPRIS::serviceOwnerChanged(const QString &serviceName, const QStri
 
 void TelepathyMPRIS::onActivateNowPlaying()
 {
-    kDebug() << "Plugin activated";
+    qCDebug(KTP_KDED_MODULE) << "Plugin activated";
     activatePlugin(true);
 }
 
 void TelepathyMPRIS::onDeactivateNowPlaying()
 {
-    kDebug() << "Plugin deactivated on contact list request";
+    qCDebug(KTP_KDED_MODULE) << "Plugin deactivated on contact list request";
     activatePlugin(false);
 }
 
@@ -207,7 +207,7 @@ void TelepathyMPRIS::onPlaybackStatusReceived(QDBusPendingCallWatcher *watcher)
 {
     QDBusPendingReply<QVariantMap> reply = *watcher;
     if (reply.isError()) {
-        kWarning() << "Received error reply from DBus" << reply.error();
+        qCWarning(KTP_KDED_MODULE) << "Received error reply from DBus" << reply.error();
     } else {
         QVariantMap replyData = reply.value();
         setPlaybackStatus(replyData);

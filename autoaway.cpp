@@ -18,10 +18,10 @@
 */
 
 #include "autoaway.h"
+#include "ktp_kded_debug.h"
 
 #include <KTp/global-presence.h>
 
-#include <KDebug>
 #include <KIdleTime>
 #include <KConfig>
 #include <KSharedConfig>
@@ -76,7 +76,7 @@ void AutoAway::timeoutReached(int id)
 
 void AutoAway::backFromIdle()
 {
-    kDebug();
+    qCDebug(KTP_KDED_MODULE);
     setActive(false);
 }
 

@@ -18,6 +18,7 @@
 */
 
 #include "contact-cache.h"
+#include "ktp_kded_debug.h"
 
 #include <KTp/core.h>
 #include <KTp/contact.h>
@@ -30,7 +31,6 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingReady>
 
-#include <KDebug>
 #include <KGlobal>
 #include <KStandardDirs>
 
@@ -78,8 +78,8 @@ ContactCache::ContactCache(QObject *parent):
 void ContactCache::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (!op || op->isError()) {
-        kWarning() << "ContactCache: Failed to initialize AccountManager:" << op->errorName();
-        kWarning() << op->errorMessage();
+        qCWarning(KTP_KDED_MODULE) << "ContactCache: Failed to initialize AccountManager:" << op->errorName();
+        qCWarning(KTP_KDED_MODULE) << op->errorMessage();
 
         return;
     }
@@ -259,7 +259,7 @@ void ContactCache::checkContactManagerState(const Tp::ContactManagerPtr &contact
         if (!account.isNull()) {
             syncContactsOfAccount(account);
         } else {
-            kWarning() << "Can't access to account by contactManager";
+            qCWarning(KTP_KDED_MODULE) << "Can't access to account by contactManager";
         }
     }
 }
