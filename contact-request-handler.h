@@ -25,8 +25,7 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/PendingOperation>
 
-class KMenu;
-class KAction;
+class QMenu;
 class KStatusNotifierItem;
 class ContactRequestHandler : public QObject
 {
@@ -57,9 +56,9 @@ private:
     void updateMenus();
     void handleNewConnection(const Tp::ConnectionPtr &connection);
 
-    QWeakPointer<KStatusNotifierItem> m_notifierItem;
+    QPointer<KStatusNotifierItem> m_notifierItem;
     QHash<QString, Tp::ContactPtr> m_pendingContacts;
-    QHash<QString, KMenu*> m_menuItems;
+    QHash<QString, QMenu*> m_menuItems;
 };
 
 #endif // CONTACT_REQUEST_HANDLER_H

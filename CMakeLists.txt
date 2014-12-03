@@ -14,16 +14,13 @@ include(KDECMakeSettings)
 include(KDECompilerSettings)
 include(FeatureSummary)
 
-find_package (Qt5 REQUIRED COMPONENTS Concurrent Widgets Sql)
-find_package (KF5 REQUIRED COMPONENTS DBusAddons Config I18n Notifications ConfigWidgets IdleTime KDELibs4Support)
+find_package (Qt5 REQUIRED COMPONENTS Concurrent Widgets Sql Network)
+find_package (KF5 REQUIRED COMPONENTS DBusAddons WidgetsAddons Config I18n KIO Notifications ConfigWidgets IdleTime KCMUtils)
 
 find_package (KTp REQUIRED)
 
 # Add an option for building tests
 option(ENABLE_TESTS "Enable compilation of tests" FALSE)
-
-# make some more macros available
-include (MacroLibrary)
 
 add_definitions (-DQT_NO_CAST_FROM_ASCII
                  -DQT_NO_KEYWORDS
@@ -52,23 +49,27 @@ add_library (kded_ktp_integration_module MODULE ${kded_ktp_integration_module_SR
 )
 
 target_link_libraries (kded_ktp_integration_module
+                       KTp::CommonInternals
+                       KTp::Widgets
                        KF5::DBusAddons
                        KF5::ConfigGui
+                       KF5::ConfigCore
                        KF5::I18n
                        KF5::Notifications
                        KF5::IdleTime
-                       KF5::KDELibs4Support
+                       KF5::KIOWidgets
+                       KF5::WidgetsAddons
                        ${TELEPATHY_QT5_LIBRARIES}
-                       KTp::CommonInternals
                        Qt5::Concurrent
                        Qt5::Sql
+                       Qt5::Network
 )
 
 install (TARGETS kded_ktp_integration_module
          DESTINATION ${PLUGIN_INSTALL_DIR}
 )
 
-install (FILES kded_ktp_integration_module.desktop
+install (FILES ktp_integration_module.desktop
          DESTINATION ${SERVICES_INSTALL_DIR}/kded
 )
 

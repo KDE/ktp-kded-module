@@ -2,7 +2,7 @@
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=ktp_integration_module
-X-KDE-DBus-ModuleName=kded_ktp_integration_module
+X-KDE-DBus-ModuleName=ktp_integration_module
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 Name=Telepathy Integration Module

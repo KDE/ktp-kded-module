@@ -158,7 +158,7 @@
                </widget>
               </item>
               <item>
-               <widget class="KLineEdit" name="m_awayMessage"/>
+               <widget class="QLineEdit" name="m_awayMessage"/>
               </item>
              </layout>
             </item>
@@ -257,7 +257,7 @@
                </widget>
               </item>
               <item>
-               <widget class="KLineEdit" name="m_xaMessage"/>
+               <widget class="QLineEdit" name="m_xaMessage"/>
               </item>
              </layout>
             </item>
@@ -315,7 +315,7 @@
                </widget>
               </item>
               <item>
-               <widget class="KLineEdit" name="m_screenSaverAwayMessage"/>
+               <widget class="QLineEdit" name="m_screenSaverAwayMessage"/>
               </item>
              </layout>
             </item>
@@ -443,11 +443,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
   <customwidget>
    <class>KUrlRequester</class>
    <extends>QFrame</extends>

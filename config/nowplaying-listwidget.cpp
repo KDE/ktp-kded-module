@@ -18,8 +18,7 @@
 
 #include "nowplaying-listwidget.h"
 
-#include <KIcon>
-#include <KIconLoader>
+#include <QIcon>
 #include <QScrollBar>
 #include <QDrag>
 #include <QMimeData>
@@ -59,7 +58,7 @@ void NowPlayingListWidget::setupItems()
         tagName = tagName.right(tagName.size() - 1); //cut the '%' character
         tagName = tagName.left(1).toUpper() + tagName.mid(1); //capitalize tag name
 
-        QListWidgetItem *newItem = new QListWidgetItem(KIcon(m_itemsIcons.at(i)), tagName);
+        QListWidgetItem *newItem = new QListWidgetItem(QIcon::fromTheme(m_itemsIcons.at(i)), tagName);
         addItem(newItem);
     }
 }

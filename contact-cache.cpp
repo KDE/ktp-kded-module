@@ -31,9 +31,8 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingReady>
 
-#include <KGlobal>
-#include <KStandardDirs>
-
+#include <QStandardPaths>
+#include <QDir>
 #include <QSqlQuery>
 #include <QSqlDriver>
 #include <QSqlField>
@@ -58,7 +57,14 @@ ContactCache::ContactCache(QObject *parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase(QLatin1String("QSQLITE")))
 {
-    m_db.setDatabaseName(KGlobal::dirs()->locateLocal("data", QLatin1String("ktp/cache.db")));
+    QString path(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("ktp"));
+    QDir dir(path);
+
+    if (!dir.exists()) {
+        dir.mkpath(path);
+    }
+
+    m_db.setDatabaseName(dir.absolutePath() + QStringLiteral("/cache.db"));
     m_db.open();
 
     if (!m_db.tables().contains(QLatin1String("groups"))) {

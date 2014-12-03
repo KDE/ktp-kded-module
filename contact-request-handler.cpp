@@ -22,8 +22,8 @@
 #include "ktp_kded_debug.h"
 
 #include <KTp/error-dictionary.h>
-#include <KTp/contact-info-dialog.h>
 #include <KTp/core.h>
+#include <KTp/Widgets/contact-info-dialog.h>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
@@ -33,15 +33,14 @@
 #include <TelepathyQt/PendingComposite>
 #include <TelepathyQt/PendingOperation>
 
-#include <KGlobal>
-#include <KAboutData>
-#include <KMenu>
-#include <KAction>
-#include <KIcon>
 #include <KStatusNotifierItem>
+#include <KLocalizedString>
 
-#include <QtCore/QFutureWatcher>
+#include <QAction>
+#include <QIcon>
+#include <QFutureWatcher>
 #include <QtConcurrentFilter>
+#include <QMenu>
 
 Q_DECLARE_METATYPE(Tp::ContactPtr)
 
@@ -228,7 +227,7 @@ void ContactRequestHandler::onNotifierActivated(bool active, const QPoint &pos)
 
 void ContactRequestHandler::onContactRequestApproved()
 {
-    QString contactId = qobject_cast<KAction*>(sender())->data().toString();
+    QString contactId = qobject_cast<QAction*>(sender())->data().toString();
 
     // Disable the action in the meanwhile
     m_menuItems.value(contactId)->setEnabled(false);
@@ -261,7 +260,7 @@ void ContactRequestHandler::onContactRequestApproved()
 
 void ContactRequestHandler::onShowContactDetails()
 {
-    QString contactId = qobject_cast<KAction*>(sender())->data().toString();
+    QString contactId = qobject_cast<QAction*>(sender())->data().toString();
 
     if (!contactId.isEmpty()) {
         const Tp::ContactPtr contact = m_pendingContacts.find(contactId).value();
@@ -319,7 +318,7 @@ void ContactRequestHandler::onAuthorizePresencePublicationFinished(Tp::PendingOp
 
 void ContactRequestHandler::onContactRequestDenied()
 {
-    QString contactId = qobject_cast<KAction*>(sender())->data().toString();
+    QString contactId = qobject_cast<QAction*>(sender())->data().toString();
 
     // Disable the action in the meanwhile
     m_menuItems.value(contactId)->setEnabled(false);
@@ -393,8 +392,8 @@ void ContactRequestHandler::updateMenus()
         m_notifierItem.data()->setTitle(i18nc("Menu title", "Pending contact requests"));
         m_notifierItem.data()->setStatus(KStatusNotifierItem::Active);
 
-        KMenu *notifierMenu = new KMenu(0);
-        notifierMenu->addTitle(i18nc("Context menu title", "Received contact requests"));
+        QMenu *notifierMenu = new QMenu(0);
+        notifierMenu->setTitle(i18nc("Context menu title", "Received contact requests"));
 
         connect(m_notifierItem.data(), SIGNAL(activateRequested(bool,QPoint)), SLOT(onNotifierActivated(bool,QPoint)));
 
@@ -414,32 +413,33 @@ void ContactRequestHandler::updateMenus()
         qCDebug(KTP_KDED_MODULE);
         Tp::ContactPtr contact = i.value();
 
-        KMenu *contactMenu = new KMenu(m_notifierItem.data()->contextMenu());
+        QMenu *contactMenu = new QMenu(m_notifierItem.data()->contextMenu());
         contactMenu->setTitle(i18n("Request from %1", contact->alias()));
         contactMenu->setObjectName(contact->id());
 
-        KAction *menuAction;
-        if (!contact->publishStateMessage().isEmpty()) {
-            contactMenu->addTitle(contact->publishStateMessage());
-        } else {
-            contactMenu->addTitle(contact->alias());
-        }
+        QAction *menuAction;
 
-        menuAction = new KAction(KIcon(QLatin1String("user-identity")), i18n("Contact Details"), contactMenu);
+        menuAction = new QAction(QIcon(QLatin1String("user-identity")), i18n("Contact Details"), contactMenu);
         menuAction->setData(i.key());
         connect(menuAction, SIGNAL(triggered()),
                 this, SLOT(onShowContactDetails()));
         contactMenu->addAction(menuAction);
 
+        if (!contact->publishStateMessage().isEmpty()) {
+            contactMenu->insertSection(menuAction, contact->publishStateMessage());
+        } else {
+            contactMenu->insertSection(menuAction, contact->alias());
+        }
+
         contactMenu->addSeparator();
 
-        menuAction = new KAction(KIcon(QLatin1String("dialog-ok-apply")), i18n("Approve"), contactMenu);
+        menuAction = new QAction(QIcon::fromTheme(QLatin1String("dialog-ok-apply")), i18n("Approve"), contactMenu);
         menuAction->setData(i.key());
         connect(menuAction, SIGNAL(triggered()),
                 this, SLOT(onContactRequestApproved()));
         contactMenu->addAction(menuAction);
 
-        menuAction = new KAction(KIcon(QLatin1String("dialog-close")), i18n("Deny"), contactMenu);
+        menuAction = new QAction(QIcon::fromTheme(QLatin1String("dialog-close")), i18n("Deny"), contactMenu);
         menuAction->setData(i.key());
         connect(menuAction, SIGNAL(triggered()),
                 this, SLOT(onContactRequestDenied()));
@@ -450,7 +450,7 @@ void ContactRequestHandler::updateMenus()
     }
 
     //remove items that are still in the menu, but not in pending contacts
-    QHash<QString, KMenu*>::iterator j = m_menuItems.begin();
+    QHash<QString, QMenu*>::iterator j = m_menuItems.begin();
     while (j != m_menuItems.end()) {
         if (m_pendingContacts.contains(j.key())) {
             // Skip
