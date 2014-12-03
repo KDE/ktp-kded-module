@@ -57,15 +57,14 @@ ContactCache::ContactCache(QObject *parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase(QLatin1String("QSQLITE")))
 {
-    QString path(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("ktp"));
+    QString path(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp"));
     QDir dir(path);
-
-    if (!dir.exists()) {
-        dir.mkpath(path);
-    }
+    dir.mkpath(path);
 
     m_db.setDatabaseName(dir.absolutePath() + QStringLiteral("/cache.db"));
-    m_db.open();
+    if (!m_db.open()) {
+        qWarning() << "couldn't open database" << m_db.databaseName();
+    }
 
     if (!m_db.tables().contains(QLatin1String("groups"))) {
         QSqlQuery preparationsQuery(m_db);
