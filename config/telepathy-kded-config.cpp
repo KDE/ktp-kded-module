@@ -377,7 +377,13 @@ void TelepathyKDEDConfig::autoXAChecked(bool checked)
 
 void TelepathyKDEDConfig::nowPlayingChecked(bool checked)
 {
-    Q_UNUSED(checked)
+    ui->m_nowPlayingText->setEnabled(checked);
+    ui->message_format_label->setEnabled(checked);
+    ui->m_nowPlayingVideoText->setEnabled(checked);
+    ui->message_format_label_video->setEnabled(checked);
+    ui->m_tagListWidget->setEnabled(checked);
+    ui->empty_fields_label->setEnabled(checked);
+    ui->m_nowPlayingEmptyFields->setEnabled(checked);
     Q_EMIT changed(true);
 }
 
