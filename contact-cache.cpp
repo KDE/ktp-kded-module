@@ -84,6 +84,8 @@ ContactCache::ContactCache(QObject *parent):
         QSqlQuery preparationsQuery(m_db);
         if (m_db.tables().contains(QLatin1String("contacts"))) {
             preparationsQuery.exec(QStringLiteral("DROP TABLE 'contacts';"));
+            // Also drop the groups table
+            preparationsQuery.exec(QStringLiteral("DROP TABLE 'groups';"));
         }
 
         preparationsQuery.exec(createTableQuery);
