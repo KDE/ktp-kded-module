@@ -89,7 +89,7 @@ ContactCache::ContactCache(QObject *parent):
         }
 
         preparationsQuery.exec(createTableQuery);
-        preparationsQuery.exec(QLatin1String("CREATE TABLE groups (groupId INTEGER, groupName VARCHAR);"));
+        preparationsQuery.exec(QLatin1String("CREATE TABLE groups (groupId INTEGER UNIQUE, groupName VARCHAR);"));
         preparationsQuery.exec(QLatin1String("CREATE UNIQUE INDEX idIndex ON contacts (accountId, contactId);"));
     }
 
