@@ -68,7 +68,7 @@ ContactCache::ContactCache(QObject *parent):
 
     // This is the query that creates the contacts table,
     // SQLite will store this within the sqlite_master table
-    QString createTableQuery = QStringLiteral("CREATE TABLE contacts (accountId VARCHAR NOT NULL, contactId VARCHAR NOT NULL, alias VARCHAR, avatarFileName VARCHAR, isBlocked INT, groupsIds VARCHAR);");
+    QString createTableQuery = QStringLiteral("CREATE TABLE contacts (accountId VARCHAR NOT NULL, contactId VARCHAR NOT NULL, alias VARCHAR, avatarFileName VARCHAR, isBlocked INT, groupsIds VARCHAR)");
 
     // Now let's verify that the table we currently have in the database
     // is the same one as above - get the stored query and compare them,
