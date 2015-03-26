@@ -26,6 +26,7 @@ option(ENABLE_TESTS "Enable compilation of tests" FALSE)
 
 add_definitions (-DQT_NO_CAST_FROM_ASCII
                  -DQT_NO_KEYWORDS
+                 -DTRANSLATION_DOMAIN=\"kded_ktp_integration_module\"
 )
 
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
