@@ -2,7 +2,7 @@ project(ktp-kded-integration-module)
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
-set(KTP_KDED_MODULE_VERSION "15.04.0")
+set(KTP_KDED_MODULE_VERSION "15.04.1")
 
 cmake_policy(SET CMP0002 OLD)
 
