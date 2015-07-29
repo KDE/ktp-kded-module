@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.9)
 project(ktp-kded-integration-module)
 
 set(KTP_CONTACT_LIST_VERSION "0.9.0")
