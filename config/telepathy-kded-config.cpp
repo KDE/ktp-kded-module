@@ -243,7 +243,7 @@ void TelepathyKDEDConfig::load()
         ui->m_autoConnectCheckBox->setCheckState(Qt::PartiallyChecked);
     }
 
-    KSharedConfigPtr contactListConfig = KSharedConfig::openConfig(QLatin1String("ktp-contactlistrc"));
+    KSharedConfigPtr contactListConfig = KSharedConfig::openConfig(QLatin1String("ktpcontactlistrc"));
     KConfigGroup generalConfigGroup(contactListConfig, "General");
     KConfigGroup notifyConfigGroup(contactListConfig, "Notification Messages");
 
@@ -313,7 +313,7 @@ void TelepathyKDEDConfig::save()
         kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Enabled));
     }
 
-    KSharedConfigPtr contactListConfig = KSharedConfig::openConfig(QLatin1String("ktp-contactlistrc"));
+    KSharedConfigPtr contactListConfig = KSharedConfig::openConfig(QLatin1String("ktpcontactlistrc"));
     KConfigGroup generalConfigGroup(contactListConfig, "General");
     KConfigGroup notifyConfigGroup(contactListConfig, "Notification Messages");
 
