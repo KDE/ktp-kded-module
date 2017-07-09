@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2017  James D. Smith <smithjd15@gmail.com>
     Copyright (C) 2014  David Edmundson <kde@davidedmundson.co.uk>
 
     This library is free software; you can redistribute it and/or
@@ -18,28 +19,28 @@
 
 
 #include <QObject>
+#include <QHash>
 
-#include <KTp/types.h>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
 
+#include <TelepathyQt/Presence>
+
+class AccountStatusHelper;
 class TelepathyKDEDModulePlugin;
-class AutoConnect;
-
-namespace KTp {
-    class GlobalPresence;
-}
+class StatusMessageParser;
 
 /**
- * This class keeps track of all status modifying functions, such as now playing and autoaway and
- * ensures they do not clash.
- * It consists of a queue of plugins. If any of these plugins are active the presence is set to this
- * this presence.
- *
- * Otherwise we fall back to the last user set presence.
+ * This class initiates and responds to presence change events, modifying the
+ * tp account presence to match the presence reflected in the plugin queue
+ * and / or account status helper. It also processes incoming account requested
+ * presence changes that aren't the result of a plugin presence or status message parser.
  */
 
 class StatusHandler : public QObject
 {
     Q_OBJECT
+
 public:
     StatusHandler(QObject *parent);
     ~StatusHandler();
@@ -48,26 +49,17 @@ Q_SIGNALS:
     void settingsChanged();
 
 private Q_SLOTS:
-    void onAccountManagerReady(Tp::PendingOperation *op);
-    void onRequestedPresenceChanged(const KTp::Presence &presence);
-    void onPluginActivated(bool);
+    void setPresence(const QString &accountUID = QString());
 
 private:
-    private:
-    /** Returns the presence we think we should be in. Either from the highest priority plugin, or if none are active, the last user set.*/
-    KTp::Presence currentPluginPresence() const;
-    QString currentPluginStatusMessage();
-    KTp::Presence presenceThrottle();
-    const QString statusMessageStack();
+    void parkAccount(const Tp::AccountPtr &account);
+    Tp::AccountSetPtr m_enabledAccounts;
 
-    bool activePlugin(); //FIXME should be isActivePlugin
-    bool activeStatusMessagePlugin(); //FIXME should be isActiveStatusMessagePlugin
-    void setPresence(const KTp::Presence &presence);
+    AccountStatusHelper *m_accountStatusHelper;
 
-    AutoConnect             *m_autoConnect;
+    QList<TelepathyKDEDModulePlugin*> m_queuePlugins;
+    QHash<QString,StatusMessageParser*> m_parsers;
 
-    QList<TelepathyKDEDModulePlugin*> m_pluginStack;
-    QList<TelepathyKDEDModulePlugin*> m_statusMessagePluginStack;
-    KTp::Presence m_lastUserPresence;
-    KTp::GlobalPresence *m_globalPresence;
+    QHash<QString,Tp::Presence> m_lastAccountStatuses;
+    Tp::Presence m_pluginPresence;
 };

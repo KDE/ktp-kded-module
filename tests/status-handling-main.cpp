@@ -18,7 +18,7 @@
 
 #include "status-handler.h"
 
-#include <QApplication>
+#include <QtGui/QApplication>
 #include <QDBusMessage>
 #include <QDBusConnection>
 #include <QDBusReply>
@@ -31,13 +31,13 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     Tp::registerTypes();
 
-    QDBusInterface kdedInterface("org.kde.kded","/kded","org.kde.kded");
+    QDBusInterface kdedInterface("org.kde.kded5","/kded","org.kde.kded5");
     QDBusReply<QStringList> reply =  kdedInterface.call("loadedModules");
 
     if (reply.value().contains("kded_ktp_integration_module")) {
         qDebug() << "The KTp KDED module is already running.";
         qDebug() << "To unload it run:";
-        qDebug() << "qdbus org.kde.kded /kded org.kde.kded.unloadModule kded_ktp_integration_module";
+        qDebug() << "qdbus org.kde.kded5 /kded org.kde.kded5.unloadModule kded_ktp_integration_module";
         app.exit();
     }
 

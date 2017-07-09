@@ -1,5 +1,6 @@
 /*
-    Now playing... presence plugin
+    Now playing
+    Copyright (C) 2017  James D. Smith <smithjd15@gmail.com>
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -20,16 +21,14 @@
 #include "telepathy-mpris.h"
 #include "ktp_kded_debug.h"
 
-#include <KTp/global-presence.h>
-
+#include <KConfig>
 #include <KConfigGroup>
-#include <KLocalizedString>
 #include <KSharedConfig>
 
+#include <QTimer>
 #include <QDBusConnectionInterface>
 #include <QDBusInterface>
 #include <QDBusReply>
-#include <QVariant>
 
 static const QLatin1String dbusInterfaceProperties("org.freedesktop.DBus.Properties");
 
@@ -37,284 +36,241 @@ static const QLatin1String mprisPath("/org/mpris/MediaPlayer2");
 static const QLatin1String mprisServicePrefix("org.mpris.MediaPlayer2");
 static const QLatin1String mprisInterfaceName("org.mpris.MediaPlayer2.Player");
 
-TelepathyMPRIS::TelepathyMPRIS(KTp::GlobalPresence* globalPresence, QObject* parent)
-    : TelepathyKDEDModulePlugin(globalPresence, parent),
-      m_enabledInConfig(false),
-      m_playbackActive(false)
+TelepathyMPRIS::TelepathyMPRIS(QObject* parent)
+    : QObject(parent),
+    m_activationTimer(new QTimer()),
+    m_activePlayer(new Player())
 {
-    //read settings and detect players if plugin is enabled
-    reloadConfig();
+    connect(this, &TelepathyMPRIS::playerChange, &m_initLoop, &QEventLoop::quit);
 
-    QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
-                                          QLatin1String("activateNowPlaying"), this, SLOT(onActivateNowPlaying()) );
-
-    QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"), QLatin1String("org.kde.Telepathy"),
-                                          QLatin1String("deactivateNowPlaying"), this, SLOT(onDeactivateNowPlaying()) );
+    m_activationTimer->setSingleShot(true);
+    m_activationTimer->setInterval(400);
 }
 
 TelepathyMPRIS::~TelepathyMPRIS()
 {
 }
 
-QString TelepathyMPRIS::pluginName() const
+void TelepathyMPRIS::enable(bool enable)
 {
-    return QString::fromLatin1("telepathy-mpris");
+    if (enable && !m_timerConnection) {
+        //player changed
+        m_timerConnection = QObject::connect(m_activationTimer, &QTimer::timeout, m_activationTimer, [=] {
+            auto getPlayers = [this] (Service state) {
+                QList<Player*> players;
+                for (Player *watchedPlayer : m_players.values()) {
+                    if (watchedPlayer->playState == state) {
+                        players << watchedPlayer;
+                    }
+                }
+
+                return players;
+            };
+
+            if (m_activePlayer->playState < Paused) {
+                QList<Player*> players = QList<Player*>() << getPlayers(Playing) << getPlayers(Paused);
+
+                //if the players list is empty create a new default active player
+                if (players.isEmpty()) {
+                    m_activePlayer = new Player();
+                } else {
+                    m_activePlayer = players.at(0);
+                }
+
+                qCDebug(KTP_KDED_MODULE) << "Active player changed:" << m_players.key(m_activePlayer);
+            }
+
+            if (!m_initLoop.isRunning()) {
+                Q_EMIT playerChange();
+            } else {
+                m_initLoop.quit();
+            }
+        });
+
+        //get registered service names asynchronously
+        QDBusPendingCall async = QDBusConnection::sessionBus().interface()->asyncCall(QLatin1String("ListNames"));
+        QDBusPendingCallWatcher *callWatcher = new QDBusPendingCallWatcher(async, this);
+        connect(callWatcher, &QDBusPendingCallWatcher::finished, callWatcher, [=] {
+            bool foundPlayers = false;
+            QDBusPendingReply<QStringList> reply = *callWatcher;
+            if (reply.isError()) {
+                qCDebug(KTP_KDED_MODULE) << reply.error();
+                return;
+            }
+
+            for (const QString &serviceName : reply.value()) {
+                if (serviceName.startsWith(mprisServicePrefix)) {
+                    requestPlaybackStatus(serviceName, QDBusConnection::sessionBus().interface()->serviceOwner(serviceName));
+                    foundPlayers = true;
+                }
+            }
+
+            if (!foundPlayers) {
+                m_initLoop.quit();
+            }
+
+            callWatcher->deleteLater();
+        });
+
+        //watch for mpris2-enabled players appearing and disappearing
+        connect(QDBusConnection::sessionBus().interface(),
+                    &QDBusConnectionInterface::serviceOwnerChanged,
+                    this,
+                    &TelepathyMPRIS::serviceOwnerChanged);
+
+        m_initLoop.exec();
+    } else if (!enable) {
+        disconnect(m_timerConnection);
+        disconnect(QDBusConnection::sessionBus().interface(),
+                    &QDBusConnectionInterface::serviceOwnerChanged,
+                    this,
+                    &TelepathyMPRIS::serviceOwnerChanged);
+
+        QHash<QString, QString> serviceNameByOwner = m_serviceNameByOwner;
+        for (const QString &serviceName : serviceNameByOwner) {
+            serviceOwnerChanged(serviceName, serviceNameByOwner.key(serviceName), QString());
+        }
+    }
 }
 
 void TelepathyMPRIS::onPlayerSignalReceived(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties)
 {
-    //if the plugin is disabled, no point in parsing the received signal
-    if (!isEnabled()) {
-        return;
-    }
+    Q_UNUSED(invalidatedProperties)
 
-    // this is not the correct property interface, ignore
+    //this is not the correct property interface, ignore
     if (interface != mprisInterfaceName) {
         return;
     }
 
-    // PropertiesChanged and GetAll share the same signature, reuse it here
-    setPlaybackStatus(changedProperties);
-
-    // if some specific implementation may not notify the new value, request it manually
-    if (invalidatedProperties.contains(QLatin1String("PlaybackStatus")) || invalidatedProperties.contains(QLatin1String("Metadata"))) {
-        requestPlaybackStatus(message().service());
-    }
+    const QString &serviceName = m_serviceNameByOwner[QDBusConnection::sessionBus().interface()->serviceOwner(message().service())];
+    sortPlayerReply(changedProperties, serviceName);
 }
 
-void TelepathyMPRIS::detectPlayers()
+void TelepathyMPRIS::requestPlaybackStatus(const QString &serviceName, const QString &owner)
 {
-    //get registered service names asynchronously
-    QDBusPendingCall async = QDBusConnection::sessionBus().interface()->asyncCall(QLatin1String("ListNames"));
-    QDBusPendingCallWatcher *callWatcher = new QDBusPendingCallWatcher(async, this);
-    connect(callWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-            this, SLOT(serviceNameFetchFinished(QDBusPendingCallWatcher*)));
-}
-
-void TelepathyMPRIS::serviceNameFetchFinished(QDBusPendingCallWatcher *callWatcher)
-{
-    QDBusPendingReply<QStringList> reply = *callWatcher;
-    if (reply.isError()) {
-        qCDebug(KTP_KDED_MODULE) << reply.error();
-        return;
-    }
-
-    callWatcher->deleteLater();
-
-    unwatchAllPlayers();
-
-    QStringList mprisServices = reply.value();
-
-    Q_FOREACH (const QString &service, mprisServices) {
-        if (!service.startsWith(mprisServicePrefix))
-            continue;
-
-        watchPlayer(service);
-    }
-
-    if (m_watchedPlayers.isEmpty()) {
-        qCDebug(KTP_KDED_MODULE) << "Received empty players list while active, deactivating (player quit)";
-        m_lastReceivedMetadata.clear();
-        m_playbackActive = false;
-        if (isActive()) {
-            setActive(false);
+    auto playerConnected = [=] () {
+        if (m_players.keys().contains(serviceName)) {
+            return true;
         }
-    }
-}
 
-void TelepathyMPRIS::reloadConfig()
-{
-    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
-    config.data()->reparseConfiguration();
+        bool connected = QDBusConnection::sessionBus().connect(serviceName,
+                                      mprisPath,
+                                      dbusInterfaceProperties,
+                                      QLatin1String("PropertiesChanged"),
+                                      this,
+                                      SLOT(onPlayerSignalReceived(QString,QVariantMap,QStringList)));
 
-    KConfigGroup kdedConfig = config->group("KDED");
+        if (connected) {
+            qCDebug(KTP_KDED_MODULE) << "Found player" << serviceName;
+            Player *player = new Player();
+            m_players.insert(serviceName, player);
+            m_serviceNameByOwner.insert(owner, serviceName);
+        }
 
-    bool enabledInConfig = kdedConfig.readEntry("nowPlayingEnabled", false);
+        return connected;
+    };
 
-    m_nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
-                                              i18nc("The default text displayed by now playing plugin. "
-                                                    "track title: %1, artist: %2, album: %3",
-                                                    "Now listening to %1 by %2 from album %3",
-                                                    QLatin1String("%title"), QLatin1String("%artist"), QLatin1String("%album")));
-
-    // we only change the enable state if the config is changed, this can prevent
-    // re-enable/disable nowplaying if user just changed some other unrelated settings in kcm
-    if (enabledInConfig != m_enabledInConfig) {
-        m_enabledInConfig = enabledInConfig;
-        activatePlugin(m_enabledInConfig);
-    }
-}
-
-void TelepathyMPRIS::watchPlayer(const QString &service)
-{
-    qCDebug(KTP_KDED_MODULE) << "Found mpris service:" << service;
-    requestPlaybackStatus(service);
-
-    //check if we are already watching this service
-    if (!m_watchedPlayers.contains(service)) {
-        QDBusConnection::sessionBus().connect(service,
-                                              mprisPath,
-                                              dbusInterfaceProperties,
-                                              QLatin1String("PropertiesChanged"),
-                                              this,
-                                              SLOT(onPlayerSignalReceived(QString,QVariantMap,QStringList)) );
-        m_watchedPlayers.append(service);
-    }
-}
-
-void TelepathyMPRIS::requestPlaybackStatus(const QString& service)
-{
-    QDBusMessage mprisMsg = QDBusMessage::createMethodCall(service, mprisPath, dbusInterfaceProperties, QLatin1String("GetAll"));
+    QDBusMessage mprisMsg = QDBusMessage::createMethodCall(serviceName, mprisPath, dbusInterfaceProperties, QLatin1String("GetAll"));
     mprisMsg.setArguments(QList<QVariant>() << mprisInterfaceName);
 
     QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(mprisMsg);
-
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-            this, SLOT(onPlaybackStatusReceived(QDBusPendingCallWatcher*)));
+    connect(watcher, &QDBusPendingCallWatcher::finished, watcher, [=] {
+        QDBusPendingReply<QVariantMap> reply = *watcher;
+
+        if (reply.isError()) {
+            qCWarning(KTP_KDED_MODULE) << "Received error reply from DBus" << reply.error() << "service" << serviceName;
+        } else if (playerConnected()) {
+            sortPlayerReply(reply.value(), serviceName);
+        }
+
+        watcher->deleteLater();
+    });
 }
 
 void TelepathyMPRIS::serviceOwnerChanged(const QString &serviceName, const QString &oldOwner, const QString &newOwner)
 {
-    Q_UNUSED(oldOwner)
+    auto playerVanished = [=] (const QString &serviceName, const QString &oldOwner) {
+        if (m_players.keys().contains(serviceName)) {
+            QDBusConnection::sessionBus().disconnect(serviceName,
+                                                     mprisPath,
+                                                     dbusInterfaceProperties,
+                                                     QLatin1String("PropertiesChanged"),
+                                                     this,
+                                                     SLOT(onPlayerSignalReceived(QString,QVariantMap,QStringList)));
+
+            m_players[serviceName]->playState = Service::Unknown;
+            if (m_players[serviceName] == m_activePlayer) {
+                m_activationTimer->start();
+            }
+            m_players.remove(serviceName);
+            m_serviceNameByOwner.remove(oldOwner);
+            qCDebug(KTP_KDED_MODULE) << "Player" << serviceName << "is no longer available";
+        }
+    };
 
     if (serviceName.startsWith(mprisServicePrefix)) {
-        if (!newOwner.isEmpty()) {
-            //if we have newOwner, we have new player registered at dbus
-            qCDebug(KTP_KDED_MODULE) << "New player appeared on dbus, connecting...";
-            watchPlayer(serviceName);
+        qCDebug(KTP_KDED_MODULE) << "DBus service name change:" << serviceName << "once owned by" << oldOwner << "is now owned by" << newOwner;
+        if (oldOwner.isEmpty()) {
+            //if we have no oldOwner, we have new player registered at dbus
+            requestPlaybackStatus(serviceName, newOwner);
         } else if (newOwner.isEmpty()) {
-            //if there's no owner, the player quit, look if there are any other players
-            qCDebug(KTP_KDED_MODULE) << "Player disappeared from dbus, looking for other players...";
-            detectPlayers();
+            //if there's no newOwner, the player quit
+            playerVanished(serviceName, oldOwner);
+        } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
+            //otherwise the service name owner changed
+            m_serviceNameByOwner.remove(oldOwner);
+            m_serviceNameByOwner.insert(newOwner, serviceName);
+            requestPlaybackStatus(serviceName, newOwner);
         }
     }
 }
 
-void TelepathyMPRIS::onActivateNowPlaying()
+void TelepathyMPRIS::sortPlayerReply(const QVariantMap &serviceInfo, const QString &serviceName)
 {
-    qCDebug(KTP_KDED_MODULE) << "Plugin activated";
-    activatePlugin(true);
-}
+    bool playerChanged = false;
 
-void TelepathyMPRIS::onDeactivateNowPlaying()
-{
-    qCDebug(KTP_KDED_MODULE) << "Plugin deactivated on contact list request";
-    activatePlugin(false);
-}
-
-void TelepathyMPRIS::onPlaybackStatusReceived(QDBusPendingCallWatcher *watcher)
-{
-    QDBusPendingReply<QVariantMap> reply = *watcher;
-    if (reply.isError()) {
-        qCWarning(KTP_KDED_MODULE) << "Received error reply from DBus" << reply.error();
-    } else {
-        QVariantMap replyData = reply.value();
-        setPlaybackStatus(replyData);
-    }
-
-    watcher->deleteLater();
-}
-
-void TelepathyMPRIS::setPlaybackStatus(const QVariantMap& replyData)
-{
-    //lookup if the PlaybackStatus was changed
-    if (replyData.keys().contains(QLatin1String("PlaybackStatus"))) {
-        if (replyData.value(QLatin1String("PlaybackStatus")) == QLatin1String("Playing")) {
-            m_playbackActive = true;
-        } else {
-            //if the player is stopped or paused, deactivate and return to normal presence
-            m_playbackActive = false;
+    //sort and store incoming metadata
+    if (serviceInfo.keys().contains(QLatin1String("Metadata"))) {
+        QVariantMap metadata = qdbus_cast<QVariantMap>(serviceInfo.value(QLatin1String("Metadata")));
+        if (m_players[serviceName]->metadata != metadata) {
+            m_players[serviceName]->metadata = metadata;
+            playerChanged = true;
         }
     }
 
-    //track data change
-    if (replyData.keys().contains(QLatin1String("Metadata"))) {
-        QVariantMap metadata = qdbus_cast<QVariantMap>(replyData.value(QLatin1String("Metadata")));
+    //sort and store incoming playback information
+    if (serviceInfo.keys().contains(QLatin1String("PlaybackStatus"))) {
+        QVariant playbackStatus = serviceInfo.value(QLatin1String("PlaybackStatus"));
+        auto playState = [] (const QVariant &playbackStatus) {
+            TelepathyMPRIS::Service playState;
+            if (playbackStatus == QLatin1String("Playing")) {
+                playState = Service::Playing;
+            } else if (playbackStatus == QLatin1String("Paused")) {
+                playState = Service::Paused;
+            } else if (playbackStatus == QLatin1String("Stopped")) {
+                playState = Service::Stopped;
+            } else {
+                playState = Service::Unknown;
+            }
 
-        QString artist = m_lastReceivedMetadata.value(QLatin1String("xesam:artist")).toString();
-        QString title = m_lastReceivedMetadata.value(QLatin1String("xesam:title")).toString();
-        QString album = m_lastReceivedMetadata.value(QLatin1String("xesam:album")).toString();
-        QString trackNumber = m_lastReceivedMetadata.value(QLatin1String("xesam:trackNumber")).toString();
+            return playState;
+        };
 
-        QString newArtist = metadata.value(QLatin1String("xesam:artist")).toString();
-        QString newTitle = metadata.value(QLatin1String("xesam:title")).toString();
-        QString newAlbum = metadata.value(QLatin1String("xesam:album")).toString();
-        QString newTrackNumber = metadata.value(QLatin1String("xesam:trackNumber")).toString();
+        if (m_players[serviceName]->playState != playState(playbackStatus)) {
+            if ((m_players[serviceName]->playState == Unknown) && (playState(playbackStatus) < Playing)) {
+                playerChanged = false;
+            } else {
+                playerChanged = true;
+            }
 
-        if (artist == newArtist && title == newTitle && album == newAlbum && trackNumber == newTrackNumber) {
-            return;
-        } else {
-            m_lastReceivedMetadata = metadata;
+            m_players[serviceName]->playState = playState(serviceInfo.value(QLatin1String("PlaybackStatus")));
         }
     }
 
-    setTrackToPresence();
-}
+    qCDebug(KTP_KDED_MODULE) << "Player" << serviceName << m_players[serviceName]->playState;
 
-void TelepathyMPRIS::setTrackToPresence()
-{
-    // not enabled, no need to parse
-    if (!isEnabled()) {
-        return;
-    }
-
-    // not playing or no metadata, set to old presence
-    if (!m_playbackActive || m_lastReceivedMetadata.isEmpty()) {
-        setActive(false);
-        return;
-    }
-
-    QString artist = m_lastReceivedMetadata.value(QLatin1String("xesam:artist")).toString();
-    QString title = m_lastReceivedMetadata.value(QLatin1String("xesam:title")).toString();
-    QString album = m_lastReceivedMetadata.value(QLatin1String("xesam:album")).toString();
-    QString trackNumber = m_lastReceivedMetadata.value(QLatin1String("xesam:trackNumber")).toString();
-
-    //we replace track's info in custom nowPlayingText
-    QString statusMessage = m_nowPlayingText;
-    statusMessage.replace(QLatin1String("%title"), title, Qt::CaseInsensitive);
-    statusMessage.replace(QLatin1String("%artist"), artist, Qt::CaseInsensitive);
-    statusMessage.replace(QLatin1String("%album"), album, Qt::CaseInsensitive);
-    statusMessage.replace(QLatin1String("%track"), trackNumber, Qt::CaseInsensitive);
-
-    setRequestedStatusMessage(statusMessage);
-    setActive(true);
-}
-
-void TelepathyMPRIS::activatePlugin(bool enabled)
-{
-    if (enabled == isEnabled()) {
-        return;
-    }
-
-    setEnabled(enabled);
-
-    if (!enabled) {
-        //unwatch for new mpris-enabled players
-        disconnect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-                   this, SLOT(serviceOwnerChanged(QString,QString,QString)));
-        unwatchAllPlayers();
-        m_lastReceivedMetadata.clear();
-        m_playbackActive = false;
-    } else {
-        //watch for new mpris-enabled players
-        connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-                this, SLOT(serviceOwnerChanged(QString,QString,QString)));
-        detectPlayers();
+    if (playerChanged || m_initLoop.isRunning()) {
+        m_activationTimer->start();
     }
 }
-
-void TelepathyMPRIS::unwatchAllPlayers()
-{
-    // disconnect all old player to avoid double connection
-    Q_FOREACH (const QString &service, m_watchedPlayers) {
-        QDBusConnection::sessionBus().disconnect(service,
-                                                 mprisPath,
-                                                 dbusInterfaceProperties,
-                                                 QLatin1String("PropertiesChanged"),
-                                                 this,
-                                                 SLOT(onPlayerSignalReceived(QString,QVariantMap,QStringList)) );
-    }
-    m_watchedPlayers.clear();
-}
-

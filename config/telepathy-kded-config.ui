@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>497</width>
-    <height>725</height>
+    <height>584</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>479</width>
-        <height>707</height>
+        <width>485</width>
+        <height>572</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -121,6 +121,9 @@
                <widget class="QSpinBox" name="m_awayMins">
                 <property name="suffix">
                  <string/>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
                 </property>
                 <property name="value">
                  <number>5</number>
@@ -220,6 +223,9 @@
                <widget class="QSpinBox" name="m_xaMins">
                 <property name="suffix">
                  <string/>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
                 </property>
                 <property name="value">
                  <number>15</number>
@@ -377,65 +383,6 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QGroupBox" name="nowPlayingGroupBox">
-         <property name="title">
-          <string>Now playing</string>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="m_nowPlayingCheckBox">
-            <property name="text">
-             <string>Enable &quot;Now playing...&quot; presence on login</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <layout class="QFormLayout" name="nowPlayingMessageFormatLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="message_format_label">
-              <property name="text">
-               <string>Message format:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="NowPlayingLineEdit" name="m_nowPlayingText">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="NowPlayingListWidget" name="m_tagListWidget"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -445,19 +392,9 @@
  <customwidgets>
   <customwidget>
    <class>KUrlRequester</class>
-   <extends>QFrame</extends>
+   <extends>QWidget</extends>
    <header>kurlrequester.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>NowPlayingLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>nowplaying-lineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>NowPlayingListWidget</class>
-   <extends>QListWidget</extends>
-   <header>nowplaying-listwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -18,27 +18,21 @@
 */
 
 #include "autoaway.h"
-#include "ktp_kded_debug.h"
 
-#include <KTp/global-presence.h>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KSharedConfig>
 
 #include <KIdleTime>
-#include <KConfig>
-#include <KSharedConfig>
-#include <KConfigGroup>
 
-AutoAway::AutoAway(KTp::GlobalPresence *globalPresence, QObject *parent)
-    : TelepathyKDEDModulePlugin(globalPresence, parent),
-      m_awayTimeoutId(-1),
-      m_extAwayTimeoutId(-1)
+AutoAway::AutoAway(QObject *parent)
+    : TelepathyKDEDModulePlugin(parent),
+    m_awayTimeoutId(-1),
+    m_extAwayTimeoutId(-1),
+    m_awayPresence(Tp::Presence::away()),
+    m_extAwayPresence(Tp::Presence::xa())
 {
     reloadConfig();
-
-    connect(KIdleTime::instance(), SIGNAL(timeoutReached(int)),
-            this, SLOT(timeoutReached(int)));
-
-    connect(KIdleTime::instance(), SIGNAL(resumingFromIdle()),
-            this, SLOT(backFromIdle()));
 }
 
 AutoAway::~AutoAway()
@@ -52,61 +46,57 @@ QString AutoAway::pluginName() const
 
 void AutoAway::timeoutReached(int id)
 {
-    if (!isEnabled()) {
+    if (id == m_awayTimeoutId) {
+        setPlugin(m_awayPresence);
+    } else if (id == m_extAwayTimeoutId) {
+        setPlugin(m_extAwayPresence);
+    } else {
         return;
     }
+
     KIdleTime::instance()->catchNextResumeEvent();
-    if (id == m_awayTimeoutId) {
-        if (m_globalPresence->currentPresence().type() != Tp::Presence::away().type() &&
-            m_globalPresence->currentPresence().type() != Tp::Presence::xa().type() &&
-            m_globalPresence->currentPresence().type() != Tp::Presence::hidden().type() &&
-            m_globalPresence->currentPresence().type() != Tp::Presence::offline().type()) {
-            m_awayMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss (%t)")), Qt::CaseInsensitive);
-            setRequestedPresence(Tp::Presence::away(m_awayMessage));
-            setActive(true);
-        }
-    } else if (id == m_extAwayTimeoutId) {
-        if (m_globalPresence->currentPresence().type() == Tp::Presence::away().type()) {
-            m_xaMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss (%t)")), Qt::CaseInsensitive);
-            setRequestedPresence(Tp::Presence::xa(m_xaMessage));
-            setActive(true);
-        }
-    }
 }
 
 void AutoAway::backFromIdle()
 {
-    qCDebug(KTP_KDED_MODULE);
-    setActive(false);
+    setPlugin(Enabled);
 }
 
 void AutoAway::reloadConfig()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     config.data()->reparseConfiguration();
-
     KConfigGroup kdedConfig = config->group("KDED");
 
     bool autoAwayEnabled = kdedConfig.readEntry("autoAwayEnabled", true);
     bool autoXAEnabled = kdedConfig.readEntry("autoXAEnabled", true);
 
-    m_awayMessage = kdedConfig.readEntry(QLatin1String("awayMessage"), QString());
-    m_xaMessage = kdedConfig.readEntry(QLatin1String("xaMessage"), QString());
-
-    //remove all our timeouts and only readd them if auto-away is enabled
     //WARNING: can't use removeAllTimeouts because this runs inside KDED, it would remove other KDED timeouts as well
     KIdleTime::instance()->removeIdleTimeout(m_awayTimeoutId);
+    m_awayTimeoutId = -1;
     KIdleTime::instance()->removeIdleTimeout(m_extAwayTimeoutId);
+    m_extAwayTimeoutId = -1;
 
     if (autoAwayEnabled) {
+        connect(KIdleTime::instance(), static_cast<void (KIdleTime::*)(int)>(&KIdleTime::timeoutReached), this, &AutoAway::timeoutReached);
+        connect(KIdleTime::instance(), &KIdleTime::resumingFromIdle, this, &AutoAway::backFromIdle);
+
         int awayTime = kdedConfig.readEntry("awayAfter", 5);
+        QString awayMessage = kdedConfig.readEntry(QLatin1String("awayMessage"), QString());
+        awayMessage.replace(QRegularExpression(QLatin1String("%te\\b")), QLatin1String("%te+") + QString::number(awayTime));
+        m_awayPresence.setStatusMessage(awayMessage);
         m_awayTimeoutId = KIdleTime::instance()->addIdleTimeout(awayTime * 60 * 1000);
-        setEnabled(true);
     } else {
-        setEnabled(false);
+        disconnect(KIdleTime::instance());
     }
+
     if (autoAwayEnabled && autoXAEnabled) {
         int xaTime = kdedConfig.readEntry("xaAfter", 15);
+        QString xaMessage = kdedConfig.readEntry(QLatin1String("xaMessage"), QString());
+        xaMessage.replace(QRegularExpression(QLatin1String("%te\\b")), QLatin1String("%te+") + QString::number(xaTime));
+        m_extAwayPresence.setStatusMessage(xaMessage);
         m_extAwayTimeoutId = KIdleTime::instance()->addIdleTimeout(xaTime * 60 * 1000);
     }
+
+    setPlugin(State(autoAwayEnabled));
 }

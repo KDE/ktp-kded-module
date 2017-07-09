@@ -23,16 +23,12 @@
 
 #include "telepathy-kded-module-plugin.h"
 
-namespace KTp {
-class GlobalPresence;
-}
-
 class AutoAway : public TelepathyKDEDModulePlugin
 {
     Q_OBJECT
 
 public:
-    explicit AutoAway(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
+    explicit AutoAway(QObject *parent = 0);
     ~AutoAway();
 
     QString pluginName() const;
@@ -41,15 +37,15 @@ public Q_SLOTS:
     void reloadConfig();
 
 private Q_SLOTS:
-    void timeoutReached(int);
+    void timeoutReached(int id);
     void backFromIdle();
 
 private:
     int m_awayTimeoutId;
     int m_extAwayTimeoutId;
 
-    QString m_awayMessage;
-    QString m_xaMessage;
+    Tp::Presence m_awayPresence;
+    Tp::Presence m_extAwayPresence;
 };
 
 #endif // AUTOAWAY_H

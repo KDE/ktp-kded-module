@@ -36,7 +36,6 @@ namespace KTp {
 }
 
 class ErrorHandler;
-class AutoConnect;
 class ContactNotify;
 class StatusHandler;
 

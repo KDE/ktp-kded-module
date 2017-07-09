@@ -40,7 +40,7 @@ K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
 
 TelepathyModule::TelepathyModule(QObject *parent, const QList<QVariant> &args)
     : KDEDModule(parent),
-    m_statusHandler(new StatusHandler(this)),
+    m_statusHandler( 0 ),
     m_contactHandler( 0 ),
     m_contactNotify( 0 ),
     m_errorHandler( 0 )
@@ -67,7 +67,10 @@ void TelepathyModule::onAccountManagerReady(Tp::PendingOperation *op)
     m_errorHandler = new ErrorHandler(this);
     m_contactHandler = new ContactRequestHandler(this);
     m_contactNotify = new ContactNotify(this);
+    m_statusHandler = new StatusHandler(this);
     new ContactCache(this);
+
+    QDBusConnection::sessionBus().registerService(QLatin1String("org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule"));
 }
 
 

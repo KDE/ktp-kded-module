@@ -23,6 +23,7 @@
 #include "ui_telepathy-kded-config.h"
 
 #include <KPluginFactory>
+#include <KConfigGroup>
 #include <KSharedConfig>
 #include <KLocalizedString>
 
@@ -31,10 +32,28 @@
 #include <QDBusConnection>
 
 #include "column-resizer.h"
-#include "autoconnect.h"
 
 K_PLUGIN_FACTORY(KCMTelepathyKDEDModuleConfigFactory, registerPlugin<TelepathyKDEDConfig>();)
 
+static const QString KDED_STATUS_MESSAGE_PARSER_WHATSTHIS(
+        i18n("<p>Tokens can be used wherever a status message can be set to create a dynamic status message.</p>")
+        + i18n("<p><strong>%tr+&lt;val&gt;</strong>: Countdown to 0 from <strong>&lt;val&gt;</strong> minutes. e.g. %tr+30</p>")
+        + i18n("<p><strong>%time+[&lt;val&gt;]</strong>: The current local time, or if a value is specified, the local time <strong>&lt;val&gt;</strong> minutes in the future. e.g. %time+10</p>")
+        + i18n("<p><strong>%utc+[&lt;val&gt;]</strong>: The current UTC time, or if a value is specified, the UTC time <strong>&lt;val&gt;</strong> minutes into the future. e.g. %utc</p>")
+        + i18n("<p><strong>%te+[&lt;val&gt;]</strong>: Time elapsed from message activation. Append an initial elapsed time &quot;&lt;val&gt;&quot in minutes.; e.g. %te+5</p>")
+        + i18n("<p><strong>%title</strong>: Now Playing track title.</p>")
+        + i18n("<p><strong>%artist</strong>: Now Playing track or album artist.</p>")
+        + i18n("<p><strong>%album</strong>: Now Playing album.</p>")
+        + i18n("<p><strong>%track</strong>: Now Playing track number.</p>")
+        + i18n("<p><strong>%um+[&lt;val&gt;]</strong>: When specified globally or in an account presence status message, overrides all automatic presence messages. When specified in an automatic presence status message, is substituted for the global or account presence status message (if specified). When <strong>val = g</strong> in an account presence status message or an automatic presence status message, overrides the account presence status message or automatic presence status message with the global presence status message. e.g. %um, %um+g</p>")
+        + i18n("<p><strong>%tu+&lt;val&gt;</strong>: Refresh the status message every <strong>&lt;val&gt;</strong> minutes. e.g. %tu+2</p>")
+        + i18n("<p><strong>%tx+&lt;val&gt;</strong>: Expire the status message after <strong>&lt;val&gt;</strong> minutes, or when the Now Playing active player stops (<strong>val = np</strong>). e.g. %tx+20, %tx+np</p>")
+        + i18n("<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: Specify a message to follow %tr, %time, %utc, and %tx token expiry. e.g. %xm+&quot;Back %time. %tx+3 %xm+&quot;Running late&quot;&quot;</p>")
+        + i18n("<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for local time using QDateTime::toString() expressions. e.g. %tf+&quot;h:mm AP t&quot;</p>")
+        + i18n("<p><strong>%uf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for UTC time using QDateTime::toString() expressions. e.g. %uf+&quot;hh:mm t&quot;</p>")
+        + i18n("<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Change the separator for empty fields. e.g. %sp+&quot;-&quot;</p>")
+        + i18n("<p>Using tokens requires the Telepathy KDED module to be loaded. Tokens can be escaped by prepending a backslash character, e.g. &#92;%sp</p>")
+        );
 
 TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& args)
     : KCModule(parent, args),
@@ -42,36 +61,10 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
 {
     ui->setupUi(this);
 
-    m_tagNames << QLatin1String("%title") << QLatin1String("%artist") << QLatin1String("%album") << QLatin1String("%track");
-    // xgettext: no-c-format
-    m_localizedTagNames << i18nc("Title tag in now playing plugin, use one word and keep the '%' character.", "%title")
-                        // xgettext: no-c-format
-                        << i18nc("Artist tag in now playing plugin, use one word and keep the '%' character.", "%artist")
-                        // xgettext: no-c-format
-                        << i18nc("Album tag in now playing plugin, use one word and keep the '%' character.", "%album")
-                        // xgettext: no-c-format
-                        << i18nc("Track number tag in now playing plugin, use one word and keep the '%' character.", "%track");
-    // xgettext: no-c-format
-    m_localizedTimeTagName = i18nc("Time tag. Use one word and keep the '%' character.", "%time");
-
-    QStringList itemsIcons;
-    itemsIcons << QLatin1String("view-media-lyrics")   //%title
-               << QLatin1String("view-media-artist")   //%artist
-               << QLatin1String("view-media-playlist") //%album
-               << QLatin1String("mixer-cd");           //%track
-
-    ui->m_tagListWidget->setItemsIcons(itemsIcons);
-    ui->m_tagListWidget->setLocalizedTagNames(m_localizedTagNames);
-    ui->m_tagListWidget->setupItems(); //populate the list, load items icons and set list's maximum size
-
-    ui->m_nowPlayingText->setLocalizedTagNames(m_localizedTagNames);
-
     ColumnResizer *resizer = new ColumnResizer(this);
     resizer->addWidgetsFromLayout(ui->incomingFilesGroupBox->layout(), 0);
     resizer->addWidgetsFromLayout(ui->autoAwayGroupBox->layout(), 0);
-    resizer->addWidgetsFromLayout(ui->nowPlayingGroupBox->layout(), 0);
     resizer->addWidgetsFromLayout(ui->presenceGroupBox->layout(), 0);
-
 
     //TODO enable this when it is supported by the approver
     ui->m_autoAcceptCheckBox->setHidden(true);
@@ -84,16 +77,9 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
                                     " minutes"));
 
     ui->m_awayMessage->setPlaceholderText(i18n("Leave empty for no message"));
-    // xgettext: no-c-format
-    ui->m_awayMessage->setToolTip(i18n("Use %time to insert UTC time of when you went away"));
-
     ui->m_xaMessage->setPlaceholderText(i18n("Leave empty for no message"));
-    // xgettext: no-c-format
-    ui->m_xaMessage->setToolTip(i18n("Use %time to insert UTC time of when you went not available"));
 
     ui->m_screenSaverAwayMessage->setPlaceholderText(i18n("Leave empty for no message"));
-    // xgettext: no-c-format
-    ui->m_screenSaverAwayMessage->setToolTip(i18n("Use %time to insert UTC time of when the screen saver was activated"));
 
     connect(ui->m_downloadUrlRequester, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
@@ -106,10 +92,6 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
     connect(ui->m_awayMins, SIGNAL(valueChanged(int)),
             this, SLOT(settingsHasChanged()));
     connect(ui->m_xaMins, SIGNAL(valueChanged(int)),
-            this, SLOT(settingsHasChanged()));
-    connect(ui->m_nowPlayingCheckBox, SIGNAL(stateChanged(int)),
-            this, SLOT(settingsHasChanged()));
-    connect(ui->m_nowPlayingText, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
     connect(ui->m_awayMessage, SIGNAL(textChanged(QString)),
             this, SLOT(settingsHasChanged()));
@@ -130,8 +112,6 @@ TelepathyKDEDConfig::TelepathyKDEDConfig(QWidget *parent, const QVariantList& ar
             this, SLOT(autoAwayChecked(bool)));
     connect(ui->m_xaCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoXAChecked(bool)));
-    connect(ui->m_nowPlayingCheckBox, SIGNAL(clicked(bool)),
-            this, SLOT(nowPlayingChecked(bool)));
     connect(ui->m_autoOfflineCheckBox, SIGNAL(clicked(bool)),
             this, SLOT(autoOfflineChecked(bool)));
     connect(ui->m_screenSaverAwayCheckBox, SIGNAL(clicked(bool)),
@@ -174,8 +154,9 @@ void TelepathyKDEDConfig::load()
 
     ui->m_awayCheckBox->setChecked(autoAwayEnabled);
     ui->m_awayMins->setValue(awayTime);
-    // Display the localized tag because the unlocalized one is saved
-    ui->m_awayMessage->setText(awayMessage.replace(QLatin1String("%time"), m_localizedTimeTagName));
+
+    ui->m_awayMessage->setText(awayMessage);
+    ui->m_awayMessage->setWhatsThis(KDED_STATUS_MESSAGE_PARSER_WHATSTHIS);
     enableAwayWidgets(autoAwayEnabled);
 
     //check for x-away
@@ -190,9 +171,8 @@ void TelepathyKDEDConfig::load()
     ui->m_xaCheckBox->setEnabled(autoAwayEnabled);
     ui->m_xaCheckBox->setChecked(autoXAEnabled && autoAwayEnabled);
     ui->m_xaMins->setValue(xaTime);
-    // Display the localized tag because the unlocalized one is saved
-    ui->m_xaMessage->setText(xaMessage.replace(QLatin1String("%time"),
-            m_localizedTimeTagName));
+    ui->m_xaMessage->setText(xaMessage);
+    ui->m_xaMessage->setWhatsThis(KDED_STATUS_MESSAGE_PARSER_WHATSTHIS);
     enableXAWidgets(autoXAEnabled && autoAwayEnabled);
 
         //check if screen-server-away is enabled
@@ -201,47 +181,13 @@ void TelepathyKDEDConfig::load()
     QString screenSaverAwayMessage = kdedConfig.readEntry(QLatin1String("screenSaverAwayMessage"), QString());
 
     ui->m_screenSaverAwayCheckBox->setChecked(screenSaverAwayEnabled);
-    // Display the localized tag because the unlocalized one is saved
-    ui->m_screenSaverAwayMessage->setText(screenSaverAwayMessage.replace(QLatin1String("%time"), m_localizedTimeTagName));
+    ui->m_screenSaverAwayMessage->setText(screenSaverAwayMessage);
+    ui->m_screenSaverAwayMessage->setWhatsThis(KDED_STATUS_MESSAGE_PARSER_WHATSTHIS);
     ui->m_screenSaverAwayMessage->setEnabled(screenSaverAwayEnabled);
 
-    //check if 'Now playing..' is enabled
-    bool nowPlayingEnabled = kdedConfig.readEntry(QLatin1String("nowPlayingEnabled"), false);
-    ui->m_nowPlayingCheckBox->setChecked(nowPlayingEnabled);
-
-    //now playing text
-    QString nowPlayingText = kdedConfig.readEntry(QLatin1String("nowPlayingText"),
-                                                  i18nc("The default text displayed by now playing plugin. "
-                                                        "track title: %1, artist: %2, album: %3",
-                                                        "Now listening to %1 by %2 from album %3",
-                                                        QLatin1String("%title"), QLatin1String("%artist"), QLatin1String("%album")));
-
-    //in nowPlayingText tag names aren't localized, here they're replaced with the localized ones
-    for (int i = 0; i < m_tagNames.size(); i++) {
-        nowPlayingText.replace(m_tagNames.at(i), m_localizedTagNames.at(i));
-    }
-
-    ui->m_nowPlayingText->setText(nowPlayingText);
-
     // autoconnect
-    QString autoConnectString = kdedConfig.readEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Manual));
-    AutoConnect::Mode autoConnectMode = AutoConnect::stringToMode(autoConnectString);
-
-    switch (autoConnectMode) {
-    case AutoConnect::Disabled:
-        ui->m_autoConnectCheckBox->setTristate(false);
-        ui->m_autoConnectCheckBox->setChecked(false);
-        break;
-    case AutoConnect::Enabled:
-        ui->m_autoConnectCheckBox->setTristate(false);
-        ui->m_autoConnectCheckBox->setChecked(true);
-        break;
-    case AutoConnect::Manual:
-        // AutoConnect::Manual is the default
-    default:
-        ui->m_autoConnectCheckBox->setTristate(true);
-        ui->m_autoConnectCheckBox->setCheckState(Qt::PartiallyChecked);
-    }
+    bool autoConnect = kdedConfig.readEntry(QLatin1String("autoConnect"), false);
+    ui->m_autoConnectCheckBox->setChecked(autoConnect);
 
     KSharedConfigPtr contactListConfig = KSharedConfig::openConfig(QLatin1String("ktpcontactlistrc"));
     KConfigGroup generalConfigGroup(contactListConfig, "General");
@@ -277,41 +223,13 @@ void TelepathyKDEDConfig::save()
 
     kdedConfig.writeEntry(QLatin1String("autoAwayEnabled"), ui->m_awayCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("awayAfter"), ui->m_awayMins->value());
-    // We store the unlocalized tag name
-    QString awayMessage = ui->m_awayMessage->text();
-    kdedConfig.writeEntry(QLatin1String("awayMessage"),
-                          awayMessage.replace(m_localizedTimeTagName, QLatin1String("%time")));
+    kdedConfig.writeEntry(QLatin1String("awayMessage"), ui->m_awayMessage->text());
     kdedConfig.writeEntry(QLatin1String("autoXAEnabled"), ui->m_xaCheckBox->isChecked());
     kdedConfig.writeEntry(QLatin1String("xaAfter"), ui->m_xaMins->value());
-    // We store the unlocalized tag name
-    QString xaMessage = ui->m_xaMessage->text();
-    kdedConfig.writeEntry(QLatin1String("xaMessage"),
-                          xaMessage.replace(m_localizedTimeTagName, QLatin1String("%time")));
-    kdedConfig.writeEntry(QLatin1String("nowPlayingEnabled"), ui->m_nowPlayingCheckBox->isChecked());
+    kdedConfig.writeEntry(QLatin1String("xaMessage"), ui->m_xaMessage->text());
     kdedConfig.writeEntry(QLatin1String("screenSaverAwayEnabled"), ui->m_screenSaverAwayCheckBox->isChecked());
-    // We store the unlocalized tag name
-    QString screenSaverAwayMessage = ui->m_screenSaverAwayMessage->text();
-    kdedConfig.writeEntry(QLatin1String("screenSaverAwayMessage"),
-                          screenSaverAwayMessage.replace(m_localizedTimeTagName, QLatin1String("%time")));
-
-    //we store a nowPlayingText version with untranslated tag names
-    QString modifiedNowPlayingText = ui->m_nowPlayingText->text();
-    for (int i = 0; i < m_tagNames.size(); i++) {
-        modifiedNowPlayingText.replace(m_localizedTagNames.at(i), m_tagNames.at(i));
-    }
-
-    kdedConfig.writeEntry(QLatin1String("nowPlayingText"), modifiedNowPlayingText);
-
-    switch (ui->m_autoConnectCheckBox->checkState()) {
-    case Qt::Unchecked:
-        kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Disabled));
-        break;
-    case Qt::PartiallyChecked:
-        kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Manual));
-        break;
-    case Qt::Checked:
-        kdedConfig.writeEntry(QLatin1String("autoConnect"), AutoConnect::modeToString(AutoConnect::Enabled));
-    }
+    kdedConfig.writeEntry(QLatin1String("screenSaverAwayMessage"), ui->m_screenSaverAwayMessage->text());
+    kdedConfig.writeEntry(QLatin1String("autoConnect"), ui->m_autoConnectCheckBox->isChecked());
 
     KSharedConfigPtr contactListConfig = KSharedConfig::openConfig(QLatin1String("ktpcontactlistrc"));
     KConfigGroup generalConfigGroup(contactListConfig, "General");
@@ -372,12 +290,6 @@ void TelepathyKDEDConfig::screenSaverAwayChecked(bool checked)
 void TelepathyKDEDConfig::autoXAChecked(bool checked)
 {
     enableXAWidgets(checked);
-    Q_EMIT changed(true);
-}
-
-void TelepathyKDEDConfig::nowPlayingChecked(bool checked)
-{
-    Q_UNUSED(checked)
     Q_EMIT changed(true);
 }
 

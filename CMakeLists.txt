@@ -20,8 +20,8 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(FeatureSummary)
 
-find_package (Qt5 REQUIRED COMPONENTS Concurrent Widgets Sql Network)
-find_package (KF5 REQUIRED COMPONENTS DBusAddons WidgetsAddons Config I18n KIO Notifications ConfigWidgets IdleTime KCMUtils)
+find_package (Qt5 REQUIRED COMPONENTS Concurrent Widgets Sql Network Test)
+find_package (KF5 REQUIRED COMPONENTS DBusAddons WidgetsAddons Config I18n KIO Notifications ConfigWidgets IdleTime KCMUtils Activities)
 
 find_package (KTp REQUIRED)
 
@@ -43,13 +43,14 @@ set (kded_ktp_integration_module_SRCS
      contact-request-handler.cpp
      telepathy-kded-module-plugin.cpp
      telepathy-module.cpp
+     account-status-helper.cpp
      autoaway.cpp
      telepathy-mpris.cpp
      status-handler.cpp
-     autoconnect.cpp
      error-handler.cpp
      contactnotify.cpp
      screensaveraway.cpp
+     status-message-parser.cpp
 )
 
 add_library (kded_ktp_integration_module MODULE ${kded_ktp_integration_module_SRCS}
@@ -66,6 +67,7 @@ target_link_libraries (kded_ktp_integration_module
                        KF5::IdleTime
                        KF5::KIOWidgets
                        KF5::WidgetsAddons
+                       KF5::Activities
                        ${TELEPATHY_QT5_LIBRARIES}
                        Qt5::Concurrent
                        Qt5::Sql

@@ -18,29 +18,23 @@
 */
 
 #include "screensaveraway.h"
-#include "ktp_kded_debug.h"
 
-#include <KTp/global-presence.h>
-
-#include <KSharedConfig>
 #include <KConfig>
 #include <KConfigGroup>
+#include <KSharedConfig>
 
 #include <QDBusConnectionInterface>
 #include <QDBusInterface>
 
-ScreenSaverAway::ScreenSaverAway(KTp::GlobalPresence *globalPresence, QObject *parent)
-    : TelepathyKDEDModulePlugin(globalPresence, parent)
+ScreenSaverAway::ScreenSaverAway(QObject *parent)
+    : TelepathyKDEDModulePlugin(parent)
 {
-    reloadConfig();
+    m_screenSaverInterface = new QDBusInterface(QLatin1String("org.freedesktop.ScreenSaver"),
+								QLatin1String("/ScreenSaver"),
+								QString(),
+								QDBusConnection::sessionBus(), this);
 
-    //watch for screen locked
-    QDBusConnection::sessionBus().connect(QString(),
-                                          QLatin1String("/ScreenSaver"),
-                                          QLatin1String("org.freedesktop.ScreenSaver"),
-                                          QLatin1String("ActiveChanged"),
-                                          this,
-                                          SLOT(onActiveChanged(bool)));
+    reloadConfig();
 }
 
 ScreenSaverAway::~ScreenSaverAway()
@@ -54,17 +48,13 @@ QString ScreenSaverAway::pluginName() const
 
 void ScreenSaverAway::onActiveChanged(bool newState)
 {
-    if (!isEnabled()) {
-        return;
-    }
-
     if (newState) {
-        m_screenSaverAwayMessage.replace(QLatin1String("%time"), QDateTime::currentDateTimeUtc().toString(QLatin1String("hh:mm:ss")), Qt::CaseInsensitive);
-        setRequestedPresence(Tp::Presence::away(m_screenSaverAwayMessage));
-        setActive(true);
+        QString awayMessage = m_screenSaverAwayMessage;
+        QDBusReply<int> idleTime = m_screenSaverInterface->asyncCall(QLatin1String("GetSessionIdleTime"));
+        awayMessage.replace(QRegularExpression(QLatin1String("%te\\b")), QLatin1String("%te+") + QString::number(std::round(idleTime.value() / 1000 / 60)));
+        setPlugin(Tp::Presence::away(awayMessage));
     } else {
-        qCDebug(KTP_KDED_MODULE);
-        setActive(false);
+        setPlugin(Enabled);
     }
 }
 
@@ -72,16 +62,17 @@ void ScreenSaverAway::reloadConfig()
 {
     KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     config.data()->reparseConfiguration();
-
     KConfigGroup kdedConfig = config->group("KDED");
 
     bool screenSaverAwayEnabled = kdedConfig.readEntry("screenSaverAwayEnabled", true);
-
     m_screenSaverAwayMessage = kdedConfig.readEntry(QLatin1String("screenSaverAwayMessage"), QString());
 
     if (screenSaverAwayEnabled) {
-        setEnabled(true);
+        //watch for screen locked
+        connect(m_screenSaverInterface, SIGNAL(ActiveChanged(bool)), this, SLOT(onActiveChanged(bool)));
     } else {
-        setEnabled(false);
+        m_screenSaverInterface->disconnect();
     }
+
+    setPlugin(State(screenSaverAwayEnabled));
 }

@@ -1,5 +1,6 @@
 /*
     Parent class for Telepathy KDED Plugins
+    Copyright (C) 2017  James D. Smith <smithjd15@gmail.com>
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -24,48 +25,59 @@
 #include <QObject>
 #include <TelepathyQt/Presence>
 
-namespace KTp {
-class GlobalPresence;
-}
-
 class TelepathyKDEDModulePlugin : public QObject
 {
     Q_OBJECT
 
+/* The parent class for the Telepathy KDED plugins. */
+
 public:
-    explicit TelepathyKDEDModulePlugin(KTp::GlobalPresence *globalPresence, QObject *parent = 0);
+    explicit TelepathyKDEDModulePlugin(QObject *parent = 0);
     virtual ~TelepathyKDEDModulePlugin();
 
-    bool isActive() const { return m_active; }
-    bool isEnabled() const { return m_enabled; }
-    /// Deriving classes must return a valid plugin name in this method
+    enum State {
+        Disabled = false,
+        Enabled = true,
+        Active
+    };
+    Q_ENUM(State)
+
+    /**
+     * \brief The plugin operating state, i.e. if it is active, enabled, or
+     * disabled.
+     *
+     * \return State enum indicating the plugin's operating state.
+     */
+    State pluginState() const { return m_pluginState; }
+
+    /**
+     * \brief Plugin name. Deriving classes must return a valid plugin name in this method.
+     */
     virtual QString pluginName() const = 0;
 
+    /**
+     * \brief A plugin presence.
+     *
+     * \return A KTp::Presence.
+     */
     Tp::Presence requestedPresence() const { return m_requestedPresence; }
-    QString requestedStatusMessage() const { return m_requestedStatusMessage; }
 
 public Q_SLOTS:
-    /// Deriving classes with configuration must have this method reimplemented
+    /**
+     * \brief Plugin-specific configuration reload. Deriving classes must have this method reimplemented.
+     */
     virtual void reloadConfig() = 0;
 
 Q_SIGNALS:
-    void requestPresenceChange(const Tp::Presence &presence);
-    void requestStatusMessageChange(const QString statusMessage);
-    void activate(bool);
+    void pluginChanged();
 
 protected:
-    void setActive(bool active);
-    void setEnabled(bool enabled);
-    void setRequestedPresence(const Tp::Presence &presence) { m_requestedPresence = presence; }
-    void setRequestedStatusMessage(const QString statusMessage) { m_requestedStatusMessage = statusMessage; }
-
-    KTp::GlobalPresence *m_globalPresence;
+    void setPlugin(State state);
+    void setPlugin(const Tp::Presence &presence);
 
 private:
     Tp::Presence m_requestedPresence;
-    QString m_requestedStatusMessage;
-    bool m_enabled;
-    bool m_active;
+    State m_pluginState;
 };
 
 #endif // TELEPATHY_KDED_MODULE_PLUGIN_H

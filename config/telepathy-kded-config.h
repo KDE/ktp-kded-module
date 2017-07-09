@@ -44,7 +44,6 @@ private Q_SLOTS:
     void settingsHasChanged();
     void autoAwayChecked(bool checked);
     void autoXAChecked(bool checked);
-    void nowPlayingChecked(bool checked);
     void autoOfflineChecked(bool checked);
     void screenSaverAwayChecked(bool checked);
     void downloadUrlCheckBoxChanged(bool checked);
@@ -52,9 +51,6 @@ private Q_SLOTS:
 private:
     void enableAwayWidgets(bool enable);
     void enableXAWidgets(bool enable);
-    QStringList m_tagNames;
-    QStringList m_localizedTagNames;
-    QString m_localizedTimeTagName;
     Ui::TelepathyKDEDUi *ui;
 };
 

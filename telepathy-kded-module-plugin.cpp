@@ -1,5 +1,6 @@
 /*
     Parent class for Telepathy KDED Plugins
+    Copyright (C) 2017  James D. Smith <smithjd15@gmail.com>
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -20,31 +21,34 @@
 
 #include "telepathy-kded-module-plugin.h"
 
-#include <KTp/global-presence.h>
+#include "ktp_kded_debug.h"
 
-TelepathyKDEDModulePlugin::TelepathyKDEDModulePlugin(KTp::GlobalPresence *globalPresence, QObject *parent)
+TelepathyKDEDModulePlugin::TelepathyKDEDModulePlugin(QObject *parent)
     : QObject(parent),
-      m_enabled(false),
-      m_active(false)
+    m_pluginState(Disabled)
 {
-    m_globalPresence = globalPresence;
+    m_requestedPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
 }
 
 TelepathyKDEDModulePlugin::~TelepathyKDEDModulePlugin()
 {
 }
 
-void TelepathyKDEDModulePlugin::setEnabled(bool enabled)
+void TelepathyKDEDModulePlugin::setPlugin(State state)
 {
-    m_enabled = enabled;
+    m_pluginState = state;
 
-    if(!enabled) {
-        setActive(false);
-    }
+    qCDebug(KTP_KDED_MODULE) << pluginName() << "state change:" << m_pluginState;
+
+    Q_EMIT pluginChanged();
 }
 
-void TelepathyKDEDModulePlugin::setActive(bool active)
+void TelepathyKDEDModulePlugin::setPlugin(const Tp::Presence &presence)
 {
-    m_active = active;
-    Q_EMIT activate(active);
+    m_requestedPresence = presence;
+    m_pluginState = Active;
+
+    qCDebug(KTP_KDED_MODULE) << pluginName() << "presence change request:" << m_requestedPresence.status() << m_requestedPresence.statusMessage();
+
+    Q_EMIT pluginChanged();
 }
