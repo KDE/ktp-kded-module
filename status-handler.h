@@ -60,6 +60,6 @@ private:
     QList<TelepathyKDEDModulePlugin*> m_queuePlugins;
     QHash<QString,StatusMessageParser*> m_parsers;
 
-    QHash<QString,Tp::Presence> m_lastAccountStatuses;
+    QHash<QString,Tp::Presence> m_accountActivePresences;
     Tp::Presence m_pluginPresence;
 };

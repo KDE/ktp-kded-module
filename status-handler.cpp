@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2017  James D. Smith <smithjd15@gmail.com>
+    Copyright (C) 2017-2018  James D. Smith <smithjd15@gmail.com>
     Copyright (C) 2014  David Edmundson <kde@davidedmundson.co.uk>
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
@@ -73,7 +73,7 @@ StatusHandler::StatusHandler(QObject* parent)
 
     auto watchRequestedPresenceChange = [=] (const Tp::AccountPtr &account) {
         connect(account.data(), &Tp::Account::requestedPresenceChanged, account.data(), [=] (const Tp::Presence &requestedPresence) {
-            if (requestedPresence != m_lastAccountStatuses[account->uniqueIdentifier()]) {
+            if (requestedPresence != m_accountActivePresences[account->uniqueIdentifier()]) {
                 m_accountStatusHelper->setRequestedAccountPresence(account->uniqueIdentifier(), requestedPresence.barePresence(), AccountStatusHelper::Session);
             }
         });
@@ -153,7 +153,7 @@ StatusHandler::StatusHandler(QObject* parent)
         disconnect(account.data(), &Tp::Account::requestedPresenceChanged, account.data(), Q_NULLPTR);
         disconnect(m_parsers[account->uniqueIdentifier()], &StatusMessageParser::statusMessageChanged, m_parsers[account->uniqueIdentifier()], Q_NULLPTR);
         m_parsers.remove(account->uniqueIdentifier());
-        m_lastAccountStatuses.remove(account->uniqueIdentifier());
+        m_accountActivePresences.remove(account->uniqueIdentifier());
         parkAccount(account);
     });
 }
@@ -193,11 +193,11 @@ void StatusHandler::setPresence(const QString &accountUID)
             }
         }
 
-        bool pluginQueue = (presence.type() != Tp::ConnectionPresenceTypeHidden)
+        bool sourcePluginQueue = (presence.type() != Tp::ConnectionPresenceTypeHidden)
           && (presence.type() != Tp::ConnectionPresenceTypeOffline)
           && (m_pluginPresence.type() != Tp::ConnectionPresenceTypeUnset);
 
-        if (pluginQueue) {
+        if (sourcePluginQueue) {
             if (KTp::Presence::sortPriority(presence.type()) < KTp::Presence::sortPriority(m_pluginPresence.type())) {
                 presence = Tp::Presence(m_pluginPresence.type(), m_pluginPresence.status(), QString());
             }
@@ -213,20 +213,20 @@ void StatusHandler::setPresence(const QString &accountUID)
     };
 
     for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+        const Tp::Presence presence = accountPresence(account->uniqueIdentifier());
+
         if (!accountUID.isEmpty() && (accountUID != account->uniqueIdentifier())) {
             continue;
         }
 
-        if (!accountPresence(account->uniqueIdentifier()).isValid()) {
-            qCDebug(KTP_KDED_MODULE) << "account" << account->uniqueIdentifier() << "new tp presence is invalid, skipping...";
-            continue;
-        }
-
-        m_lastAccountStatuses[account->uniqueIdentifier()] = accountPresence(account->uniqueIdentifier());
-        qCDebug(KTP_KDED_MODULE) << "requested presence changing for" << account->uniqueIdentifier()
-        << "to presence" << m_lastAccountStatuses[account->uniqueIdentifier()].status()
-        << "and status message" << m_lastAccountStatuses[account->uniqueIdentifier()].statusMessage();
-        account->setRequestedPresence(m_lastAccountStatuses[account->uniqueIdentifier()]);
+        connect(account->setRequestedPresence(presence), &Tp::PendingOperation::finished, [=] (Tp::PendingOperation *op) {
+            if (op->isValid()) {
+                qCDebug(KTP_KDED_MODULE) << account->uniqueIdentifier() << "requested presence change to" << presence.status() << "with status message" << presence.statusMessage();
+                m_accountActivePresences[account->uniqueIdentifier()] = presence;
+            } else if (op->isError()) {
+                qCWarning(KTP_KDED_MODULE()) << account->uniqueIdentifier() << "requested presence change error:" << op->errorMessage();
+            }
+        });
     }
 }
 
