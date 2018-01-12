@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QMutex>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
@@ -61,5 +62,6 @@ private:
     QHash<QString,StatusMessageParser*> m_parsers;
 
     QHash<QString,Tp::Presence> m_accountActivePresences;
+    QHash<QString,QMutex*> m_accountMutexes;
     Tp::Presence m_pluginPresence;
 };

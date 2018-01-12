@@ -31,6 +31,8 @@
 #include <QTimer>
 #include <QVariant>
 #include <QHash>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
@@ -80,6 +82,7 @@ StatusHandler::StatusHandler(QObject* parent)
     };
 
     for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+        m_accountMutexes.insert(account->uniqueIdentifier(), new QMutex());
         addParser(account->uniqueIdentifier());
         watchRequestedPresenceChange(account);
     }
@@ -145,6 +148,7 @@ StatusHandler::StatusHandler(QObject* parent)
     });
 
     connect(m_enabledAccounts.data(), &Tp::AccountSet::accountAdded, [=] (const Tp::AccountPtr &account) {
+        m_accountMutexes.insert(account->uniqueIdentifier(), new QMutex());
         addParser(account->uniqueIdentifier());
         watchRequestedPresenceChange(account);
     });
@@ -154,6 +158,7 @@ StatusHandler::StatusHandler(QObject* parent)
         disconnect(m_parsers[account->uniqueIdentifier()], &StatusMessageParser::statusMessageChanged, m_parsers[account->uniqueIdentifier()], Q_NULLPTR);
         m_parsers.remove(account->uniqueIdentifier());
         m_accountActivePresences.remove(account->uniqueIdentifier());
+        m_accountMutexes.remove(account->uniqueIdentifier());
         parkAccount(account);
     });
 }
@@ -214,16 +219,17 @@ void StatusHandler::setPresence(const QString &accountUID)
 
     for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
         const Tp::Presence presence = accountPresence(account->uniqueIdentifier());
+        QMutexLocker locker(m_accountMutexes[account->uniqueIdentifier()]);
 
         if (!accountUID.isEmpty() && (accountUID != account->uniqueIdentifier())) {
             continue;
         }
 
+        m_accountActivePresences[account->uniqueIdentifier()] = presence;
         connect(account->setRequestedPresence(presence), &Tp::PendingOperation::finished, [=] (Tp::PendingOperation *op) {
-            if (op->isValid()) {
+            if (!op->isError()) {
                 qCDebug(KTP_KDED_MODULE) << account->uniqueIdentifier() << "requested presence change to" << presence.status() << "with status message" << presence.statusMessage();
-                m_accountActivePresences[account->uniqueIdentifier()] = presence;
-            } else if (op->isError()) {
+            } else {
                 qCWarning(KTP_KDED_MODULE()) << account->uniqueIdentifier() << "requested presence change error:" << op->errorMessage();
             }
         });
