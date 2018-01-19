@@ -20,7 +20,6 @@
 
 #include <QObject>
 #include <QHash>
-#include <QMutex>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>

@@ -31,8 +31,6 @@
 #include <QTimer>
 #include <QVariant>
 #include <QHash>
-#include <QMutex>
-#include <QMutexLocker>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
