@@ -63,28 +63,24 @@ StatusHandler::StatusHandler(QObject* parent)
         setPresence();
     });
 
-    auto addParser = [=] (const QString &accountUID) {
-        m_parsers[accountUID] = new StatusMessageParser(this);
-        connect(m_parsers[accountUID], &StatusMessageParser::statusMessageChanged, m_parsers[accountUID], [=] {
-            qCDebug(KTP_KDED_MODULE) << "account" << accountUID << "parser has new status message" << m_parsers[accountUID]->statusMessage();
-            setPresence(accountUID);
+    auto addAccount = [=] (const Tp::AccountPtr &account) {
+        // Connect a new status message parser for the account.
+        m_parsers[account->uniqueIdentifier()] = new StatusMessageParser(this);
+        connect(m_parsers[account->uniqueIdentifier()], &StatusMessageParser::statusMessageChanged, m_parsers[account->uniqueIdentifier()], [=] {
+            qCDebug(KTP_KDED_MODULE) << "account" << account->uniqueIdentifier() << "parser has new status message" << m_parsers[account->uniqueIdentifier()]->statusMessage();
+            setPresence(account->uniqueIdentifier());
         });
 
-        qCDebug(KTP_KDED_MODULE) << "new parser:" << accountUID;
-    };
+        qCDebug(KTP_KDED_MODULE) << "new parser:" << account->uniqueIdentifier();
 
-    auto watchRequestedPresenceChange = [=] (const Tp::AccountPtr &account) {
-        connect(account.data(), &Tp::Account::requestedPresenceChanged, account.data(), [=] (const Tp::Presence &requestedPresence) {
-            if (requestedPresence != m_accountActivePresences[account->uniqueIdentifier()]) {
-                m_accountStatusHelper->setRequestedAccountPresence(account->uniqueIdentifier(), requestedPresence.barePresence(), AccountStatusHelper::Session);
-            }
+        // Watch for automatic presence changes from the account.
+        connect(account.data(), &Tp::Account::automaticPresenceChanged, account.data(), [=] (const Tp::Presence &automaticPresence) {
+            m_accountStatusHelper->setRequestedAccountPresence(account->uniqueIdentifier(), automaticPresence.barePresence(), AccountStatusHelper::Persistent);
         });
     };
 
     for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
-        m_accountMutexes.insert(account->uniqueIdentifier(), new QMutex());
-        addParser(account->uniqueIdentifier());
-        watchRequestedPresenceChange(account);
+        addAccount(account);
     }
 
     m_pluginPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
@@ -95,37 +91,34 @@ StatusHandler::StatusHandler(QObject* parent)
     //earlier in list = lower priority
     m_queuePlugins << screenSaverAway << autoAway;
 
-    QTimer *activationTimer = new QTimer();
-    activationTimer->setSingleShot(true);
-    activationTimer->setInterval(500);
-    connect(activationTimer, &QTimer::timeout, [=] {
-        QList<TelepathyKDEDModulePlugin*> activePlugins;
-        for (TelepathyKDEDModulePlugin* plugin : m_queuePlugins) {
-            if (plugin->pluginState() != TelepathyKDEDModulePlugin::Active)
-                continue;
-
-            if (KTp::Presence::sortPriority(plugin->requestedPresence().type())
-              >= KTp::Presence::sortPriority(m_pluginPresence.type())) {
-                activePlugins.prepend(plugin);
-            } else {
-                activePlugins.append(plugin);
-            }
-        }
-
-        if (activePlugins.isEmpty()) {
-            m_pluginPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
-        } else {
-            m_pluginPresence = activePlugins.at(0)->requestedPresence();
-        }
-
-        m_parsers[(QLatin1String("PluginPresence"))]->parseStatusMessage(m_pluginPresence.statusMessage());
-        qCDebug(KTP_KDED_MODULE) << "plugin queue activation:" << m_pluginPresence.status()
-          << m_parsers[(QLatin1String("PluginPresence"))]->statusMessage();
-        setPresence();
-    });
-
     for (TelepathyKDEDModulePlugin* plugin : m_queuePlugins) {
-        connect(plugin, &TelepathyKDEDModulePlugin::pluginChanged, activationTimer, static_cast<void (QTimer::*)(void)>(&QTimer::start));
+        connect(plugin, &TelepathyKDEDModulePlugin::pluginChanged, [=] () {
+            QList<TelepathyKDEDModulePlugin*> activePlugins;
+            for (TelepathyKDEDModulePlugin* plugin : m_queuePlugins) {
+                if (plugin->pluginState() != TelepathyKDEDModulePlugin::Active)
+                    continue;
+
+                if (KTp::Presence::sortPriority(plugin->requestedPresence().type())
+                    >= KTp::Presence::sortPriority(m_pluginPresence.type())) {
+                    activePlugins.prepend(plugin);
+                } else {
+                    activePlugins.append(plugin);
+                }
+            }
+
+            if (activePlugins.isEmpty()) {
+                m_pluginPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
+            } else {
+                m_pluginPresence = activePlugins.at(0)->requestedPresence();
+            }
+
+            m_parsers[(QLatin1String("PluginPresence"))]->parseStatusMessage(m_pluginPresence.statusMessage());
+            qCDebug(KTP_KDED_MODULE) << "plugin queue activation:" << m_pluginPresence.status()
+              << m_parsers[(QLatin1String("PluginPresence"))]->statusMessage();
+
+            setPresence();
+        });
+
         connect(this, &StatusHandler::settingsChanged, plugin, &TelepathyKDEDModulePlugin::reloadConfig);
     }
 
@@ -148,17 +141,13 @@ StatusHandler::StatusHandler(QObject* parent)
     });
 
     connect(m_enabledAccounts.data(), &Tp::AccountSet::accountAdded, [=] (const Tp::AccountPtr &account) {
-        m_accountMutexes.insert(account->uniqueIdentifier(), new QMutex());
-        addParser(account->uniqueIdentifier());
-        watchRequestedPresenceChange(account);
+        addAccount(account);
     });
 
     connect(m_enabledAccounts.data(), &Tp::AccountSet::accountRemoved, [=] (const Tp::AccountPtr &account) {
         disconnect(account.data(), &Tp::Account::requestedPresenceChanged, account.data(), Q_NULLPTR);
         disconnect(m_parsers[account->uniqueIdentifier()], &StatusMessageParser::statusMessageChanged, m_parsers[account->uniqueIdentifier()], Q_NULLPTR);
         m_parsers.remove(account->uniqueIdentifier());
-        m_accountActivePresences.remove(account->uniqueIdentifier());
-        m_accountMutexes.remove(account->uniqueIdentifier());
         parkAccount(account);
     });
 }
@@ -218,14 +207,11 @@ void StatusHandler::setPresence(const QString &accountUID)
     };
 
     for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
-        const Tp::Presence presence = accountPresence(account->uniqueIdentifier());
-        QMutexLocker locker(m_accountMutexes[account->uniqueIdentifier()]);
-
         if (!accountUID.isEmpty() && (accountUID != account->uniqueIdentifier())) {
             continue;
         }
 
-        m_accountActivePresences[account->uniqueIdentifier()] = presence;
+        const Tp::Presence presence = accountPresence(account->uniqueIdentifier());
         connect(account->setRequestedPresence(presence), &Tp::PendingOperation::finished, [=] (Tp::PendingOperation *op) {
             if (!op->isError()) {
                 qCDebug(KTP_KDED_MODULE) << account->uniqueIdentifier() << "requested presence change to" << presence.status() << "with status message" << presence.statusMessage();
