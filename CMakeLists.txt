@@ -53,8 +53,9 @@ set (kded_ktp_integration_module_SRCS
      status-message-parser.cpp
 )
 
-add_library (kded_ktp_integration_module MODULE ${kded_ktp_integration_module_SRCS}
-)
+add_library (kded_ktp_integration_module MODULE ${kded_ktp_integration_module_SRCS})
+set_target_properties (kded_ktp_integration_module PROPERTIES OUTPUT_NAME ktp_integration)
+kcoreaddons_desktop_to_json(kded_ktp_integration_module ktp_integration_module.desktop)
 
 target_link_libraries (kded_ktp_integration_module
                        KTp::CommonInternals
@@ -75,11 +76,7 @@ target_link_libraries (kded_ktp_integration_module
 )
 
 install (TARGETS kded_ktp_integration_module
-         DESTINATION ${PLUGIN_INSTALL_DIR}
-)
-
-install (FILES ktp_integration_module.desktop
-         DESTINATION ${SERVICES_INSTALL_DIR}/kded
+         DESTINATION ${PLUGIN_INSTALL_DIR}/kf5/kded
 )
 
 find_file(DBUS_SEND_PATH dbus-send HINTS /usr/bin)

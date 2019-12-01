@@ -36,7 +36,7 @@
 #include <KConfigGroup>
 #include <KPluginFactory>
 
-K_PLUGIN_FACTORY(TelepathyModuleFactory, registerPlugin<TelepathyModule>(); )
+K_PLUGIN_CLASS_WITH_JSON(TelepathyModule, "ktp_integration_module.json")
 
 TelepathyModule::TelepathyModule(QObject *parent, const QList<QVariant> &args)
     : KDEDModule(parent),
