@@ -54,7 +54,7 @@ set (kded_ktp_integration_module_SRCS
 )
 
 add_library (kded_ktp_integration_module MODULE ${kded_ktp_integration_module_SRCS})
-set_target_properties (kded_ktp_integration_module PROPERTIES OUTPUT_NAME ktp_integration)
+set_target_properties (kded_ktp_integration_module PROPERTIES OUTPUT_NAME ktp_integration_module)
 kcoreaddons_desktop_to_json(kded_ktp_integration_module ktp_integration_module.desktop)
 
 target_link_libraries (kded_ktp_integration_module
