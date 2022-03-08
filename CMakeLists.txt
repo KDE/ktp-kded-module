@@ -1,6 +1,4 @@
-project(ktp-kded-integration-module)
-
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16)
 
 # KDE Application Version, managed by release script
 set(RELEASE_SERVICE_VERSION_MAJOR "22")
@@ -8,7 +6,7 @@ set(RELEASE_SERVICE_VERSION_MINOR "03")
 set(RELEASE_SERVICE_VERSION_MICRO "70")
 set(KTP_KDED_MODULE_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_VERSION_MINOR}.${RELEASE_SERVICE_VERSION_MICRO}")
 
-cmake_policy(SET CMP0002 OLD)
+project(ktp-kded-integration-module VERSION ${KTP_KDED_MODULE_VERSION})
 
 set(IS_KTP_INTERNAL_MODULE TRUE)
 
