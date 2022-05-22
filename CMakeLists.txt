@@ -86,3 +86,5 @@ add_subdirectory(config)
 if(ENABLE_TESTS)
     add_subdirectory(tests)
 endif()
+
+ki18n_install(po)
