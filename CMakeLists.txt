@@ -8,7 +8,7 @@ set(KTP_KDED_MODULE_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_
 
 project(ktp-kded-integration-module VERSION ${KTP_KDED_MODULE_VERSION})
 
-find_package(ECM 1.3.0 REQUIRED NO_MODULE)
+find_package(ECM 1.6.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
 
 include(KDEInstallDirs)
@@ -72,14 +72,14 @@ target_link_libraries (kded_ktp_integration_module
 )
 
 install (TARGETS kded_ktp_integration_module
-         DESTINATION ${PLUGIN_INSTALL_DIR}/kf5/kded
+         DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded
 )
 
 find_file(DBUS_SEND_PATH dbus-send HINTS /usr/bin)
 configure_file(org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule.service.in
                ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule.service)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule.service
-        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
+        DESTINATION ${KDE_INSTALL_DBUSSERVICEDIR})
 
 add_subdirectory(config)
 

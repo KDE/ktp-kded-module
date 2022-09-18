@@ -23,8 +23,8 @@ target_link_libraries(kcm_ktp_integration_module Qt5::Widgets
 
 
 install(TARGETS kcm_ktp_integration_module
-        DESTINATION ${PLUGIN_INSTALL_DIR})
+        DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 install (FILES kcm_ktp_integration_module.desktop
-         DESTINATION ${SERVICES_INSTALL_DIR}
+         DESTINATION ${KDE_INSTALL_KSERVICES5DIR}
 )
