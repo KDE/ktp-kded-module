@@ -1,0 +1,438 @@
+# Translation of kded_ktp_integration_module.po to Catalan (Valencian)
+# Copyright (C) 2012-2022 This_file_is_part_of_KDE
+# This file is distributed under the license LGPL version 2.1 or
+# version 3 or later versions approved by the membership of KDE e.V.
+#
+# Josep M. Ferrer <txemaq@gmail.com>, 2012, 2013, 2014, 2015, 2017, 2018, 2022.
+# Antoni Bella Pérez <antonibella5@yahoo.com>, 2014, 2016, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-kded-module\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2022-07-08 14:59+0200\n"
+"Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
+"Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
+"Language: ca@valencia\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Accelerator-Marker: &\n"
+"X-Generator: Lokalize 20.12.0\n"
+
+#: config/telepathy-kded-config.cpp:39
+#, kde-format
+msgid ""
+"<p>Tokens can be used wherever a status message can be set to create a "
+"dynamic status message.</p>"
+msgstr ""
+"<p>Els símbols es poden utilitzar a on es puga establir un missatge d'estat "
+"per a crear un missatge d'estat dinàmic.</p>"
+
+#: config/telepathy-kded-config.cpp:40
+#, kde-format
+msgid ""
+"<p><strong>%tr+&lt;val&gt;</strong>: Countdown to 0 from <strong>&lt;val&gt;"
+"</strong> minutes. e.g. %tr+30</p>"
+msgstr ""
+"<p><strong>%tr+&lt;val&gt;</strong>: Compte arrere fins a 0 des de "
+"<strong>&lt;val&gt;</strong> minuts. P. ex. %tr+30</p>"
+
+#: config/telepathy-kded-config.cpp:41
+#, kde-format
+msgid ""
+"<p><strong>%time+[&lt;val&gt;]</strong>: The current local time, or if a "
+"value is specified, the local time <strong>&lt;val&gt;</strong> minutes in "
+"the future. e.g. %time+10</p>"
+msgstr ""
+"<p><strong>%time+[&lt;val&gt;]</strong>: L'hora local actual, o si "
+"s'especifica un valor, l'hora local més <strong>&lt;val&gt;</strong> minuts "
+"en el futur. P. ex. %time+10</p>"
+
+#: config/telepathy-kded-config.cpp:42
+#, kde-format
+msgid ""
+"<p><strong>%utc+[&lt;val&gt;]</strong>: The current UTC time, or if a value "
+"is specified, the UTC time <strong>&lt;val&gt;</strong> minutes into the "
+"future. e.g. %utc</p>"
+msgstr ""
+"<p><strong>%utc+[&lt;val&gt;]</strong>: L'hora UTC actual, o si s'especifica "
+"un valor, l'hora UTC més <strong>&lt;val&gt;</strong> minuts en el futur. P. "
+"ex. %utc</p>"
+
+# skip-rule: da-te
+#: config/telepathy-kded-config.cpp:43
+#, kde-format
+msgid ""
+"<p><strong>%te+[&lt;val&gt;]</strong>: Time elapsed from message activation. "
+"Append an initial elapsed time &quot;&lt;val&gt;&quot; in minutes. e.g. %te"
+"+5</p>"
+msgstr ""
+"<p><strong>%te+[&lt;val&gt;]</strong>: Temps transcorregut des de "
+"l'activació del missatge. Afig un temps transcorregut inicial &quot;&lt;"
+"val&gt;&quot; en minuts. P. ex. %te+5</p>"
+
+#: config/telepathy-kded-config.cpp:44
+#, kde-format
+msgid "<p><strong>%title</strong>: Now Playing track title.</p>"
+msgstr "<p><strong>%title</strong>: Títol de la peça en reproducció.</p>"
+
+#: config/telepathy-kded-config.cpp:45
+#, kde-format
+msgid "<p><strong>%artist</strong>: Now Playing track or album artist.</p>"
+msgstr ""
+"<p><strong>%artist</strong>: Artista de la peça o de l'àlbum en reproducció."
+"</p>"
+
+#: config/telepathy-kded-config.cpp:46
+#, kde-format
+msgid "<p><strong>%album</strong>: Now Playing album.</p>"
+msgstr "<p><strong>%album</strong>: Àlbum en reproducció.</p>"
+
+#: config/telepathy-kded-config.cpp:47
+#, kde-format
+msgid "<p><strong>%track</strong>: Now Playing track number.</p>"
+msgstr "<p><strong>%track</strong>: Número de la peça en reproducció.</p>"
+
+#: config/telepathy-kded-config.cpp:48
+#, kde-format
+msgid ""
+"<p><strong>%um+[&lt;val&gt;]</strong>: When specified globally or in an "
+"account presence status message, overrides all automatic presence messages. "
+"When specified in an automatic presence status message, is substituted for "
+"the global or account presence status message (if specified). When "
+"<strong>val = g</strong> in an account presence status message or an "
+"automatic presence status message, overrides the account presence status "
+"message or automatic presence status message with the global presence status "
+"message. e.g. %um, %um+g</p>"
+msgstr ""
+"<p><strong>%um+[&lt;val&gt;]</strong>: Quan s'especifica un missatge d'estat "
+"de presència globalment o en un compte, sobreescriu tots els missatges "
+"automàtics de presència. Quan s'especifica en un missatge automàtic d'estat "
+"de presència, se substituïx pel missatge d'estat de presència global o per "
+"compte (si s'ha especificat). Quan <strong>val = g</strong> en un missatge "
+"d'estat de presència de compte o un missatge automàtic d'estat de presència, "
+"substituïx el missatge d'estat de presència de compte o el missatge "
+"automàtic d'estat de presència per al missatge d'estat de presència global. "
+"P. ex. %um, %um+g</p>"
+
+#: config/telepathy-kded-config.cpp:49
+#, kde-format
+msgid ""
+"<p><strong>%tu+&lt;val&gt;</strong>: Refresh the status message every "
+"<strong>&lt;val&gt;</strong> minutes. e.g. %tu+2</p>"
+msgstr ""
+"<p><strong>%tu+&lt;val&gt;</strong>: Actualitza el missatge d'estat cada "
+"<strong>&lt;val&gt;</strong> minuts. p. ex. %tu+2</p>"
+
+#: config/telepathy-kded-config.cpp:50
+#, kde-format
+msgid ""
+"<p><strong>%tx+&lt;val&gt;</strong>: Expire the status message after "
+"<strong>&lt;val&gt;</strong> minutes, or when the Now Playing active player "
+"stops (<strong>val = np</strong>). e.g. %tx+20, %tx+np</p>"
+msgstr ""
+"<p><strong>%tx+&lt;val&gt;</strong>: Venç el missatge d'estat després de "
+"<strong>&lt;val&gt;</strong> minuts, o quan el reproductor actiu de peça en "
+"reproducció s'para (<strong>val = np</strong>). p. ex. %tx+20, %tx+np</p>"
+
+#: config/telepathy-kded-config.cpp:51
+#, kde-format
+msgid ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: Specify a message to follow "
+"%tr, %time, %utc, and %tx token expiry. e.g. %xm+&quot;Back %time. %tx+3 %xm"
+"+&quot;Running late&quot;&quot;</p>"
+msgstr ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: Especifica un missatge que "
+"seguisca el venciment dels símbols %tr, %time, %utc, i %tx. p. ex. %xm+&quot;"
+"Tornaré %time. %tx+3 %xm+&quot;Faç tard&quot;&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:52
+#, kde-format
+msgid ""
+"<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for "
+"local time using QDateTime::toString() expressions. e.g. %tf+&quot;h:mm AP "
+"t&quot;</p>"
+msgstr ""
+"<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: Especifica el format per a "
+"l'hora local utilitzant les expressions de QDateTime::toString(). P. ex. %tf"
+"+&quot;h:mm AP t&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:53
+#, kde-format
+msgid ""
+"<p><strong>%uf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for UTC "
+"time using QDateTime::toString() expressions. e.g. %uf+&quot;hh:mm t&quot;</"
+"p>"
+msgstr ""
+"<p><strong>%uf+&lt;val&gt;</strong>: Especifica el format per a l'hora UTC "
+"utilitzant les expressions de QDateTime::toString(). P. ex. %uf+&quot;h:mm "
+"AP t&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:54
+#, kde-format
+msgid ""
+"<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Change the separator for "
+"empty fields. e.g. %sp+&quot;-&quot;</p>"
+msgstr ""
+"<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Canvia el separador dels "
+"camps buits. P. ex. %sp+&quot;-&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:55
+#, kde-format
+msgid ""
+"<p>Using tokens requires the Telepathy KDED module to be loaded. Tokens can "
+"be escaped by prepending a backslash character, e.g. &#92;%sp</p>"
+msgstr ""
+"<p>L'ús de símbols requerix carregar el mòdul KDED de Telepathy. Els símbols "
+"es poden escapar precedint-los per un caràcter de barra inversa. P. ex. &#92;"
+"%sp</p>"
+
+#: config/telepathy-kded-config.cpp:74 config/telepathy-kded-config.cpp:77
+#, kde-format
+msgctxt ""
+"Unit after number in spinbox, denotes time unit 'minutes', keep the leading "
+"whitespace!"
+msgid " minutes"
+msgstr " minuts"
+
+#: config/telepathy-kded-config.cpp:79 config/telepathy-kded-config.cpp:80
+#: config/telepathy-kded-config.cpp:82
+#, kde-format
+msgid "Leave empty for no message"
+msgstr "Deixeu-ho buit per a sense missatge"
+
+#: config/telepathy-kded-config.cpp:135
+#, kde-format
+msgctxt "This is the download directory in user's home"
+msgid "Downloads"
+msgstr "Baixades"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoConnectCheckBox)
+#: config/telepathy-kded-config.ui:44
+#, kde-format
+msgid "Restore last presence on login"
+msgstr "Restaura l'última presència en connectar"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoOfflineCheckBox)
+#: config/telepathy-kded-config.ui:51
+#, kde-format
+msgid "Go offline when closing the contact list"
+msgstr "Es desconnecta en tancar la llista de contactes"
+
+#. i18n: ectx: property (title), widget (QGroupBox, autoAwayGroupBox)
+#: config/telepathy-kded-config.ui:61
+#, kde-format
+msgid "Auto away"
+msgstr "Absència automàtica"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: config/telepathy-kded-config.ui:70
+#, kde-format
+msgid "Set my status to:"
+msgstr "Establix el meu estat a:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_awayCheckBox)
+#: config/telepathy-kded-config.ui:81
+#, kde-format
+msgid "Away"
+msgstr "Absent"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayMinsLabel)
+#: config/telepathy-kded-config.ui:110
+#, kde-format
+msgid "After:"
+msgstr "Després:"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayInactivityLabel)
+#. i18n: ectx: property (text), widget (QLabel, m_xaInactivityLabel)
+#: config/telepathy-kded-config.ui:142 config/telepathy-kded-config.ui:244
+#, kde-format
+msgid "of inactivity"
+msgstr "d'inactivitat"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayMessageLabel)
+#. i18n: ectx: property (text), widget (QLabel, m_screenSaverAwayLabel)
+#: config/telepathy-kded-config.ui:153 config/telepathy-kded-config.ui:313
+#, kde-format
+msgid "With &message:"
+msgstr "Amb el &missatge:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_xaCheckBox)
+#: config/telepathy-kded-config.ui:180
+#, kde-format
+msgid "Not available"
+msgstr "No disponible"
+
+#. i18n: ectx: property (text), widget (QLabel, m_xaMinsLabel)
+#: config/telepathy-kded-config.ui:212
+#, kde-format
+msgid "Aft&er:"
+msgstr "D&esprés de:"
+
+#. i18n: ectx: property (text), widget (QLabel, m_xaMessageLabel)
+#: config/telepathy-kded-config.ui:255
+#, kde-format
+msgid "With messa&ge:"
+msgstr "Amb el missat&ge:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_screenSaverAwayCheckBox)
+#: config/telepathy-kded-config.ui:286
+#, kde-format
+msgid "Set my status to Away when the screen saver is activated"
+msgstr "Establix l'estat com absent quan el salvapantalla estiga activat"
+
+#. i18n: ectx: property (title), widget (QGroupBox, incomingFilesGroupBox)
+#: config/telepathy-kded-config.ui:336
+#, kde-format
+msgid "Incoming files"
+msgstr "Fitxers entrants"
+
+#. i18n: ectx: property (text), widget (QLabel, m_downloadUrlLabel)
+#: config/telepathy-kded-config.ui:347
+#, kde-format
+msgid "Download folder:"
+msgstr "Carpeta de baixades:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_downloadUrlCheckBox)
+#: config/telepathy-kded-config.ui:360
+#, kde-format
+msgid "Always Ask"
+msgstr "Pregunta sempre"
+
+#. i18n: ectx: property (toolTip), widget (KUrlRequester, m_downloadUrlRequester)
+#. i18n: ectx: property (whatsThis), widget (KUrlRequester, m_downloadUrlRequester)
+#: config/telepathy-kded-config.ui:367 config/telepathy-kded-config.ui:370
+#, kde-format
+msgid "This is the folder where received files will be saved."
+msgstr "Esta és la carpeta a on es guardaran els fitxers rebuts."
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoAcceptCheckBox)
+#: config/telepathy-kded-config.ui:379
+#, kde-format
+msgid "Automatically accept file transfers"
+msgstr "Accepta automàticament les transferències de fitxers"
+
+#: contact-request-handler.cpp:180
+#, kde-format
+msgid "New contact request"
+msgstr "Sol·licitud nova de contacte"
+
+#: contact-request-handler.cpp:181
+#, kde-format
+msgid "The contact %1 wants to be able to chat with you."
+msgstr "El contacte %1 desitja poder fer un xat amb vós."
+
+#: contact-request-handler.cpp:198
+#, kde-format
+msgid "Error adding contact"
+msgstr "S'ha produït un error en afegir el contacte"
+
+#: contact-request-handler.cpp:199
+#, kde-format
+msgid ""
+"%1 has been added successfully to your contact list, but might be unable to "
+"see when you are online. Error details: %2"
+msgstr ""
+"S'ha afegit %1 correctament a la llista de contactes, però potser no pot "
+"veure si esteu en línia. Detalls de l'error: %2"
+
+#: contact-request-handler.cpp:285
+#, kde-format
+msgid "Error granting contact authorization"
+msgstr "S'ha produït un error en atorgar l'autorització al contacte"
+
+#: contact-request-handler.cpp:286
+#, kde-format
+msgid "There was an error while accepting the request: %1"
+msgstr "S'ha produït un error en acceptar la sol·licitud: %1"
+
+#: contact-request-handler.cpp:296
+#, kde-format
+msgid "Contact request accepted"
+msgstr "Sol·licitud de contacte acceptada"
+
+#: contact-request-handler.cpp:297
+#, kde-format
+msgid "%1 will now be able to see when you are online"
+msgstr "%1 ara podrà veure quan esteu connectat"
+
+#: contact-request-handler.cpp:364
+#, kde-format
+msgid "Error denying contact request"
+msgstr "S'ha produït un error en denegar la sol·licitud de contacte"
+
+#: contact-request-handler.cpp:365
+#, kde-format
+msgid "There was an error while denying the request: %1"
+msgstr "S'ha produït un error en denegar la sol·licitud: %1"
+
+#: contact-request-handler.cpp:374
+#, kde-format
+msgid "Contact request denied"
+msgstr "Sol·licitud de contacte denegada"
+
+#: contact-request-handler.cpp:375
+#, kde-format
+msgid "%1 will not be able to see when you are online"
+msgstr "%1 no podrà veure quan esteu connectat"
+
+#: contact-request-handler.cpp:392
+#, kde-format
+msgctxt "Menu title"
+msgid "Pending contact requests"
+msgstr "Sol·licituds de contacte pendents"
+
+#: contact-request-handler.cpp:396
+#, kde-format
+msgctxt "Context menu title"
+msgid "Received contact requests"
+msgstr "Sol·licituds de contacte rebudes"
+
+#: contact-request-handler.cpp:417
+#, kde-format
+msgid "Request from %1"
+msgstr "Sol·licitud d'en %1"
+
+#: contact-request-handler.cpp:422
+#, kde-format
+msgid "Contact Details"
+msgstr "Detalls del contacte"
+
+#: contact-request-handler.cpp:436
+#, kde-format
+msgid "Approve"
+msgstr "Aprova"
+
+#: contact-request-handler.cpp:442
+#, kde-format
+msgid "Deny"
+msgstr "Denega"
+
+#: contact-request-handler.cpp:469
+#, kde-format
+msgid "You have 1 contact wanting to chat with you"
+msgid_plural "You have %1 contacts wanting to chat with you"
+msgstr[0] "Teniu 1 contacte que desitja fer un xat amb vós"
+msgstr[1] "Teniu %1 contactes que desitgen fer un xat amb vós"
+
+#: contactnotify.cpp:65
+#, kde-format
+msgctxt "%1 is the contact name, %2 is the presence name"
+msgid "%1 is now %2"
+msgstr "%1 ara és %2"
+
+#: error-handler.cpp:141
+#, kde-format
+msgctxt "%1 is the account name"
+msgid "Could not connect %1. There was a network error, check your connection"
+msgstr ""
+"No s'ha pogut connectar amb %1. Hi ha un error de la xarxa, comproveu la "
+"connexió"
+
+#: error-handler.cpp:148 error-handler.cpp:150
+#, kde-format
+msgctxt "%1 is the account name, %2 the error message"
+msgid "There was a problem while trying to connect %1 - %2"
+msgstr "S'ha produït un problema en intentar connectar amb %1 - %2"

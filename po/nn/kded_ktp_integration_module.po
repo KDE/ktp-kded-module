@@ -1,0 +1,433 @@
+# Translation of kded_ktp_integration_module to Norwegian Nynorsk
+#
+# Karl Ove Hufthammer <karl@huftis.org>, 2016, 2018.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2018-07-03 09:54+0100\n"
+"Last-Translator: Karl Ove Hufthammer <karl@huftis.org>\n"
+"Language-Team: Norwegian Nynorsk <l10n-no@lister.huftis.org>\n"
+"Language: nn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 2.0\n"
+"X-Environment: kde\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+
+#: config/telepathy-kded-config.cpp:39
+#, kde-format
+msgid ""
+"<p>Tokens can be used wherever a status message can be set to create a "
+"dynamic status message.</p>"
+msgstr ""
+"<p>Plasshaldarar kan brukast til å laga dynamiske statusmeldingar, og kan "
+"brukast alle stadar der du kan velja statusmelding.</p>"
+
+#: config/telepathy-kded-config.cpp:40
+#, kde-format
+msgid ""
+"<p><strong>%tr+&lt;val&gt;</strong>: Countdown to 0 from <strong>&lt;val&gt;"
+"</strong> minutes. e.g. %tr+30</p>"
+msgstr ""
+"<p><strong>%tr+&lt;verdi&gt;</strong>: Tel ned frå <strong>&lt;verdi&gt;</"
+"strong> til 0 minutt. Eksempel: %tr+30</p>"
+
+#: config/telepathy-kded-config.cpp:41
+#, kde-format
+msgid ""
+"<p><strong>%time+[&lt;val&gt;]</strong>: The current local time, or if a "
+"value is specified, the local time <strong>&lt;val&gt;</strong> minutes in "
+"the future. e.g. %time+10</p>"
+msgstr ""
+"<p><strong>%time+[&lt;verdi&gt;]</strong>: Gjeldande lokaltid eller, viss du "
+"oppgjev ein verdi, lokaltida <strong>&lt;verdi&gt;</strong> minutt inn i "
+"framtida. Eksempel: %time+10</p>"
+
+#: config/telepathy-kded-config.cpp:42
+#, kde-format
+msgid ""
+"<p><strong>%utc+[&lt;val&gt;]</strong>: The current UTC time, or if a value "
+"is specified, the UTC time <strong>&lt;val&gt;</strong> minutes into the "
+"future. e.g. %utc</p>"
+msgstr ""
+"<p><strong>%utc+[&lt;verdi&gt;]</strong>: Gjeldande UTC-tid eller, viss du "
+"oppgjev ein verdi, UTC-tida <strong>&lt;verdi&gt;</strong> minutt inni "
+"framtida. Eksempel: %utc</p>"
+
+#: config/telepathy-kded-config.cpp:43
+#, kde-format
+msgid ""
+"<p><strong>%te+[&lt;val&gt;]</strong>: Time elapsed from message activation. "
+"Append an initial elapsed time &quot;&lt;val&gt;&quot; in minutes. e.g. %te"
+"+5</p>"
+msgstr ""
+"<p><strong>%te+[&lt;verdi&gt;]</strong>: Tid gått sidan meldingsaktiveringa. "
+"Du kan òg leggja til eit tidstillegg på <strong>&lt;verdi&gt;</strong> "
+"minutt. Eksempel: %te+5</p>"
+
+#: config/telepathy-kded-config.cpp:44
+#, kde-format
+msgid "<p><strong>%title</strong>: Now Playing track title.</p>"
+msgstr "<p><strong>%title</strong>: Tittelen på songen som spelar.</p>"
+
+#: config/telepathy-kded-config.cpp:45
+#, kde-format
+msgid "<p><strong>%artist</strong>: Now Playing track or album artist.</p>"
+msgstr ""
+"<p><strong>%artist</strong>: Artisten/albumartisten til songen som spelar.</"
+"p>"
+
+#: config/telepathy-kded-config.cpp:46
+#, kde-format
+msgid "<p><strong>%album</strong>: Now Playing album.</p>"
+msgstr "<p><strong>%album</strong>: Albumtittelen til songen som spelar.</p>"
+
+#: config/telepathy-kded-config.cpp:47
+#, kde-format
+msgid "<p><strong>%track</strong>: Now Playing track number.</p>"
+msgstr "<p><strong>%track</strong>: Spornummeret til songen som spelar.</p>"
+
+#: config/telepathy-kded-config.cpp:48
+#, kde-format
+msgid ""
+"<p><strong>%um+[&lt;val&gt;]</strong>: When specified globally or in an "
+"account presence status message, overrides all automatic presence messages. "
+"When specified in an automatic presence status message, is substituted for "
+"the global or account presence status message (if specified). When "
+"<strong>val = g</strong> in an account presence status message or an "
+"automatic presence status message, overrides the account presence status "
+"message or automatic presence status message with the global presence status "
+"message. e.g. %um, %um+g</p>"
+msgstr ""
+"<p><strong>%um+[&lt;verdi&gt;]</strong>: Viss definert globalt eller i ei "
+"statusmelding for ein konto, vil meldinga overstyra alle automatiske "
+"statusmeldingar. Viss definert i ei automatisk statusmelding, vert ho brukt "
+"i staden for den globale eller kontospesifikke statusmeldinga (viss "
+"definert). Når <strong>verdi = g</strong> i ei kontospesifikk statusmelding "
+"eller ei automatisk statusmelding, overstyrer meldinga den kontospesifikke "
+"meldinga med den globale statusmeldinga. Eksempel: %um, %um+g</p>"
+
+#: config/telepathy-kded-config.cpp:49
+#, kde-format
+msgid ""
+"<p><strong>%tu+&lt;val&gt;</strong>: Refresh the status message every "
+"<strong>&lt;val&gt;</strong> minutes. e.g. %tu+2</p>"
+msgstr ""
+"<p><strong>%tu+&lt;verdi&gt;</strong>: Oppdater statusmeldinga kvart "
+"<strong>&lt;verdi&gt;</strong> minutt. Eksempel: %tu+2</p>"
+
+#: config/telepathy-kded-config.cpp:50
+#, kde-format
+msgid ""
+"<p><strong>%tx+&lt;val&gt;</strong>: Expire the status message after "
+"<strong>&lt;val&gt;</strong> minutes, or when the Now Playing active player "
+"stops (<strong>val = np</strong>). e.g. %tx+20, %tx+np</p>"
+msgstr ""
+"<p><strong>%tx+&lt;verdi&gt;</strong>: Tømmer statusmeldinga etter "
+"<strong>&lt;verdi&gt;</strong> minutt eller når «Spelar no»-spelaren stoppar "
+"(for <strong>val = np</strong>). Eksempel: %tx+20, %tx+np</p>"
+
+#: config/telepathy-kded-config.cpp:51
+#, kde-format
+msgid ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: Specify a message to follow "
+"%tr, %time, %utc, and %tx token expiry. e.g. %xm+&quot;Back %time. %tx+3 %xm"
+"+&quot;Running late&quot;&quot;</p>"
+msgstr ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: Definer ei melding som skal "
+"visast når plasshaldarane %tr, %time, %utc og %tx utgår på tid. Eksempel:%xm"
+"+&quot;Tilbake %time. %tx+3 %xm+&quot;Er forseinka&quot;&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:52
+#, kde-format
+msgid ""
+"<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for "
+"local time using QDateTime::toString() expressions. e.g. %tf+&quot;h:mm AP "
+"t&quot;</p>"
+msgstr ""
+"<p><strong>%tf+&quot;&lt;verdi&gt;&quot;</strong>: Definer formateringa for "
+"lokaltid, i QDateTime::toString()-syntaks. Eksempel: %tf+&quot;h:mm AP "
+"t&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:53
+#, kde-format
+msgid ""
+"<p><strong>%uf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for UTC "
+"time using QDateTime::toString() expressions. e.g. %uf+&quot;hh:mm t&quot;</"
+"p>"
+msgstr ""
+"<p><strong>%uf+&quot;&lt;verdi&gt;&quot;</strong>: Definer formateringa for "
+"UTC-tid, i QDateTime::toString()-syntaks. Eksempel: %uf+&quot;hh:mm t&quot;</"
+"p>"
+
+#: config/telepathy-kded-config.cpp:54
+#, kde-format
+msgid ""
+"<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Change the separator for "
+"empty fields. e.g. %sp+&quot;-&quot;</p>"
+msgstr ""
+"<p><strong>%sp+&quot;&lt;verdi&gt;&quot;</strong>: Byt skiljeteikn for tomme "
+"felt. Eksempel: %sp+&quot;-&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:55
+#, kde-format
+msgid ""
+"<p>Using tokens requires the Telepathy KDED module to be loaded. Tokens can "
+"be escaped by prepending a backslash character, e.g. &#92;%sp</p>"
+msgstr ""
+"<p>Telepathy KDED-modulen må vera lasta dersom du vil bruka plasshaldarar. "
+"Du kan bruka plasshaldarteikna bokstavleg ved å skriva ein omvend skråstrek "
+"framfor dei. Eksempel: &#92;%sp</p>"
+
+#: config/telepathy-kded-config.cpp:74 config/telepathy-kded-config.cpp:77
+#, kde-format
+msgctxt ""
+"Unit after number in spinbox, denotes time unit 'minutes', keep the leading "
+"whitespace!"
+msgid " minutes"
+msgstr " minutt"
+
+#: config/telepathy-kded-config.cpp:79 config/telepathy-kded-config.cpp:80
+#: config/telepathy-kded-config.cpp:82
+#, kde-format
+msgid "Leave empty for no message"
+msgstr "La stå tom for inga melding"
+
+#: config/telepathy-kded-config.cpp:135
+#, kde-format
+msgctxt "This is the download directory in user's home"
+msgid "Downloads"
+msgstr "Nedlastingar"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoConnectCheckBox)
+#: config/telepathy-kded-config.ui:44
+#, kde-format
+msgid "Restore last presence on login"
+msgstr "Bruk siste statusmelding ved innlogging"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoOfflineCheckBox)
+#: config/telepathy-kded-config.ui:51
+#, kde-format
+msgid "Go offline when closing the contact list"
+msgstr "Kopla frå ved lukking av kontaktlista"
+
+#. i18n: ectx: property (title), widget (QGroupBox, autoAwayGroupBox)
+#: config/telepathy-kded-config.ui:61
+#, kde-format
+msgid "Auto away"
+msgstr "Auto-vekke"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: config/telepathy-kded-config.ui:70
+#, kde-format
+msgid "Set my status to:"
+msgstr "Set statusen min til:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_awayCheckBox)
+#: config/telepathy-kded-config.ui:81
+#, kde-format
+msgid "Away"
+msgstr "Vekke"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayMinsLabel)
+#: config/telepathy-kded-config.ui:110
+#, kde-format
+msgid "After:"
+msgstr "Etter:"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayInactivityLabel)
+#. i18n: ectx: property (text), widget (QLabel, m_xaInactivityLabel)
+#: config/telepathy-kded-config.ui:142 config/telepathy-kded-config.ui:244
+#, kde-format
+msgid "of inactivity"
+msgstr "utan aktivitet"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayMessageLabel)
+#. i18n: ectx: property (text), widget (QLabel, m_screenSaverAwayLabel)
+#: config/telepathy-kded-config.ui:153 config/telepathy-kded-config.ui:313
+#, kde-format
+msgid "With &message:"
+msgstr "Med &meldinga:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_xaCheckBox)
+#: config/telepathy-kded-config.ui:180
+#, kde-format
+msgid "Not available"
+msgstr "Ikkje tilgjengeleg"
+
+#. i18n: ectx: property (text), widget (QLabel, m_xaMinsLabel)
+#: config/telepathy-kded-config.ui:212
+#, kde-format
+msgid "Aft&er:"
+msgstr "&Etter:"
+
+#. i18n: ectx: property (text), widget (QLabel, m_xaMessageLabel)
+#: config/telepathy-kded-config.ui:255
+#, kde-format
+msgid "With messa&ge:"
+msgstr "Med &meldinga:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_screenSaverAwayCheckBox)
+#: config/telepathy-kded-config.ui:286
+#, kde-format
+msgid "Set my status to Away when the screen saver is activated"
+msgstr "Bruk vekke-status når pauseskjermen vert starta"
+
+#. i18n: ectx: property (title), widget (QGroupBox, incomingFilesGroupBox)
+#: config/telepathy-kded-config.ui:336
+#, kde-format
+msgid "Incoming files"
+msgstr "Innkommande filer"
+
+#. i18n: ectx: property (text), widget (QLabel, m_downloadUrlLabel)
+#: config/telepathy-kded-config.ui:347
+#, kde-format
+msgid "Download folder:"
+msgstr "Nedlastingsmappe:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_downloadUrlCheckBox)
+#: config/telepathy-kded-config.ui:360
+#, kde-format
+msgid "Always Ask"
+msgstr "Spør alltid"
+
+#. i18n: ectx: property (toolTip), widget (KUrlRequester, m_downloadUrlRequester)
+#. i18n: ectx: property (whatsThis), widget (KUrlRequester, m_downloadUrlRequester)
+#: config/telepathy-kded-config.ui:367 config/telepathy-kded-config.ui:370
+#, kde-format
+msgid "This is the folder where received files will be saved."
+msgstr "Mottekne filer vert lagra i denne mappa."
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoAcceptCheckBox)
+#: config/telepathy-kded-config.ui:379
+#, kde-format
+msgid "Automatically accept file transfers"
+msgstr "Godta automatisk filoverføring"
+
+#: contact-request-handler.cpp:180
+#, kde-format
+msgid "New contact request"
+msgstr "Førespurnad om ny kontakt"
+
+#: contact-request-handler.cpp:181
+#, kde-format
+msgid "The contact %1 wants to be able to chat with you."
+msgstr "Kontakten %1 ønskjer å kunna prata med deg."
+
+#: contact-request-handler.cpp:198
+#, kde-format
+msgid "Error adding contact"
+msgstr "Feil ved tillegging av kontakt"
+
+#: contact-request-handler.cpp:199
+#, kde-format
+msgid ""
+"%1 has been added successfully to your contact list, but might be unable to "
+"see when you are online. Error details: %2"
+msgstr ""
+"%1 er no lagd til i kontaktlista di, men vil kanskje ikkje kunna sjå når du "
+"er tilkopla. Informasjon om feilen: %2"
+
+#: contact-request-handler.cpp:285
+#, kde-format
+msgid "Error granting contact authorization"
+msgstr "Klarte ikkje gje løyve"
+
+#: contact-request-handler.cpp:286
+#, kde-format
+msgid "There was an error while accepting the request: %1"
+msgstr "Det oppstod ein feil ved godtaking av førespurnaden: %1"
+
+#: contact-request-handler.cpp:296
+#, kde-format
+msgid "Contact request accepted"
+msgstr "Kontaktførespurnad godteken"
+
+#: contact-request-handler.cpp:297
+#, kde-format
+msgid "%1 will now be able to see when you are online"
+msgstr "%1 vil no kunna sjå når du er tilkopla"
+
+#: contact-request-handler.cpp:364
+#, kde-format
+msgid "Error denying contact request"
+msgstr "Feil ved avvising av kontaktførespurnad"
+
+#: contact-request-handler.cpp:365
+#, kde-format
+msgid "There was an error while denying the request: %1"
+msgstr "Det oppstod ein feil ved avvising av førespurnaden: %1"
+
+#: contact-request-handler.cpp:374
+#, kde-format
+msgid "Contact request denied"
+msgstr "Kontaktførespurnad avvist"
+
+#: contact-request-handler.cpp:375
+#, kde-format
+msgid "%1 will not be able to see when you are online"
+msgstr "%1 vil ikkje kunna sjå når du er tilkopla"
+
+#: contact-request-handler.cpp:392
+#, kde-format
+msgctxt "Menu title"
+msgid "Pending contact requests"
+msgstr "Tidlegare kontaktførespurnadar"
+
+#: contact-request-handler.cpp:396
+#, kde-format
+msgctxt "Context menu title"
+msgid "Received contact requests"
+msgstr "Mottekne kontaktførespurnadar"
+
+#: contact-request-handler.cpp:417
+#, kde-format
+msgid "Request from %1"
+msgstr "Førespurnad frå %1"
+
+#: contact-request-handler.cpp:422
+#, kde-format
+msgid "Contact Details"
+msgstr "Kontaktinformasjon"
+
+#: contact-request-handler.cpp:436
+#, kde-format
+msgid "Approve"
+msgstr "Godkjenn"
+
+#: contact-request-handler.cpp:442
+#, kde-format
+msgid "Deny"
+msgstr "Avvis"
+
+#: contact-request-handler.cpp:469
+#, kde-format
+msgid "You have 1 contact wanting to chat with you"
+msgid_plural "You have %1 contacts wanting to chat with you"
+msgstr[0] "Du har 1 kontakt som vil prata med deg"
+msgstr[1] "Du har %1 kontaktar som vil prata med deg"
+
+#: contactnotify.cpp:65
+#, kde-format
+msgctxt "%1 is the contact name, %2 is the presence name"
+msgid "%1 is now %2"
+msgstr "%1 er no %2"
+
+#: error-handler.cpp:141
+#, kde-format
+msgctxt "%1 is the account name"
+msgid "Could not connect %1. There was a network error, check your connection"
+msgstr ""
+"Klarte ikkje kopla til %1. Det oppstod ein nettverksfeil. Kontroller "
+"tilkoplinga."
+
+#: error-handler.cpp:148 error-handler.cpp:150
+#, kde-format
+msgctxt "%1 is the account name, %2 the error message"
+msgid "There was a problem while trying to connect %1 - %2"
+msgstr "Det oppstod ein feil ved forsøk på å kontakta %1 – %2"

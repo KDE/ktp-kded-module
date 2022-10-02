@@ -1,0 +1,489 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+# Volkan Gezer <volkangezer@gmail.com>, 2013.
+# Emir SARI <emir_sari@icloud.com>, 2022.
+msgid ""
+msgstr ""
+"Project-Id-Version: extragear-network-kde4\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2022-06-23 11:45+0300\n"
+"Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
+"Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Lokalize 22.04.2\n"
+
+#: config/telepathy-kded-config.cpp:39
+#, kde-format
+msgid ""
+"<p>Tokens can be used wherever a status message can be set to create a "
+"dynamic status message.</p>"
+msgstr ""
+"<p>Jetonlar, bir devingen durum iletisi oluşturmak için bir durum iletisinin "
+"ayarlanabildiği her yerde kullanılabilirler.</p>"
+
+#: config/telepathy-kded-config.cpp:40
+#, kde-format
+msgid ""
+"<p><strong>%tr+&lt;val&gt;</strong>: Countdown to 0 from <strong>&lt;val&gt;"
+"</strong> minutes. e.g. %tr+30</p>"
+msgstr ""
+"<p><strong>%tr+&lt;val&gt;</strong>: <strong>&lt;val&gt;</strong> dakikadan "
+"0'a geri sayım; örn. %tr+30</p>"
+
+#: config/telepathy-kded-config.cpp:41
+#, kde-format
+msgid ""
+"<p><strong>%time+[&lt;val&gt;]</strong>: The current local time, or if a "
+"value is specified, the local time <strong>&lt;val&gt;</strong> minutes in "
+"the future. e.g. %time+10</p>"
+msgstr ""
+"<p><strong>%time+[&lt;val&gt;]</strong>: Geçerli yerel zaman veya bir değer "
+"belirtilmişse <strong>&lt;val&gt;</strong> dakika gelecekteki yerel zaman; "
+"örn. %time+10</p>"
+
+#: config/telepathy-kded-config.cpp:42
+#, kde-format
+msgid ""
+"<p><strong>%utc+[&lt;val&gt;]</strong>: The current UTC time, or if a value "
+"is specified, the UTC time <strong>&lt;val&gt;</strong> minutes into the "
+"future. e.g. %utc</p>"
+msgstr ""
+"<p><strong>%utc+[&lt;val&gt;]</strong>: Geçerli UTC zamanı veya bir değer "
+"belirtilmişse <strong>&lt;val&gt;</strong> dakika gelecekteki UTC zamanı; "
+"örn. %utc</p>"
+
+#: config/telepathy-kded-config.cpp:43
+#, kde-format
+msgid ""
+"<p><strong>%te+[&lt;val&gt;]</strong>: Time elapsed from message activation. "
+"Append an initial elapsed time &quot;&lt;val&gt;&quot; in minutes. e.g. %te"
+"+5</p>"
+msgstr ""
+"<p><strong>%te+[&lt;val&gt;]</strong>: İleti etkinleşmesinden bu yana geçen "
+"zaman. Bir ilk alınan süreyi &quot;&lt;val&gt;&quot; dakika olarak ekleyin; "
+"örn. %te+5</p>"
+
+#: config/telepathy-kded-config.cpp:44
+#, kde-format
+msgid "<p><strong>%title</strong>: Now Playing track title.</p>"
+msgstr "<p><strong>%title</strong>: Şimdi çalınan parçanın adı.</p>"
+
+#: config/telepathy-kded-config.cpp:45
+#, kde-format
+msgid "<p><strong>%artist</strong>: Now Playing track or album artist.</p>"
+msgstr ""
+"<p><strong>%artist</strong>: Şimri çalınan parça veya albüm sanatçısı.</p>"
+
+#: config/telepathy-kded-config.cpp:46
+#, kde-format
+msgid "<p><strong>%album</strong>: Now Playing album.</p>"
+msgstr "<p><strong>%album</strong>: Şimdi çalınan albüm.</p>"
+
+#: config/telepathy-kded-config.cpp:47
+#, kde-format
+msgid "<p><strong>%track</strong>: Now Playing track number.</p>"
+msgstr "<p><strong>%track</strong>: Şimdi çalınan parçanın numarası.</p>"
+
+#: config/telepathy-kded-config.cpp:48
+#, kde-format
+msgid ""
+"<p><strong>%um+[&lt;val&gt;]</strong>: When specified globally or in an "
+"account presence status message, overrides all automatic presence messages. "
+"When specified in an automatic presence status message, is substituted for "
+"the global or account presence status message (if specified). When "
+"<strong>val = g</strong> in an account presence status message or an "
+"automatic presence status message, overrides the account presence status "
+"message or automatic presence status message with the global presence status "
+"message. e.g. %um, %um+g</p>"
+msgstr ""
+"<p><strong>%um+[&lt;val&gt;]</strong>: Global olarak veya bir hesap varlığı "
+"durum iletisinde belirtildiğinde, tüm otomatik varlık iletilerini geçersiz "
+"kılar. Bir otomatik varlık durum iletisinde belirtildiğinde, global veya "
+"hesap varlığı durum iletisi yerine kullanılır (belirtilmişse). Bir hesap "
+"varlık durum iletisinde veya otomatik varlık durum iletisinde <strong>val = "
+"g</strong> ise hesap varlık veya otomatik varlık durum iletisini global "
+"varlık durum iletisi ile değiştirir; örn. %um, %um+g</p>"
+
+#: config/telepathy-kded-config.cpp:49
+#, kde-format
+msgid ""
+"<p><strong>%tu+&lt;val&gt;</strong>: Refresh the status message every "
+"<strong>&lt;val&gt;</strong> minutes. e.g. %tu+2</p>"
+msgstr ""
+"<p><strong>%tu+&lt;val&gt;</strong>: Durum iletisini her <strong>&lt;val&gt;"
+"</strong> dakikada bir yenile; örn. %tu+2</p>"
+
+#: config/telepathy-kded-config.cpp:50
+#, kde-format
+msgid ""
+"<p><strong>%tx+&lt;val&gt;</strong>: Expire the status message after "
+"<strong>&lt;val&gt;</strong> minutes, or when the Now Playing active player "
+"stops (<strong>val = np</strong>). e.g. %tx+20, %tx+np</p>"
+msgstr ""
+"<p><strong>%tx+&lt;val&gt;</strong>: Durum iletisini <strong>&lt;val&gt;</"
+"strong> dakikadan sonra veya Şimdi Çalınıyor etkin çaları durdurulduğunda "
+"kaldır (<strong>val = np</strong>). örn. %tx+20, %tx+np</p>"
+
+#: config/telepathy-kded-config.cpp:51
+#, kde-format
+msgid ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: Specify a message to follow "
+"%tr, %time, %utc, and %tx token expiry. e.g. %xm+&quot;Back %time. %tx+3 %xm"
+"+&quot;Running late&quot;&quot;</p>"
+msgstr ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: %tr, %time, %utc ve %tx "
+"jeton süre dolumunu takip etmek için bir ileti belirt; örn. %xm+&quot;%time. "
+"%tx+3 %xm+&quot;Geç kalındı&quot;&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:52
+#, kde-format
+msgid ""
+"<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for "
+"local time using QDateTime::toString() expressions. e.g. %tf+&quot;h:mm AP "
+"t&quot;</p>"
+msgstr ""
+"<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: Yerel zaman için biçimi "
+"QDateTime::toString() ifadeleri kullanarak tanımla; örn. %tf+&quot;h:mm AP "
+"t&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:53
+#, kde-format
+msgid ""
+"<p><strong>%uf+&quot;&lt;val&gt;&quot;</strong>: Specify the format for UTC "
+"time using QDateTime::toString() expressions. e.g. %uf+&quot;hh:mm t&quot;</"
+"p>"
+msgstr ""
+"<p><strong>%uf+&quot;&lt;val&gt;&quot;</strong>: UTC zamanı için biçimi "
+"QDateTime::toString() ifadeleri kullanarak tanımla; örn. %uf+&quot;hh:mm "
+"t&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:54
+#, kde-format
+msgid ""
+"<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Change the separator for "
+"empty fields. e.g. %sp+&quot;-&quot;</p>"
+msgstr ""
+"<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Boş alanlar ayırıcısını "
+"değiştir; örn. %sp+&quot;-&quot;</p>"
+
+#: config/telepathy-kded-config.cpp:55
+#, kde-format
+msgid ""
+"<p>Using tokens requires the Telepathy KDED module to be loaded. Tokens can "
+"be escaped by prepending a backslash character, e.g. &#92;%sp</p>"
+msgstr ""
+"<p>Jetonları kullanmak, Telepathy KDED modülünün yüklü olmasını gerektirir. "
+"Jetonlar, önüne bir ters eğik çizgi getirilerek kaçırılabilir; örn. &#92;"
+"%sp</p>"
+
+#: config/telepathy-kded-config.cpp:74 config/telepathy-kded-config.cpp:77
+#, kde-format
+msgctxt ""
+"Unit after number in spinbox, denotes time unit 'minutes', keep the leading "
+"whitespace!"
+msgid " minutes"
+msgstr " dakika"
+
+#: config/telepathy-kded-config.cpp:79 config/telepathy-kded-config.cpp:80
+#: config/telepathy-kded-config.cpp:82
+#, kde-format
+msgid "Leave empty for no message"
+msgstr "İleti kullanmamak için boş bırakın"
+
+#: config/telepathy-kded-config.cpp:135
+#, kde-format
+msgctxt "This is the download directory in user's home"
+msgid "Downloads"
+msgstr "İndirilenler"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoConnectCheckBox)
+#: config/telepathy-kded-config.ui:44
+#, kde-format
+msgid "Restore last presence on login"
+msgstr "Oturumda son iletişim durumunu geri yükle"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoOfflineCheckBox)
+#: config/telepathy-kded-config.ui:51
+#, kde-format
+msgid "Go offline when closing the contact list"
+msgstr "Kişi listesi kapatıldığında otomatik olarak çevrimdışı ol"
+
+#. i18n: ectx: property (title), widget (QGroupBox, autoAwayGroupBox)
+#: config/telepathy-kded-config.ui:61
+#, kde-format
+msgid "Auto away"
+msgstr "Otomatik uzakta"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: config/telepathy-kded-config.ui:70
+#, kde-format
+msgid "Set my status to:"
+msgstr "Durumumu şuna ayarla:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_awayCheckBox)
+#: config/telepathy-kded-config.ui:81
+#, kde-format
+msgid "Away"
+msgstr "Uzakta"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayMinsLabel)
+#: config/telepathy-kded-config.ui:110
+#, kde-format
+msgid "After:"
+msgstr "Şu kadar sonra:"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayInactivityLabel)
+#. i18n: ectx: property (text), widget (QLabel, m_xaInactivityLabel)
+#: config/telepathy-kded-config.ui:142 config/telepathy-kded-config.ui:244
+#, kde-format
+msgid "of inactivity"
+msgstr "bir şey yapmadığımda"
+
+#. i18n: ectx: property (text), widget (QLabel, m_awayMessageLabel)
+#. i18n: ectx: property (text), widget (QLabel, m_screenSaverAwayLabel)
+#: config/telepathy-kded-config.ui:153 config/telepathy-kded-config.ui:313
+#, kde-format
+msgid "With &message:"
+msgstr "&Şu ileti ile:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_xaCheckBox)
+#: config/telepathy-kded-config.ui:180
+#, kde-format
+msgid "Not available"
+msgstr "Uygun değil"
+
+#. i18n: ectx: property (text), widget (QLabel, m_xaMinsLabel)
+#: config/telepathy-kded-config.ui:212
+#, kde-format
+msgid "Aft&er:"
+msgstr "&Sonra"
+
+#. i18n: ectx: property (text), widget (QLabel, m_xaMessageLabel)
+#: config/telepathy-kded-config.ui:255
+#, kde-format
+msgid "With messa&ge:"
+msgstr "&Şu ileti ile:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_screenSaverAwayCheckBox)
+#: config/telepathy-kded-config.ui:286
+#, kde-format
+msgid "Set my status to Away when the screen saver is activated"
+msgstr "Ekran koruyucu etkinleştirildiğinde durumumu Uzakta işaretle"
+
+#. i18n: ectx: property (title), widget (QGroupBox, incomingFilesGroupBox)
+#: config/telepathy-kded-config.ui:336
+#, kde-format
+msgid "Incoming files"
+msgstr "Gelen dosyalar"
+
+#. i18n: ectx: property (text), widget (QLabel, m_downloadUrlLabel)
+#: config/telepathy-kded-config.ui:347
+#, kde-format
+msgid "Download folder:"
+msgstr "Dosya indirme klasörü:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_downloadUrlCheckBox)
+#: config/telepathy-kded-config.ui:360
+#, kde-format
+msgid "Always Ask"
+msgstr "Her Zaman Sor"
+
+#. i18n: ectx: property (toolTip), widget (KUrlRequester, m_downloadUrlRequester)
+#. i18n: ectx: property (whatsThis), widget (KUrlRequester, m_downloadUrlRequester)
+#: config/telepathy-kded-config.ui:367 config/telepathy-kded-config.ui:370
+#, kde-format
+msgid "This is the folder where received files will be saved."
+msgstr "Bu alınan dosyaların kaydedileceği klasördür."
+
+#. i18n: ectx: property (text), widget (QCheckBox, m_autoAcceptCheckBox)
+#: config/telepathy-kded-config.ui:379
+#, kde-format
+msgid "Automatically accept file transfers"
+msgstr "Dosya aktarımlarını otomatik olarak kabul et"
+
+#: contact-request-handler.cpp:180
+#, kde-format
+msgid "New contact request"
+msgstr "Yeni kişi isteği"
+
+#: contact-request-handler.cpp:181
+#, kde-format
+msgid "The contact %1 wants to be able to chat with you."
+msgstr "%1 adlı kişi sizinle sohbet edebilmek istiyor."
+
+#: contact-request-handler.cpp:198
+#, kde-format
+msgid "Error adding contact"
+msgstr "Kişi eklenirken hata"
+
+#: contact-request-handler.cpp:199
+#, kde-format
+msgid ""
+"%1 has been added successfully to your contact list, but might be unable to "
+"see when you are online. Error details: %2"
+msgstr ""
+"%1 kişi listenize başarıyla eklendi ancak çevrimiçi olduğunuzu "
+"göremeyebilir. Hata ayrıntıları: %2"
+
+#: contact-request-handler.cpp:285
+#, kde-format
+msgid "Error granting contact authorization"
+msgstr "Kişi doğrulaması verilirken hata"
+
+#: contact-request-handler.cpp:286
+#, kde-format
+msgid "There was an error while accepting the request: %1"
+msgstr "İstek kabul edilirken bir hata oluştu: %1"
+
+#: contact-request-handler.cpp:296
+#, kde-format
+msgid "Contact request accepted"
+msgstr "Kişi talebi kabul edildi"
+
+#: contact-request-handler.cpp:297
+#, kde-format
+msgid "%1 will now be able to see when you are online"
+msgstr "%1 artık çevrimiçi olduğunuzu görebilecek"
+
+#: contact-request-handler.cpp:364
+#, kde-format
+msgid "Error denying contact request"
+msgstr "Kişi talebi reddedilirken hata"
+
+#: contact-request-handler.cpp:365
+#, kde-format
+msgid "There was an error while denying the request: %1"
+msgstr "İstek reddedilirken bir hata oluştu: %1"
+
+#: contact-request-handler.cpp:374
+#, kde-format
+msgid "Contact request denied"
+msgstr "Kişi isteği reddedildi"
+
+#: contact-request-handler.cpp:375
+#, kde-format
+msgid "%1 will not be able to see when you are online"
+msgstr "%1 çevrimiçi olduğunuzu göremeyecek"
+
+#: contact-request-handler.cpp:392
+#, kde-format
+msgctxt "Menu title"
+msgid "Pending contact requests"
+msgstr "Bekleyen kişi istekleri"
+
+#: contact-request-handler.cpp:396
+#, kde-format
+msgctxt "Context menu title"
+msgid "Received contact requests"
+msgstr "Alınan kişi istekleri"
+
+#: contact-request-handler.cpp:417
+#, kde-format
+msgid "Request from %1"
+msgstr "%1 kişisinden istek"
+
+#: contact-request-handler.cpp:422
+#, kde-format
+msgid "Contact Details"
+msgstr "Kişi Ayrıntıları"
+
+#: contact-request-handler.cpp:436
+#, kde-format
+msgid "Approve"
+msgstr "Onayla"
+
+#: contact-request-handler.cpp:442
+#, kde-format
+msgid "Deny"
+msgstr "Reddet"
+
+#: contact-request-handler.cpp:469
+#, kde-format
+msgid "You have 1 contact wanting to chat with you"
+msgid_plural "You have %1 contacts wanting to chat with you"
+msgstr[0] "Sizinle sohbet etmek isteyen 1 kişi var"
+msgstr[1] "Sizinle sohbet etmek isteyen %1 kişi var"
+
+#: contactnotify.cpp:65
+#, kde-format
+msgctxt "%1 is the contact name, %2 is the presence name"
+msgid "%1 is now %2"
+msgstr "%1 artık %2"
+
+#: error-handler.cpp:141
+#, kde-format
+msgctxt "%1 is the account name"
+msgid "Could not connect %1. There was a network error, check your connection"
+msgstr "%1 bağlantısı yapılamadı. Ağ hatası oluştu, bağlantınızı denetleyin"
+
+#: error-handler.cpp:148 error-handler.cpp:150
+#, kde-format
+msgctxt "%1 is the account name, %2 the error message"
+msgid "There was a problem while trying to connect %1 - %2"
+msgstr "%1 bağlantısı yapılırken bir hata oluştu - %2"
+
+#~ msgctxt ""
+#~ "Title tag in now playing plugin, use one word and keep the '%' character."
+#~ msgid "%title"
+#~ msgstr "%başlık"
+
+#~ msgctxt ""
+#~ "Artist tag in now playing plugin, use one word and keep the '%' character."
+#~ msgid "%artist"
+#~ msgstr "%sanatçı"
+
+#~ msgctxt ""
+#~ "Album tag in now playing plugin, use one word and keep the '%' character."
+#~ msgid "%album"
+#~ msgstr "%albüm"
+
+#~ msgctxt ""
+#~ "Track number tag in now playing plugin, use one word and keep the '%' "
+#~ "character."
+#~ msgid "%track"
+#~ msgstr "%parça"
+
+#~ msgctxt "Time tag. Use one word and keep the '%' character."
+#~ msgid "%time"
+#~ msgstr "%zaman"
+
+#~ msgid "Use %time to insert UTC time of when you went away"
+#~ msgstr "Uzakta olduğunuzda UTC zamanı eklemek için %zaman kullanın"
+
+#~ msgid "Use %time to insert UTC time of when you went not available"
+#~ msgstr "Uygun olmadığınızda UTC zamanı eklemek için %zaman kullanın"
+
+#~ msgid "Use %time to insert UTC time of when the screen saver was activated"
+#~ msgstr ""
+#~ "Ekran koruyucu etkinleştirildiğinde UTC zamanı eklemek için %zaman "
+#~ "kullanın"
+
+#~ msgctxt ""
+#~ "The default text displayed by now playing plugin. track title: %1, "
+#~ "artist: %2, album: %3"
+#~ msgid "Now listening to %1 by %2 from album %3"
+#~ msgstr "Şimdi dinlenen %1, %2 sanatçısının %3 albümünden"
+
+#~ msgid "Now playing"
+#~ msgstr "Şimdi çalınıyor"
+
+#~ msgid "Enable \"Now playing...\" presence on login"
+#~ msgstr "Oturum açtığımda \"Şimdi çalınıyor...\" durumunu etkinleştir"
+
+#~ msgid "Message format:"
+#~ msgstr "İleti biçimi:"
+
+#~ msgctxt "NAME OF TRANSLATORS"
+#~ msgid "Your names"
+#~ msgstr "Volkan Gezer"
+
+#~ msgctxt "EMAIL OF TRANSLATORS"
+#~ msgid "Your emails"
+#~ msgstr "volkangezer@gmail.com"
