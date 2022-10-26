@@ -135,7 +135,7 @@ msgid ""
 msgstr ""
 "<p><strong>%tx+&lt;val&gt;</strong>: Venç el missatge d'estat després de "
 "<strong>&lt;val&gt;</strong> minuts, o quan el reproductor actiu de peça en "
-"reproducció s'para (<strong>val = np</strong>). p. ex. %tx+20, %tx+np</p>"
+"reproducció es para (<strong>val = np</strong>). p. ex. %tx+20, %tx+np</p>"
 
 #: config/telepathy-kded-config.cpp:51
 #, kde-format
