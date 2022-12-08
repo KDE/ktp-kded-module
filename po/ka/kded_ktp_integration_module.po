@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ktp-kded-module\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2019-05-20 03:11+0200\n"
-"PO-Revision-Date: 2022-09-27 16:59+0200\n"
+"PO-Revision-Date: 2022-12-07 08:32+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: config/telepathy-kded-config.cpp:39
 #, kde-format
@@ -59,22 +59,23 @@ msgstr ""
 #: config/telepathy-kded-config.cpp:44
 #, kde-format
 msgid "<p><strong>%title</strong>: Now Playing track title.</p>"
-msgstr ""
+msgstr "<p><strong>%title</strong>: ახლა დაკვრადი ტრეკის სათაური.</p>"
 
 #: config/telepathy-kded-config.cpp:45
 #, kde-format
 msgid "<p><strong>%artist</strong>: Now Playing track or album artist.</p>"
 msgstr ""
+"<p><strong>%artist</strong>: ახლა დაკვრადი ტრეკი ან ალბომის შემსრულებელი.</p>"
 
 #: config/telepathy-kded-config.cpp:46
 #, kde-format
 msgid "<p><strong>%album</strong>: Now Playing album.</p>"
-msgstr ""
+msgstr "<p><strong>%album</strong>: ახლა დაკვრადი ალბომი.</p>"
 
 #: config/telepathy-kded-config.cpp:47
 #, kde-format
 msgid "<p><strong>%track</strong>: Now Playing track number.</p>"
-msgstr ""
+msgstr "<p><strong>%track</strong>: ახლა დაკვრადი ტრეკის ნომერი.</p>"
 
 #: config/telepathy-kded-config.cpp:48
 #, kde-format
@@ -154,7 +155,7 @@ msgstr " წუთი"
 #: config/telepathy-kded-config.cpp:82
 #, kde-format
 msgid "Leave empty for no message"
-msgstr ""
+msgstr "შეტყობინების გარეშე დასატოვებლად ცარიელი დატოვეთ"
 
 #: config/telepathy-kded-config.cpp:135
 #, kde-format
@@ -166,13 +167,13 @@ msgstr "გადმოწერები"
 #: config/telepathy-kded-config.ui:44
 #, kde-format
 msgid "Restore last presence on login"
-msgstr ""
+msgstr "შესვლისას ბოლო სტატუსის აღდგენა"
 
 #. i18n: ectx: property (text), widget (QCheckBox, m_autoOfflineCheckBox)
 #: config/telepathy-kded-config.ui:51
 #, kde-format
 msgid "Go offline when closing the contact list"
-msgstr ""
+msgstr "კონტაქტების სიის დახურვისას ოფლაინში გასვლა"
 
 #. i18n: ectx: property (title), widget (QGroupBox, autoAwayGroupBox)
 #: config/telepathy-kded-config.ui:61
@@ -203,7 +204,7 @@ msgstr "შემდეგ:"
 #: config/telepathy-kded-config.ui:142 config/telepathy-kded-config.ui:244
 #, kde-format
 msgid "of inactivity"
-msgstr ""
+msgstr "არააქტივობისას"
 
 #. i18n: ectx: property (text), widget (QLabel, m_awayMessageLabel)
 #. i18n: ectx: property (text), widget (QLabel, m_screenSaverAwayLabel)
@@ -259,23 +260,23 @@ msgstr "ყოველთვის კითხვა"
 #: config/telepathy-kded-config.ui:367 config/telepathy-kded-config.ui:370
 #, kde-format
 msgid "This is the folder where received files will be saved."
-msgstr ""
+msgstr "საქაღალდე მიღებული ფაილებისთვის."
 
 #. i18n: ectx: property (text), widget (QCheckBox, m_autoAcceptCheckBox)
 #: config/telepathy-kded-config.ui:379
 #, kde-format
 msgid "Automatically accept file transfers"
-msgstr ""
+msgstr "ფაილების მიმოცვლის ავტომატური მიღება"
 
 #: contact-request-handler.cpp:180
 #, kde-format
 msgid "New contact request"
-msgstr ""
+msgstr "ახალი კონტაქტის მოთხოვნა"
 
 #: contact-request-handler.cpp:181
 #, kde-format
 msgid "The contact %1 wants to be able to chat with you."
-msgstr ""
+msgstr "კონტაქტს %1 სურს, გაგესაუბროთ."
 
 #: contact-request-handler.cpp:198
 #, kde-format
@@ -292,12 +293,12 @@ msgstr ""
 #: contact-request-handler.cpp:285
 #, kde-format
 msgid "Error granting contact authorization"
-msgstr ""
+msgstr "კონტაქტის ავტორიზაციის მინიჭების შეცდომა"
 
 #: contact-request-handler.cpp:286
 #, kde-format
 msgid "There was an error while accepting the request: %1"
-msgstr ""
+msgstr "მოთხოვნის დადასტურების შეცდომა: %1"
 
 #: contact-request-handler.cpp:296
 #, kde-format
@@ -307,7 +308,7 @@ msgstr "კონტაქტის მოთხოვნა მიღებუ�
 #: contact-request-handler.cpp:297
 #, kde-format
 msgid "%1 will now be able to see when you are online"
-msgstr ""
+msgstr "%1 დაგინახავთ, როცა ხაზზე იქნებით"
 
 #: contact-request-handler.cpp:364
 #, kde-format
@@ -317,7 +318,7 @@ msgstr "კონტაქტის მოთხოვნის უარყო�
 #: contact-request-handler.cpp:365
 #, kde-format
 msgid "There was an error while denying the request: %1"
-msgstr ""
+msgstr "შეცდომა მოთხოვნის უარყოფისას: %1"
 
 #: contact-request-handler.cpp:374
 #, kde-format
@@ -327,24 +328,24 @@ msgstr "კონტაქტის მოთხოვნა უარყოფ�
 #: contact-request-handler.cpp:375
 #, kde-format
 msgid "%1 will not be able to see when you are online"
-msgstr ""
+msgstr "%1 ვერ დაგინახავთ, როცა ხაზზე იქნებით"
 
 #: contact-request-handler.cpp:392
 #, kde-format
 msgctxt "Menu title"
 msgid "Pending contact requests"
-msgstr ""
+msgstr "დარჩენილი კონტაქტის მოთხოვნები"
 
 #: contact-request-handler.cpp:396
 #, kde-format
 msgctxt "Context menu title"
 msgid "Received contact requests"
-msgstr ""
+msgstr "მიღებული კონტაქტის მოთხოვნები"
 
 #: contact-request-handler.cpp:417
 #, kde-format
 msgid "Request from %1"
-msgstr ""
+msgstr "მოთხოვნა %1-დან"
 
 #: contact-request-handler.cpp:422
 #, kde-format
@@ -365,23 +366,25 @@ msgstr "უარყოფა"
 #, kde-format
 msgid "You have 1 contact wanting to chat with you"
 msgid_plural "You have %1 contacts wanting to chat with you"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "გყავთ 1 კონტაქტი, ვისაც თქვენთან საუბარი სურს"
+msgstr[1] "გყავთ %1 კონტაქტი, ვისაც თქვენთან საუბარი სურს"
 
 #: contactnotify.cpp:65
 #, kde-format
 msgctxt "%1 is the contact name, %2 is the presence name"
 msgid "%1 is now %2"
-msgstr ""
+msgstr "%1 ახლა %2-ა"
 
 #: error-handler.cpp:141
 #, kde-format
 msgctxt "%1 is the account name"
 msgid "Could not connect %1. There was a network error, check your connection"
 msgstr ""
+"%1-სთან მიერთების შეცდომა. ქსელთან მიერთება შეუძლებელია. გადაამოწმეთ "
+"ინტერნეტი"
 
 #: error-handler.cpp:148 error-handler.cpp:150
 #, kde-format
 msgctxt "%1 is the account name, %2 the error message"
 msgid "There was a problem while trying to connect %1 - %2"
-msgstr ""
+msgstr "პრობლემა %1-სთან მიერთებისას: %2"
