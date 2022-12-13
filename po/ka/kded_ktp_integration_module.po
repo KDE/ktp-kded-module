@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ktp-kded-module\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2019-05-20 03:11+0200\n"
-"PO-Revision-Date: 2022-09-27 16:59+0200\n"
+"PO-Revision-Date: 2022-12-12 09:52+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: config/telepathy-kded-config.cpp:39
 #, kde-format
@@ -24,6 +24,8 @@ msgid ""
 "<p>Tokens can be used wherever a status message can be set to create a "
 "dynamic status message.</p>"
 msgstr ""
+"<p>კოდების გამოყენება შეგიძლიათ, თუ სტატუსის შეტყობინება შეიძლება დინამიკურ "
+"სტატუსის შეტყობინებაზე დააყენოთ.</p>"
 
 #: config/telepathy-kded-config.cpp:40
 #, kde-format
@@ -31,6 +33,8 @@ msgid ""
 "<p><strong>%tr+&lt;val&gt;</strong>: Countdown to 0 from <strong>&lt;val&gt;"
 "</strong> minutes. e.g. %tr+30</p>"
 msgstr ""
+"<p><strong>%tr+&lt;val&gt;</strong>: ათვლა 0დან <strong>&lt;val&gt;</strong>-"
+"მდე წუთი. მაგ: %tr+30</p>"
 
 #: config/telepathy-kded-config.cpp:41
 #, kde-format
@@ -39,6 +43,9 @@ msgid ""
 "value is specified, the local time <strong>&lt;val&gt;</strong> minutes in "
 "the future. e.g. %time+10</p>"
 msgstr ""
+"<p><strong>%time+[&lt;val&gt;]</strong>: მიმდინარე ლოკალური დრო, ან, თუ "
+"მნიშვნელობა მითითებულია, ლოკალური დრო<strong>&lt;val&gt;</strong> წუთი "
+"მომავალში. მაგ: %time+10</p>"
 
 #: config/telepathy-kded-config.cpp:42
 #, kde-format
@@ -47,6 +54,9 @@ msgid ""
 "is specified, the UTC time <strong>&lt;val&gt;</strong> minutes into the "
 "future. e.g. %utc</p>"
 msgstr ""
+"<p><strong>%utc+[&lt;val&gt;]</strong>: მიმდინარე UTC დრო, ან, თუ "
+"მნიშვნელობა მითითებულია, UTC დრო <strong>&lt;val&gt;</strong> წუთებში, "
+"მომავალში. მაგ: %utc</p>"
 
 #: config/telepathy-kded-config.cpp:43
 #, kde-format
@@ -55,26 +65,30 @@ msgid ""
 "Append an initial elapsed time &quot;&lt;val&gt;&quot; in minutes. e.g. %te"
 "+5</p>"
 msgstr ""
+"<p><strong>%te+[&lt;val&gt;]</strong>: შეტყობინების აქტივაციის შემდეგ გასული "
+"დრო. საწყისი გასუი დროისთვის მიწერა &quot;&lt;val&gt;&quot; წუთებში. მაგ: %te"
+"+5</p>"
 
 #: config/telepathy-kded-config.cpp:44
 #, kde-format
 msgid "<p><strong>%title</strong>: Now Playing track title.</p>"
-msgstr ""
+msgstr "<p><strong>%title</strong>: ახლა დაკვრადი ტრეკის სათაური.</p>"
 
 #: config/telepathy-kded-config.cpp:45
 #, kde-format
 msgid "<p><strong>%artist</strong>: Now Playing track or album artist.</p>"
 msgstr ""
+"<p><strong>%artist</strong>: ახლა დაკვრადი ტრეკი ან ალბომის შემსრულებელი.</p>"
 
 #: config/telepathy-kded-config.cpp:46
 #, kde-format
 msgid "<p><strong>%album</strong>: Now Playing album.</p>"
-msgstr ""
+msgstr "<p><strong>%album</strong>: ახლა დაკვრადი ალბომი.</p>"
 
 #: config/telepathy-kded-config.cpp:47
 #, kde-format
 msgid "<p><strong>%track</strong>: Now Playing track number.</p>"
-msgstr ""
+msgstr "<p><strong>%track</strong>: ახლა დაკვრადი ტრეკის ნომერი.</p>"
 
 #: config/telepathy-kded-config.cpp:48
 #, kde-format
@@ -88,6 +102,13 @@ msgid ""
 "message or automatic presence status message with the global presence status "
 "message. e.g. %um, %um+g</p>"
 msgstr ""
+"<p><strong>%um+[&lt;val&gt;]</strong>: როცა მითითებულია გლობალურად ან "
+"ანგარიშის სტატუსის შეტყობინებაში, გადაფარავს ყველა ავტომატურ შეტყობინებას. "
+"როცა მითითებულია ავტომატურ სტატუსის შეტყობინებაში, ის ანაცვლებს გლობალურ ან "
+"ანგარიშის სტატუსის შეტყობინებას (თუ მითითებულია). როცა <strong>val = g</"
+"strong> ანგარიშის სტატუსის შეტყობინებაში ან ავტომატური სტატუსის "
+"შეტყობინებაში, გადაფარავს ანგარიშის სტატუსის შეტყობინებას გლობალური სტატუსის "
+"შეტყობინებით. მაგ: %um, %um+g</p>"
 
 #: config/telepathy-kded-config.cpp:49
 #, kde-format
@@ -95,6 +116,8 @@ msgid ""
 "<p><strong>%tu+&lt;val&gt;</strong>: Refresh the status message every "
 "<strong>&lt;val&gt;</strong> minutes. e.g. %tu+2</p>"
 msgstr ""
+"<p><strong>%tu+&lt;val&gt;</strong>: სტატუსის შეტყობინების ყოველ <strong>&lt;"
+"val&gt;</strong> წუთში განახლება. მაგ: %tu+2</p>"
 
 #: config/telepathy-kded-config.cpp:50
 #, kde-format
@@ -103,6 +126,9 @@ msgid ""
 "<strong>&lt;val&gt;</strong> minutes, or when the Now Playing active player "
 "stops (<strong>val = np</strong>). e.g. %tx+20, %tx+np</p>"
 msgstr ""
+"<p><strong>%tx+&lt;val&gt;</strong>: სტატუსის შეტყობინებას ვადა <strong>&lt;"
+"val&gt;</strong> წუთში, ან მაშინ, როცა მომხმარებელი, რომელიც თამაშობს, "
+"შეწყვეტს.(<strong>val = np</strong>). მაგ: %tx+20, %tx+np</p>"
 
 #: config/telepathy-kded-config.cpp:51
 #, kde-format
@@ -111,6 +137,9 @@ msgid ""
 "%tr, %time, %utc, and %tx token expiry. e.g. %xm+&quot;Back %time. %tx+3 %xm"
 "+&quot;Running late&quot;&quot;</p>"
 msgstr ""
+"<p><strong>%xm+&quot;&lt;val&gt;&quot;</strong>: მიუთითეთ შეტყობინება, "
+"რომელიც %tr, %time, %utc, და %tx კოდის ვადას მისდევს. მაგ: . %xm+&quot;Back "
+"%time. %tx+3 %xm+&quot;აგვიანებთ&quot;&quot;</p>"
 
 #: config/telepathy-kded-config.cpp:52
 #, kde-format
@@ -119,6 +148,9 @@ msgid ""
 "local time using QDateTime::toString() expressions. e.g. %tf+&quot;h:mm AP "
 "t&quot;</p>"
 msgstr ""
+"<p><strong>%tf+&quot;&lt;val&gt;&quot;</strong>: მიუთითეთ ლოკალური დრის "
+"ფორმატი QDateTime::toString() გამოსახულებებით. მაგ: %tf+&quot;h:mm AP t&quot;"
+"</p>"
 
 #: config/telepathy-kded-config.cpp:53
 #, kde-format
@@ -127,6 +159,8 @@ msgid ""
 "time using QDateTime::toString() expressions. e.g. %uf+&quot;hh:mm t&quot;</"
 "p>"
 msgstr ""
+"<p><strong>%uf+&quot;&lt;val&gt;&quot;</strong>: მიუთითეთ UTC დროის ფორმატი "
+"QDateTime::toString() გამოსახულებით. მაგ: %uf+&quot;hh:mm t&quot;</p>"
 
 #: config/telepathy-kded-config.cpp:54
 #, kde-format
@@ -134,6 +168,8 @@ msgid ""
 "<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: Change the separator for "
 "empty fields. e.g. %sp+&quot;-&quot;</p>"
 msgstr ""
+"<p><strong>%sp+&quot;&lt;val&gt;&quot;</strong>: ცარიელი ველების გამყოფის "
+"შეცვლა. მაგ: %sp+&quot;-&quot;</p>"
 
 #: config/telepathy-kded-config.cpp:55
 #, kde-format
@@ -141,6 +177,8 @@ msgid ""
 "<p>Using tokens requires the Telepathy KDED module to be loaded. Tokens can "
 "be escaped by prepending a backslash character, e.g. &#92;%sp</p>"
 msgstr ""
+"<p>კოდების გამოყენება მოითხოვს Telepathy KDED მოდულის ჩატვირთვას. კოდების "
+"დაცვა ბოლოში უკუღმა დახრილი ხაზის სიმბოლოთი შეგიძლიათ. მაგ: &#92;%sp</p>"
 
 #: config/telepathy-kded-config.cpp:74 config/telepathy-kded-config.cpp:77
 #, kde-format
@@ -154,7 +192,7 @@ msgstr " წუთი"
 #: config/telepathy-kded-config.cpp:82
 #, kde-format
 msgid "Leave empty for no message"
-msgstr ""
+msgstr "შეტყობინების გარეშე დასატოვებლად ცარიელი დატოვეთ"
 
 #: config/telepathy-kded-config.cpp:135
 #, kde-format
@@ -166,13 +204,13 @@ msgstr "გადმოწერები"
 #: config/telepathy-kded-config.ui:44
 #, kde-format
 msgid "Restore last presence on login"
-msgstr ""
+msgstr "შესვლისას ბოლო სტატუსის აღდგენა"
 
 #. i18n: ectx: property (text), widget (QCheckBox, m_autoOfflineCheckBox)
 #: config/telepathy-kded-config.ui:51
 #, kde-format
 msgid "Go offline when closing the contact list"
-msgstr ""
+msgstr "კონტაქტების სიის დახურვისას ოფლაინში გასვლა"
 
 #. i18n: ectx: property (title), widget (QGroupBox, autoAwayGroupBox)
 #: config/telepathy-kded-config.ui:61
@@ -203,7 +241,7 @@ msgstr "შემდეგ:"
 #: config/telepathy-kded-config.ui:142 config/telepathy-kded-config.ui:244
 #, kde-format
 msgid "of inactivity"
-msgstr ""
+msgstr "არააქტივობისას"
 
 #. i18n: ectx: property (text), widget (QLabel, m_awayMessageLabel)
 #. i18n: ectx: property (text), widget (QLabel, m_screenSaverAwayLabel)
@@ -234,7 +272,7 @@ msgstr "&შეტყობინებით:"
 #: config/telepathy-kded-config.ui:286
 #, kde-format
 msgid "Set my status to Away when the screen saver is activated"
-msgstr ""
+msgstr "როცა ეკრანის დამცველი აქტიურია, სტატუსის \"გასულზე\" დაყენება"
 
 #. i18n: ectx: property (title), widget (QGroupBox, incomingFilesGroupBox)
 #: config/telepathy-kded-config.ui:336
@@ -259,23 +297,23 @@ msgstr "ყოველთვის კითხვა"
 #: config/telepathy-kded-config.ui:367 config/telepathy-kded-config.ui:370
 #, kde-format
 msgid "This is the folder where received files will be saved."
-msgstr ""
+msgstr "საქაღალდე მიღებული ფაილებისთვის."
 
 #. i18n: ectx: property (text), widget (QCheckBox, m_autoAcceptCheckBox)
 #: config/telepathy-kded-config.ui:379
 #, kde-format
 msgid "Automatically accept file transfers"
-msgstr ""
+msgstr "ფაილების მიმოცვლის ავტომატური მიღება"
 
 #: contact-request-handler.cpp:180
 #, kde-format
 msgid "New contact request"
-msgstr ""
+msgstr "ახალი კონტაქტის მოთხოვნა"
 
 #: contact-request-handler.cpp:181
 #, kde-format
 msgid "The contact %1 wants to be able to chat with you."
-msgstr ""
+msgstr "კონტაქტს %1 სურს, გაგესაუბროთ."
 
 #: contact-request-handler.cpp:198
 #, kde-format
@@ -288,16 +326,18 @@ msgid ""
 "%1 has been added successfully to your contact list, but might be unable to "
 "see when you are online. Error details: %2"
 msgstr ""
+"%1 წარმატებით ჩაემატა თქვენი კონტაქტების სიაში, მაგრამ შეიძლება, როცა ონლაინ "
+"იქნებით, ვერ დაინახოთ. შეცდომის დეტალები: %2"
 
 #: contact-request-handler.cpp:285
 #, kde-format
 msgid "Error granting contact authorization"
-msgstr ""
+msgstr "კონტაქტის ავტორიზაციის მინიჭების შეცდომა"
 
 #: contact-request-handler.cpp:286
 #, kde-format
 msgid "There was an error while accepting the request: %1"
-msgstr ""
+msgstr "მოთხოვნის დადასტურების შეცდომა: %1"
 
 #: contact-request-handler.cpp:296
 #, kde-format
@@ -307,7 +347,7 @@ msgstr "კონტაქტის მოთხოვნა მიღებუ�
 #: contact-request-handler.cpp:297
 #, kde-format
 msgid "%1 will now be able to see when you are online"
-msgstr ""
+msgstr "%1 დაგინახავთ, როცა ხაზზე იქნებით"
 
 #: contact-request-handler.cpp:364
 #, kde-format
@@ -317,7 +357,7 @@ msgstr "კონტაქტის მოთხოვნის უარყო�
 #: contact-request-handler.cpp:365
 #, kde-format
 msgid "There was an error while denying the request: %1"
-msgstr ""
+msgstr "შეცდომა მოთხოვნის უარყოფისას: %1"
 
 #: contact-request-handler.cpp:374
 #, kde-format
@@ -327,24 +367,24 @@ msgstr "კონტაქტის მოთხოვნა უარყოფ�
 #: contact-request-handler.cpp:375
 #, kde-format
 msgid "%1 will not be able to see when you are online"
-msgstr ""
+msgstr "%1 ვერ დაგინახავთ, როცა ხაზზე იქნებით"
 
 #: contact-request-handler.cpp:392
 #, kde-format
 msgctxt "Menu title"
 msgid "Pending contact requests"
-msgstr ""
+msgstr "დარჩენილი კონტაქტის მოთხოვნები"
 
 #: contact-request-handler.cpp:396
 #, kde-format
 msgctxt "Context menu title"
 msgid "Received contact requests"
-msgstr ""
+msgstr "მიღებული კონტაქტის მოთხოვნები"
 
 #: contact-request-handler.cpp:417
 #, kde-format
 msgid "Request from %1"
-msgstr ""
+msgstr "მოთხოვნა %1-დან"
 
 #: contact-request-handler.cpp:422
 #, kde-format
@@ -365,23 +405,25 @@ msgstr "უარყოფა"
 #, kde-format
 msgid "You have 1 contact wanting to chat with you"
 msgid_plural "You have %1 contacts wanting to chat with you"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "გყავთ 1 კონტაქტი, ვისაც თქვენთან საუბარი სურს"
+msgstr[1] "გყავთ %1 კონტაქტი, ვისაც თქვენთან საუბარი სურს"
 
 #: contactnotify.cpp:65
 #, kde-format
 msgctxt "%1 is the contact name, %2 is the presence name"
 msgid "%1 is now %2"
-msgstr ""
+msgstr "%1 ახლა %2-ა"
 
 #: error-handler.cpp:141
 #, kde-format
 msgctxt "%1 is the account name"
 msgid "Could not connect %1. There was a network error, check your connection"
 msgstr ""
+"%1-სთან მიერთების შეცდომა. ქსელთან მიერთება შეუძლებელია. გადაამოწმეთ "
+"ინტერნეტი"
 
 #: error-handler.cpp:148 error-handler.cpp:150
 #, kde-format
 msgctxt "%1 is the account name, %2 the error message"
 msgid "There was a problem while trying to connect %1 - %2"
-msgstr ""
+msgstr "პრობლემა %1-სთან მიერთებისას: %2"
